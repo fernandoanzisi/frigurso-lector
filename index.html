@@ -505,17 +505,10 @@ async function ocrConGemini(file, idioma) {
     reader.readAsDataURL(file);
   });
 
-  const langHint = idioma && idioma !== 'auto' ? `El texto está en ${idioma}. ` : '';
-  const prompt = langHint +
-    'Extraé todo el texto de esta imagen exactamente como aparece. ' +
-    'Conservá los párrafos, los saltos de línea entre párrafos y la puntuación. ' +
-    'No agregues nada, no resumas, solo transcribí el texto tal cual está escrito. ' +
-    'Si hay números de página, títulos o encabezados incluílos también.';
-
-  const resp = await fetch('/api/gemini', {
+  const resp = await fetch('/api/ocr', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: base64, mimeType: file.type || 'image/jpeg', hint: prompt })
+    body: JSON.stringify({ image: base64, mimeType: file.type || 'image/jpeg', language: idioma })
   });
   const data = await resp.json();
   if (!resp.ok) throw new Error(data.error || 'Error en el servidor');
