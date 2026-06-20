@@ -10,236 +10,204 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
   :root {
-    --bg: #f5f0e8;
-    --bg2: #ede8df;
-    --card: #fff;
-    --text: #2c2416;
-    --text2: #5a4e3a;
-    --text3: #9a8e7a;
-    --accent: #c9832a;
-    --accent2: #e8b86d;
-    --border: #ddd5c4;
-    --red: #c0392b;
-    --green: #27ae60;
-    --shadow: 0 2px 12px rgba(0,0,0,0.08);
-    --font-read: 'Georgia', 'Times New Roman', serif;
-    --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-size: 19px;
-    --line-height: 1.85;
+    --bg:#f5f0e8;--bg2:#ede8df;--card:#fff;--text:#2c2416;--text2:#5a4e3a;
+    --text3:#9a8e7a;--accent:#c9832a;--accent2:#e8b86d;--border:#ddd5c4;
+    --shadow:0 2px 12px rgba(0,0,0,0.08);
+    --font-read:'Georgia','Times New Roman',serif;
+    --font-ui:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --font-size:19px;--line-height:1.85;
   }
   .dark {
-    --bg: #1a1a2e;
-    --bg2: #16213e;
-    --card: #0f3460;
-    --text: #e8dcc8;
-    --text2: #c4b49a;
-    --text3: #7a6e5e;
-    --accent: #e8b86d;
-    --accent2: #d4a55a;
-    --border: #2a3a5a;
-    --shadow: 0 2px 16px rgba(0,0,0,0.4);
+    --bg:#1a1a2e;--bg2:#16213e;--card:#0f3460;--text:#e8dcc8;--text2:#c4b49a;
+    --text3:#7a6e5e;--accent:#e8b86d;--accent2:#d4a55a;--border:#2a3a5a;
+    --shadow:0 2px 16px rgba(0,0,0,0.4);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: var(--font-ui); background: var(--bg); color: var(--text); min-height: 100dvh; transition: background 0.3s, color 0.3s; }
-  button { font-family: var(--font-ui); cursor: pointer; border: none; outline: none; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:var(--font-ui);background:var(--bg);color:var(--text);min-height:100dvh;transition:background 0.3s,color 0.3s}
+  button{font-family:var(--font-ui);cursor:pointer;border:none;outline:none}
 
-  /* ── HEADER ── */
-  .header {
-    position: sticky; top: 0; z-index: 100;
-    background: var(--bg2); border-bottom: 1px solid var(--border);
-    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
-    box-shadow: var(--shadow);
-  }
-  .header-title { font-size: 17px; font-weight: 700; color: var(--text); flex: 1; }
-  .header-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
-  .btn-icon {
-    width: 40px; height: 40px; border-radius: 50%; background: var(--bg);
-    border: 1px solid var(--border); color: var(--text2); font-size: 18px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .btn-icon:active { opacity: 0.7; }
+  .header{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);
+    padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}
+  .header-title{font-size:17px;font-weight:700;color:var(--text);flex:1}
+  .header-sub{font-size:11px;color:var(--text3);margin-top:1px}
+  .btn-icon{width:40px;height:40px;border-radius:50%;background:var(--bg);border:1px solid var(--border);
+    color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .btn-icon:active{opacity:0.7}
 
-  /* ── PAGES ── */
-  .page { display: none; min-height: calc(100dvh - 60px); }
-  .page.active { display: block; }
+  .page{display:none;min-height:calc(100dvh - 60px)}
+  .page.active{display:block}
 
-  /* ── BIBLIOTECA ── */
-  .biblioteca { padding: 16px; }
-  .bib-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .bib-title { font-size: 14px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
-  .btn-add {
-    padding: 10px 20px; border-radius: 99px; background: var(--accent); color: #fff;
-    font-size: 13px; font-weight: 700;
-  }
-  .btn-add:active { opacity: 0.85; }
-  .libros-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
-  .libro-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-    overflow: hidden; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s;
-    position: relative;
-  }
-  .libro-card:active { transform: scale(0.97); }
-  .libro-cover {
-    height: 190px; background: linear-gradient(135deg, var(--accent2), var(--accent));
-    display: flex; align-items: center; justify-content: center; font-size: 50px;
-    position: relative; overflow: hidden;
-  }
-  .libro-cover img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-  .libro-cover-emoji { position: relative; z-index: 1; }
-  .libro-info { padding: 10px 12px; }
-  .libro-titulo { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; line-height: 1.3; }
-  .libro-meta { font-size: 11px; color: var(--text3); }
-  .libro-badge {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(0,0,0,0.55); color: #fff; font-size: 10px; font-weight: 700;
-    padding: 2px 7px; border-radius: 99px;
-  }
-  .libro-del {
-    position: absolute; top: 6px; left: 6px;
-    background: rgba(192,57,43,0.85); color: #fff; font-size: 14px;
-    width: 28px; height: 28px; border-radius: 50%; display: none;
-    align-items: center; justify-content: center;
-  }
-  .libro-card:hover .libro-del { display: flex; }
-  .empty-state { text-align: center; padding: 60px 20px; }
-  .empty-icon { font-size: 64px; margin-bottom: 16px; }
-  .empty-text { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-  .empty-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+  /* BIBLIOTECA */
+  .biblioteca{padding:16px}
+  .bib-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .bib-title{font-size:14px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+  .btn-add{padding:10px 20px;border-radius:99px;background:var(--accent);color:#fff;font-size:13px;font-weight:700}
+  .btn-add:active{opacity:0.85}
+  .stats-bib{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .stat-chip{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;color:var(--text2)}
+  .stat-chip strong{color:var(--accent);font-size:15px;display:block}
+  .libros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .libro-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+    box-shadow:var(--shadow);cursor:pointer;transition:transform 0.15s;position:relative}
+  .libro-card:active{transform:scale(0.97)}
+  .libro-cover{height:190px;background:linear-gradient(135deg,var(--accent2),var(--accent));
+    display:flex;align-items:center;justify-content:center;font-size:50px;position:relative;overflow:hidden}
+  .libro-cover img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+  .libro-cover-emoji{position:relative;z-index:1}
+  .libro-info{padding:10px 12px}
+  .libro-titulo{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.3}
+  .libro-meta{font-size:11px;color:var(--text3)}
+  .libro-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.55);color:#fff;
+    font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+  .libro-del{position:absolute;top:6px;left:6px;background:rgba(192,57,43,0.85);color:#fff;
+    font-size:14px;width:28px;height:28px;border-radius:50%;display:none;align-items:center;justify-content:center}
+  .libro-card:hover .libro-del{display:flex}
+  .empty-state{text-align:center;padding:60px 20px}
+  .empty-icon{font-size:64px;margin-bottom:16px}
+  .empty-text{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+  .empty-sub{font-size:13px;color:var(--text3);margin-bottom:24px}
 
-  /* ── SUBIR ── */
-  .subir-wrap { padding: 16px; max-width: 620px; margin: 0 auto; }
-  .subir-titulo { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-  .subir-sub { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
-  .input-field {
-    width: 100%; padding: 12px 14px; border-radius: 10px;
-    border: 1px solid var(--border); background: var(--card); color: var(--text);
-    font-size: 15px; font-family: var(--font-ui); margin-bottom: 14px;
-  }
-  .input-field:focus { outline: none; border-color: var(--accent); }
-  .drop-zone {
-    border: 2px dashed var(--accent2); border-radius: 16px;
-    padding: 36px 20px; text-align: center; background: var(--bg2);
-    cursor: pointer; transition: border-color 0.2s, background 0.2s;
-    margin-bottom: 14px;
-  }
-  .drop-zone.drag-over { border-color: var(--accent); background: rgba(201,131,42,0.08); }
-  .drop-icon { font-size: 48px; margin-bottom: 12px; }
-  .drop-text { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-  .drop-sub { font-size: 12px; color: var(--text3); }
-  .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
-  .thumb-item {
-    width: 80px; height: 100px; border-radius: 8px; overflow: hidden;
-    position: relative; border: 1px solid var(--border); background: var(--bg2);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
-  .thumb-num {
-    position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6);
-    color: #fff; font-size: 10px; font-weight: 700; text-align: center; padding: 2px;
-  }
-  .thumb-del {
-    position: absolute; top: 2px; right: 2px; background: rgba(192,57,43,0.9);
-    color: #fff; font-size: 12px; width: 20px; height: 20px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-  }
-  .progress-wrap { margin-bottom: 16px; }
-  .progress-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 600; }
-  .progress-bar { height: 6px; border-radius: 99px; background: var(--border); overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.3s; }
-  .btn-proc {
-    width: 100%; padding: 14px; border-radius: 12px; background: var(--accent); color: #fff;
-    font-size: 16px; font-weight: 800; margin-bottom: 10px;
-  }
-  .btn-proc:disabled { opacity: 0.5; }
-  .btn-proc:active:not(:disabled) { opacity: 0.85; }
-  .btn-cancel-proc {
-    width: 100%; padding: 11px; border-radius: 12px;
-    border: 1px solid var(--border); background: transparent; color: var(--text3);
-    font-size: 14px; font-weight: 600;
-  }
+  /* SUBIR */
+  .subir-wrap{padding:16px;max-width:620px;margin:0 auto}
+  .subir-titulo{font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
+  .subir-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+  .input-field{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);
+    background:var(--card);color:var(--text);font-size:15px;font-family:var(--font-ui);margin-bottom:14px}
+  .input-field:focus{outline:none;border-color:var(--accent)}
+  .drop-zone{border:2px dashed var(--accent2);border-radius:16px;padding:36px 20px;text-align:center;
+    background:var(--bg2);cursor:pointer;transition:border-color 0.2s,background 0.2s;margin-bottom:14px}
+  .drop-zone.drag-over{border-color:var(--accent);background:rgba(201,131,42,0.08)}
+  .drop-icon{font-size:48px;margin-bottom:12px}
+  .drop-text{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+  .drop-sub{font-size:12px;color:var(--text3)}
+  .thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+  .thumb-item{width:80px;height:100px;border-radius:8px;overflow:hidden;position:relative;
+    border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;
+    justify-content:center;cursor:grab;user-select:none}
+  .thumb-item.dragging{opacity:0.4}
+  .thumb-item.drag-over-thumb{border:2px solid var(--accent)}
+  .thumb-item img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .thumb-num{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);
+    color:#fff;font-size:10px;font-weight:700;text-align:center;padding:2px}
+  .thumb-del{position:absolute;top:2px;right:2px;background:rgba(192,57,43,0.9);color:#fff;
+    font-size:12px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;cursor:pointer}
+  .progress-wrap{margin-bottom:16px}
+  .progress-label{font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:600}
+  .progress-bar{height:6px;border-radius:99px;background:var(--border);overflow:hidden}
+  .progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.3s}
+  .btn-proc{width:100%;padding:14px;border-radius:12px;background:var(--accent);color:#fff;
+    font-size:16px;font-weight:800;margin-bottom:10px}
+  .btn-proc:disabled{opacity:0.5}
+  .btn-proc:active:not(:disabled){opacity:0.85}
+  .btn-cancel-proc{width:100%;padding:11px;border-radius:12px;border:1px solid var(--border);
+    background:transparent;color:var(--text3);font-size:14px;font-weight:600}
 
-  /* ── LECTOR ── */
-  .lector-wrap { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
-  .lector-header {
-    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-    background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink: 0;
-  }
-  .lector-titulo { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .lector-pag { font-size: 12px; color: var(--text3); font-weight: 600; white-space: nowrap; }
-  .lector-body {
-    flex: 1; overflow-y: auto; padding: 24px 20px 100px;
-    max-width: 720px; margin: 0 auto; width: 100%;
-  }
-  .lector-texto {
-    font-family: var(--font-read); font-size: var(--font-size); line-height: var(--line-height);
-    color: var(--text); text-align: justify; white-space: pre-wrap; word-break: break-word;
-  }
-  .lector-footer {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--bg2); border-top: 1px solid var(--border);
-    padding: 10px 16px; display: flex; align-items: center; gap: 12px;
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
-  }
-  .btn-nav {
-    width: 48px; height: 48px; border-radius: 50%; background: var(--card);
-    border: 1px solid var(--border); color: var(--text); font-size: 22px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .btn-nav:disabled { opacity: 0.3; }
-  .btn-nav:active:not(:disabled) { background: var(--accent); color: #fff; }
-  .pag-info { flex: 1; text-align: center; }
-  .pag-num { font-size: 15px; font-weight: 800; color: var(--text); }
-  .pag-total { font-size: 11px; color: var(--text3); margin-top: 1px; }
-  .pag-barra { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; margin-top: 5px; }
-  .pag-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.3s; }
+  /* LECTOR */
+  .lector-wrap{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+  .lector-header{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--bg2);
+    border-bottom:1px solid var(--border);flex-shrink:0}
+  .lector-titulo{font-size:12px;font-weight:700;color:var(--text);flex:1;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .lector-pag{font-size:11px;color:var(--text3);font-weight:600;white-space:nowrap}
+  .btn-sm{width:34px;height:34px;border-radius:50%;background:transparent;border:none;
+    color:var(--text2);font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .btn-sm:active{background:var(--border)}
+  .btn-sm.active{color:var(--accent)}
 
-  /* Controles de tamaño de fuente */
-  .font-controls { display: flex; align-items: center; gap: 6px; }
-  .btn-font {
-    width: 34px; height: 34px; border-radius: 8px; background: var(--bg);
-    border: 1px solid var(--border); color: var(--text2); font-size: 14px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .btn-font:active { background: var(--accent); color: #fff; }
+  .search-panel{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 12px;flex-shrink:0}
+  .search-input-wrap{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+  .search-input{flex:1;padding:8px 12px;border-radius:8px;font-size:14px;border:1px solid var(--border);
+    background:var(--card);color:var(--text);font-family:var(--font-ui)}
+  .search-input:focus{outline:none;border-color:var(--accent)}
+  .search-results{max-height:180px;overflow-y:auto}
+  .search-result-item{padding:8px 10px;cursor:pointer;font-size:13px;color:var(--text2);
+    border-bottom:1px solid var(--border)}
+  .search-result-item:last-child{border-bottom:none}
+  .search-result-item:active{background:var(--bg)}
+  .search-result-item strong{color:var(--text);display:block;margin-bottom:2px;font-size:11px}
+  .search-result-item em{color:var(--accent);font-style:normal;font-weight:700}
+  .search-empty{font-size:13px;color:var(--text3);padding:8px 0;text-align:center}
 
-  /* ── TOAST ── */
-  .toast {
-    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: #1a1a2e; color: #fff; padding: 10px 20px; border-radius: 99px;
-    font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.25s; z-index: 9999;
-    white-space: nowrap; pointer-events: none; max-width: 90vw; text-align: center;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .lector-body{flex:1;overflow-y:auto;padding:20px 20px 110px;max-width:720px;margin:0 auto;width:100%}
+  .nota-indicator{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;
+    font-size:11px;padding:3px 12px;margin-bottom:14px;font-family:var(--font-ui);cursor:pointer}
+  .lector-texto{font-family:var(--font-read);font-size:var(--font-size);line-height:var(--line-height);
+    color:var(--text);text-align:justify;white-space:pre-wrap;word-break:break-word;outline:none}
+  .lector-texto[contenteditable=true]{border:2px solid var(--accent);border-radius:8px;
+    padding:12px;background:var(--card)}
 
-  /* ── SPINNER ── */
-  .spin { animation: spin 0.9s linear infinite; display: inline-block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .lector-footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
+    border-top:1px solid var(--border);padding:8px 10px;display:flex;align-items:center;
+    gap:6px;box-shadow:0 -2px 12px rgba(0,0,0,0.08)}
+  .btn-nav{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--border);
+    color:var(--text);font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .btn-nav:disabled{opacity:0.3}
+  .btn-nav:active:not(:disabled){background:var(--accent);color:#fff}
+  .pag-info{flex:1;text-align:center}
+  .pag-num{font-size:14px;font-weight:800;color:var(--text)}
+  .pag-total{font-size:10px;color:var(--text3);margin-top:1px}
+  .pag-barra{height:3px;background:var(--border);border-radius:99px;overflow:visible;margin-top:5px;position:relative}
+  .pag-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.3s}
+  .marcador-dot{position:absolute;top:-3px;width:9px;height:9px;border-radius:50%;
+    background:var(--accent2);border:2px solid var(--accent);transform:translateX(-50%);cursor:pointer}
+  .font-controls{display:flex;align-items:center;gap:4px}
+  .btn-font{width:30px;height:30px;border-radius:8px;background:var(--bg);border:1px solid var(--border);
+    color:var(--text2);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .btn-font:active{background:var(--accent);color:#fff}
 
-  /* ── MISC ── */
-  .sep { height: 1px; background: var(--border); margin: 16px 0; }
+  .export-popup{position:fixed;bottom:72px;right:10px;z-index:200;background:var(--card);
+    border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);display:none;min-width:180px}
+  .export-popup.show{display:block}
+  .export-opt{padding:13px 18px;font-size:14px;font-weight:600;color:var(--text);display:flex;
+    align-items:center;gap:10px;cursor:pointer;border-bottom:1px solid var(--border)}
+  .export-opt:last-child{border-bottom:none}
+  .export-opt:active{background:var(--bg2)}
+
+  /* MODAL NOTA */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;
+    align-items:flex-end;z-index:300}
+  .modal-overlay.show{display:flex}
+  .modal-sheet{background:var(--card);border-radius:20px 20px 0 0;padding:20px;
+    width:100%;max-height:70vh;display:flex;flex-direction:column}
+  .modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;
+    display:flex;align-items:center;justify-content:space-between}
+  .nota-textarea{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);
+    background:var(--bg);color:var(--text);font-size:15px;font-family:var(--font-ui);
+    resize:none;min-height:120px;line-height:1.6}
+  .nota-textarea:focus{outline:none;border-color:var(--accent)}
+  .modal-actions{display:flex;gap:10px;margin-top:12px}
+  .btn-modal-save{flex:1;padding:12px;border-radius:10px;background:var(--accent);
+    color:#fff;font-size:15px;font-weight:700}
+  .btn-modal-cancel{padding:12px 18px;border-radius:10px;border:1px solid var(--border);
+    background:transparent;color:var(--text3);font-size:14px;font-weight:600}
+
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;
+    font-weight:600;opacity:0;transition:all 0.25s;z-index:9999;white-space:nowrap;
+    pointer-events:none;max-width:90vw;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- HEADER (solo visible en biblioteca) -->
 <div class="header" id="main-header">
   <div style="flex:1">
     <div class="header-title">📚 Frigurso Lector</div>
     <div class="header-sub" id="header-sub">Mi biblioteca</div>
   </div>
-  <button class="btn-icon" id="btn-dark" onclick="toggleDark()" title="Modo noche">🌙</button>
+  <button class="btn-icon" id="btn-dark" onclick="toggleDark()">🌙</button>
 </div>
 
-<!-- PÁGINA: BIBLIOTECA -->
+<!-- BIBLIOTECA -->
 <div class="page active" id="page-bib">
   <div class="biblioteca">
     <div class="bib-header">
       <div class="bib-title">Mis libros</div>
       <button class="btn-add" onclick="goSubir()">＋ Agregar</button>
     </div>
-    <div class="libros-grid" id="libros-grid">
-      <!-- se renderiza con JS -->
-    </div>
+    <div class="stats-bib" id="stats-bib"></div>
+    <div class="libros-grid" id="libros-grid"></div>
     <div class="empty-state" id="empty-state" style="display:none">
       <div class="empty-icon">📖</div>
       <div class="empty-text">Todavía no tenés libros</div>
@@ -249,7 +217,7 @@
   </div>
 </div>
 
-<!-- PÁGINA: SUBIR -->
+<!-- SUBIR -->
 <div class="page" id="page-subir">
   <div class="subir-wrap">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-top:4px">
@@ -259,9 +227,7 @@
         <div class="subir-sub">Subí las fotos de las páginas</div>
       </div>
     </div>
-
     <input type="text" class="input-field" id="libro-titulo" placeholder="Título del libro (ej: El Principito)">
-
     <select class="input-field" id="libro-idioma">
       <option value="auto">Detectar idioma automáticamente</option>
       <option value="español" selected>Español</option>
@@ -271,7 +237,6 @@
       <option value="alemán">Alemán</option>
       <option value="italiano">Italiano</option>
     </select>
-
     <div class="drop-zone" id="drop-zone"
       ondragover="event.preventDefault();this.classList.add('drag-over')"
       ondragleave="this.classList.remove('drag-over')"
@@ -283,33 +248,40 @@
       <input type="file" id="file-input" accept="image/*" multiple style="display:none"
         onchange="handleFiles(this.files);this.value=''">
     </div>
-
     <div class="thumbs" id="thumbs"></div>
-
     <div class="progress-wrap" id="progress-wrap" style="display:none">
-      <div class="progress-label" id="progress-label">Procesando página 1 de 5...</div>
+      <div class="progress-label" id="progress-label">Procesando...</div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     </div>
-
-    <button class="btn-proc" id="btn-proc" onclick="procesarLibro()" disabled>
-      🔍 Reconocer texto
-    </button>
+    <button class="btn-proc" id="btn-proc" onclick="procesarLibro()" disabled>🔍 Reconocer texto</button>
     <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
   </div>
 </div>
 
-<!-- PÁGINA: LECTOR -->
+<!-- LECTOR -->
 <div class="page" id="page-lector">
   <div class="lector-wrap">
     <div class="lector-header">
-      <button class="btn-icon" style="width:36px;height:36px;font-size:16px" onclick="goBib()">←</button>
+      <button class="btn-sm" onclick="goBib()">←</button>
       <div class="lector-titulo" id="lector-titulo">—</div>
-      <div class="lector-pag" id="lector-pag">1 / 1</div>
-      <button class="btn-icon" style="width:36px;height:36px;font-size:16px" onclick="exportarTxt()" title="Exportar TXT">⬇️</button>
-      <button class="btn-icon" style="width:36px;height:36px;font-size:16px" onclick="toggleDark()">🌙</button>
+      <div class="lector-pag" id="lector-pag">1/1</div>
+      <button class="btn-sm" id="btn-buscar" onclick="toggleBusqueda()" title="Buscar">🔍</button>
+      <button class="btn-sm" id="btn-edit" onclick="toggleEditar()" title="Editar">✏️</button>
+      <button class="btn-sm" onclick="toggleDark()">🌙</button>
+    </div>
+
+    <div class="search-panel" id="search-panel" style="display:none">
+      <div class="search-input-wrap">
+        <input type="text" id="search-input" class="search-input"
+          placeholder="Buscar en el libro..." oninput="buscarDebounced(this.value)">
+        <button class="btn-sm" onclick="cerrarBusqueda()">✕</button>
+      </div>
+      <div class="search-results" id="search-results"></div>
     </div>
 
     <div class="lector-body" id="lector-body">
+      <div id="nota-indicator" class="nota-indicator" style="display:none"
+        onclick="abrirNota()">📝 Esta página tiene una nota — tocá para ver</div>
       <div class="lector-texto" id="lector-texto"></div>
     </div>
 
@@ -322,385 +294,492 @@
       <div class="pag-info">
         <div class="pag-num" id="pag-num">1</div>
         <div class="pag-total" id="pag-total">de 1</div>
-        <div class="pag-barra"><div class="pag-fill" id="pag-fill" style="width:0%"></div></div>
+        <div class="pag-barra" id="pag-barra">
+          <div class="pag-fill" id="pag-fill" style="width:0%"></div>
+        </div>
       </div>
       <button class="btn-nav" id="btn-next" onclick="cambiarPag(1)">›</button>
+      <button class="btn-sm" id="btn-marcador" onclick="toggleMarcador()">🏷️</button>
+      <button class="btn-sm" onclick="abrirNota()">📝</button>
+      <button class="btn-sm" onclick="toggleExportMenu()">⬇️</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- EXPORT POPUP -->
+<div class="export-popup" id="export-popup">
+  <div class="export-opt" onclick="exportarTxt();cerrarExportMenu()">📄 Exportar TXT</div>
+  <div class="export-opt" onclick="exportarPDF();cerrarExportMenu()">📑 Exportar PDF</div>
+  <div class="export-opt" onclick="toggleFullscreen();cerrarExportMenu()">⛶ Pantalla completa</div>
+</div>
+
+<!-- MODAL NOTA -->
+<div class="modal-overlay" id="modal-nota" onclick="event.target===this&&cerrarNota()">
+  <div class="modal-sheet">
+    <div class="modal-title">
+      <span id="modal-nota-titulo">📝 Nota — Página 1</span>
+      <button class="btn-sm" onclick="cerrarNota()">✕</button>
+    </div>
+    <textarea class="nota-textarea" id="nota-textarea" placeholder="Escribí tu nota acá..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="cerrarNota()">Cancelar</button>
+      <button class="btn-modal-save" onclick="guardarNota()">Guardar nota</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── ESTADO ────────────────────────────────────────────────────
 const LEGACY_KEY = 'lector_libros_v1';
 let _state = {
-  libros: [],
-  libroActual: null,
-  paginaActual: 0,
-  dark: false,
-  fontSize: 19,
-  pendingFiles: [],
+  libros:[], libroActual:null, paginaActual:0,
+  dark:false, fontSize:19, pendingFiles:[],
+  editando:false, buscando:false, dragIdx:null,
 };
-let _procesando = false;
-let _cancelar = false;
+let _procesando=false, _searchTimer=null, _exportOpen=false;
 
 // ─── INDEXEDDB ─────────────────────────────────────────────────
-const DB_NAME = 'lector_db';
-const DB_VER = 1;
-const STORE = 'libros';
-let _db = null;
-
+const DB_NAME='lector_db', DB_VER=1, STORE='libros';
+let _db=null;
 function openDB() {
   if (_db) return Promise.resolve(_db);
-  return new Promise((res, rej) => {
+  return new Promise((res,rej) => {
     const req = indexedDB.open(DB_NAME, DB_VER);
     req.onupgradeneeded = e => {
       const db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE))
-        db.createObjectStore(STORE, { keyPath: 'id' });
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE,{keyPath:'id'});
     };
-    req.onsuccess = e => { _db = e.target.result; res(_db); };
+    req.onsuccess = e => { _db=e.target.result; res(_db); };
     req.onerror = () => rej(req.error);
   });
 }
-
 async function saveLibro(libro) {
   const db = await openDB();
-  return new Promise((res, rej) => {
-    const tx = db.transaction(STORE, 'readwrite');
+  return new Promise((res,rej) => {
+    const tx = db.transaction(STORE,'readwrite');
     tx.objectStore(STORE).put(libro);
-    tx.oncomplete = res;
-    tx.onerror = () => rej(tx.error);
+    tx.oncomplete=res; tx.onerror=()=>rej(tx.error);
   });
 }
-
 async function deleteLibro(id) {
   const db = await openDB();
-  return new Promise((res, rej) => {
-    const tx = db.transaction(STORE, 'readwrite');
+  return new Promise((res,rej) => {
+    const tx = db.transaction(STORE,'readwrite');
     tx.objectStore(STORE).delete(id);
-    tx.oncomplete = res;
-    tx.onerror = () => rej(tx.error);
+    tx.oncomplete=res; tx.onerror=()=>rej(tx.error);
+  });
+}
+async function loadLibros() {
+  const db = await openDB();
+  return new Promise((res,rej) => {
+    const tx = db.transaction(STORE,'readonly');
+    const req = tx.objectStore(STORE).getAll();
+    req.onsuccess = () => res((req.result||[]).sort((a,b)=>b.id.localeCompare(a.id)));
+    req.onerror = ()=>rej(req.error);
   });
 }
 
-async function loadLibros() {
-  const db = await openDB();
-  return new Promise((res, rej) => {
-    const tx = db.transaction(STORE, 'readonly');
-    const req = tx.objectStore(STORE).getAll();
-    req.onsuccess = () => {
-      const libros = (req.result || []).sort((a, b) => b.id.localeCompare(a.id));
-      res(libros);
+// ─── PORTADA ───────────────────────────────────────────────────
+async function generarPortada(file) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width=150; c.height=200;
+      const ctx = c.getContext('2d');
+      const r = Math.max(150/img.width, 200/img.height);
+      ctx.drawImage(img,(150-img.width*r)/2,(200-img.height*r)/2,img.width*r,img.height*r);
+      res(c.toDataURL('image/jpeg',0.65));
     };
-    req.onerror = () => rej(req.error);
+    img.onerror = ()=>res(null);
+    img.src = URL.createObjectURL(file);
   });
 }
 
 // ─── NAVEGACIÓN ────────────────────────────────────────────────
 function goPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  const hdr = document.getElementById('main-header');
-  hdr.style.display = id === 'lector' ? 'none' : '';
-  window.scrollTo(0, 0);
+  document.getElementById('main-header').style.display = id==='lector'?'none':'';
+  window.scrollTo(0,0);
 }
 async function goBib() {
-  _state.pendingFiles = [];
-  renderThumbsUI();
-  updateBtnProc();
+  if (_state.editando) salirModoEdicion();
+  cerrarBusqueda(); cerrarExportMenu();
+  _state.pendingFiles=[];
+  renderThumbsUI(); updateBtnProc();
   goPage('bib');
   _state.libros = await loadLibros();
   renderBiblioteca();
 }
 function goSubir() { goPage('subir'); }
-function goLector(libroId) {
-  const lib = _state.libros.find(l => l.id === libroId);
-  if (!lib || !lib.paginas.length) { toast('Este libro no tiene páginas'); return; }
-  _state.libroActual = libroId;
-  _state.paginaActual = lib.ultimaPag || 0;
-  goPage('lector');
-  renderPagina();
+function goLector(id) {
+  const lib = _state.libros.find(l=>l.id===id);
+  if (!lib||!lib.paginas.length) { toast('Sin páginas'); return; }
+  _state.libroActual=id; _state.paginaActual=lib.ultimaPag||0;
+  goPage('lector'); renderPagina();
 }
 
 // ─── BIBLIOTECA ────────────────────────────────────────────────
 function renderBiblioteca() {
-  const grid = document.getElementById('libros-grid');
-  const empty = document.getElementById('empty-state');
-  const sub = document.getElementById('header-sub');
-  const libros = _state.libros;
-  sub.textContent = libros.length + (libros.length === 1 ? ' libro' : ' libros');
-  if (!libros.length) {
-    grid.innerHTML = '';
-    empty.style.display = '';
-    return;
-  }
-  empty.style.display = 'none';
-  grid.innerHTML = libros.map(l => {
-    const pct = l.paginas.length > 1
-      ? Math.round(((l.ultimaPag||0)+1)/l.paginas.length*100) : null;
-    return '<div class="libro-card" onclick="goLector(\''+l.id+'\')">' +
-      '<div class="libro-cover">' +
-        '<span class="libro-cover-emoji">📖</span>' +
-        '<div class="libro-badge">'+l.paginas.length+' pág.</div>' +
-      '</div>' +
-      '<div class="libro-info">' +
-        '<div class="libro-titulo">'+escHtml(l.titulo)+'</div>' +
-        '<div class="libro-meta">'+(pct!==null?pct+'% leído':'Sin leer')+'</div>' +
-      '</div>' +
-      '<button class="libro-del" onclick="event.stopPropagation();borrarLibro(\''+l.id+'\')" title="Borrar">✕</button>' +
-    '</div>';
+  const grid=document.getElementById('libros-grid');
+  const empty=document.getElementById('empty-state');
+  const sub=document.getElementById('header-sub');
+  const statsEl=document.getElementById('stats-bib');
+  const libros=_state.libros;
+  sub.textContent=libros.length+(libros.length===1?' libro':' libros');
+  if (!libros.length) { grid.innerHTML=''; statsEl.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  const totalPags=libros.reduce((s,l)=>s+l.paginas.length,0);
+  const totalPalab=libros.reduce((s,l)=>s+(l.palabras||0),0);
+  const minLec=Math.ceil(totalPalab/200);
+  statsEl.innerHTML=
+    `<div class="stat-chip"><strong>${libros.length}</strong>libros</div>`+
+    `<div class="stat-chip"><strong>${totalPags}</strong>páginas</div>`+
+    (totalPalab>0?`<div class="stat-chip"><strong>${minLec} min</strong>lectura total</div>`:'');
+  grid.innerHTML=libros.map(l=>{
+    const pct=l.paginas.length>1?Math.round(((l.ultimaPag||0)+1)/l.paginas.length*100):null;
+    const marc=(l.marcadores||[]).length;
+    const cover=l.portada?`<img src="${l.portada}" alt="">`:'<span class="libro-cover-emoji">📖</span>';
+    return `<div class="libro-card" onclick="goLector('${l.id}')">
+      <div class="libro-cover">${cover}<div class="libro-badge">${l.paginas.length} pág.</div></div>
+      <div class="libro-info">
+        <div class="libro-titulo">${escHtml(l.titulo)}</div>
+        <div class="libro-meta">${pct!==null?pct+'% leído':'Sin leer'}${marc?' · 🔖'+marc:''}</div>
+      </div>
+      <button class="libro-del" onclick="event.stopPropagation();borrarLibro('${l.id}')">✕</button>
+    </div>`;
   }).join('');
 }
-
 async function borrarLibro(id) {
-  if (!confirm('¿Borrar este libro? No se puede deshacer.')) return;
+  if (!confirm('¿Borrar este libro?')) return;
   await deleteLibro(id);
-  _state.libros = _state.libros.filter(l => l.id !== id);
+  _state.libros=_state.libros.filter(l=>l.id!==id);
   renderBiblioteca();
 }
 
 // ─── SUBIR ─────────────────────────────────────────────────────
 function handleFiles(files) {
-  const arr = Array.from(files).filter(f => f.type.startsWith('image/'));
-  _state.pendingFiles = [..._state.pendingFiles, ...arr];
-  renderThumbsUI();
-  updateBtnProc();
+  _state.pendingFiles=[..._state.pendingFiles,...Array.from(files).filter(f=>f.type.startsWith('image/'))];
+  renderThumbsUI(); updateBtnProc();
 }
 function handleDrop(e) {
-  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-  _state.pendingFiles = [..._state.pendingFiles, ...files];
-  renderThumbsUI();
-  updateBtnProc();
+  _state.pendingFiles=[..._state.pendingFiles,...Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))];
+  renderThumbsUI(); updateBtnProc();
 }
 function renderThumbsUI() {
-  const c = document.getElementById('thumbs');
-  if (!_state.pendingFiles.length) { c.innerHTML = ''; return; }
-  c.innerHTML = _state.pendingFiles.map((f, i) => {
-    const url = URL.createObjectURL(f);
-    return '<div class="thumb-item">' +
-      '<img src="'+url+'" alt="pág '+(i+1)+'">' +
-      '<div class="thumb-num">Pág. '+(i+1)+'</div>' +
-      '<div class="thumb-del" onclick="quitarPag('+i+')">✕</div>' +
-    '</div>';
-  }).join('');
+  const c=document.getElementById('thumbs');
+  if (!_state.pendingFiles.length) { c.innerHTML=''; return; }
+  c.innerHTML=_state.pendingFiles.map((f,i)=>`
+    <div class="thumb-item" draggable="true"
+      ondragstart="thumbDragStart(${i})" ondragover="thumbDragOver(event,${i})"
+      ondrop="thumbDrop(event,${i})" ondragend="thumbDragEnd()">
+      <img src="${URL.createObjectURL(f)}" alt="">
+      <div class="thumb-num">Pág. ${i+1}</div>
+      <div class="thumb-del" onclick="event.stopPropagation();quitarPag(${i})">✕</div>
+    </div>`).join('');
 }
-function quitarPag(i) {
-  _state.pendingFiles.splice(i, 1);
-  renderThumbsUI();
-  updateBtnProc();
+function thumbDragStart(i) { _state.dragIdx=i; }
+function thumbDragOver(e,i) {
+  e.preventDefault();
+  document.querySelectorAll('.thumb-item').forEach((el,idx)=>
+    el.classList.toggle('drag-over-thumb',idx===i&&i!==_state.dragIdx));
 }
+function thumbDrop(e,i) {
+  e.preventDefault();
+  if (_state.dragIdx===null||_state.dragIdx===i) return;
+  const f=[..._state.pendingFiles];
+  const [m]=f.splice(_state.dragIdx,1); f.splice(i,0,m);
+  _state.pendingFiles=f; renderThumbsUI(); updateBtnProc();
+}
+function thumbDragEnd() {
+  document.querySelectorAll('.thumb-item').forEach(el=>el.classList.remove('drag-over-thumb'));
+  _state.dragIdx=null;
+}
+function quitarPag(i) { _state.pendingFiles.splice(i,1); renderThumbsUI(); updateBtnProc(); }
 function updateBtnProc() {
-  const btn = document.getElementById('btn-proc');
-  btn.disabled = _state.pendingFiles.length === 0 || _procesando;
+  document.getElementById('btn-proc').disabled=_state.pendingFiles.length===0||_procesando;
 }
 
-async function ocrConGemini(file, idioma) {
-  const base64 = await new Promise((res, rej) => {
-    const reader = new FileReader();
-    reader.onload = e => res(e.target.result.split(',')[1]);
-    reader.onerror = rej;
-    reader.readAsDataURL(file);
+async function ocrConApi(file,idioma) {
+  const base64 = await new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=e=>res(e.target.result.split(',')[1]);
+    r.onerror=rej; r.readAsDataURL(file);
   });
-
-  const resp = await fetch('/api/ocr', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: base64, mimeType: file.type || 'image/jpeg', language: idioma })
+  const resp = await fetch('/api/ocr',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({image:base64,mimeType:file.type||'image/jpeg',language:idioma})
   });
-  const data = await resp.json();
-  if (!resp.ok) throw new Error(data.error || 'Error en el servidor');
-  return data.text || '';
+  const data=await resp.json();
+  if (!resp.ok) throw new Error(data.error||'Error en el servidor');
+  return data.text||'';
 }
 
 async function procesarLibro() {
-  const titulo = (document.getElementById('libro-titulo').value.trim()) || 'Sin título';
-  const idioma = document.getElementById('libro-idioma').value;
-  const files = _state.pendingFiles;
+  const titulo=document.getElementById('libro-titulo').value.trim()||'Sin título';
+  const idioma=document.getElementById('libro-idioma').value;
+  const files=_state.pendingFiles;
   if (!files.length) { toast('Seleccioná al menos una imagen'); return; }
   if (_procesando) return;
-
-  _procesando = true;
-  _cancelar = false;
-  updateBtnProc();
-  document.getElementById('progress-wrap').style.display = '';
-  document.getElementById('btn-proc').textContent = '⏳ Procesando...';
-
-  const paginas = [];
-  const label = document.getElementById('progress-label');
-  const fill = document.getElementById('progress-fill');
-
-  for (let i = 0; i < files.length; i++) {
-    if (_cancelar) break;
-    label.textContent = 'Procesando página ' + (i+1) + ' de ' + files.length + '...';
-    fill.style.width = Math.round(i / files.length * 100) + '%';
-
-    try {
-      const texto = await ocrConGemini(files[i], idioma);
-      paginas.push({ texto });
-    } catch(e) {
-      paginas.push({ texto: '[Error en página ' + (i+1) + ': ' + e.message + ']' });
-    }
-
-    fill.style.width = Math.round((i+1) / files.length * 100) + '%';
-    label.textContent = (i+1) + ' de ' + files.length + ' páginas procesadas ✓';
+  _procesando=true; updateBtnProc();
+  document.getElementById('progress-wrap').style.display='';
+  document.getElementById('btn-proc').textContent='⏳ Procesando...';
+  const label=document.getElementById('progress-label');
+  const fill=document.getElementById('progress-fill');
+  const paginas=[];
+  const portada=await generarPortada(files[0]);
+  for (let i=0;i<files.length;i++) {
+    label.textContent=`Procesando página ${i+1} de ${files.length}...`;
+    fill.style.width=Math.round(i/files.length*100)+'%';
+    try { paginas.push({texto:await ocrConApi(files[i],idioma),nota:''}); }
+    catch(e) { paginas.push({texto:`[Error pág.${i+1}: ${e.message}]`,nota:''}); }
+    fill.style.width=Math.round((i+1)/files.length*100)+'%';
+    label.textContent=`${i+1} de ${files.length} páginas ✓`;
   }
-
-  if (!_cancelar && paginas.length) {
-    const libro = {
-      id: 'l' + Date.now(),
-      titulo,
-      paginas,
-      creado: new Date().toLocaleDateString('es-AR'),
-      ultimaPag: 0,
-    };
-    await saveLibro(libro);
-    _state.libros.unshift(libro);
-    toast('📚 "' + titulo + '" guardado — ' + paginas.length + ' páginas');
-    setTimeout(() => {
-      resetSubir();
-      goBib();
-    }, 800);
+  if (paginas.length) {
+    const palabras=paginas.reduce((s,p)=>s+p.texto.split(/\s+/).filter(Boolean).length,0);
+    const libro={id:'l'+Date.now(),titulo,paginas,portada,
+      creado:new Date().toLocaleDateString('es-AR'),ultimaPag:0,marcadores:[],palabras};
+    await saveLibro(libro); _state.libros.unshift(libro);
+    toast(`📚 "${titulo}" guardado — ${paginas.length} páginas`);
+    setTimeout(()=>{resetSubir();goBib();},800);
   }
-
-  _procesando = false;
-  updateBtnProc();
-  document.getElementById('btn-proc').textContent = '🔍 Reconocer texto';
-  document.getElementById('progress-wrap').style.display = 'none';
+  _procesando=false; updateBtnProc();
+  document.getElementById('btn-proc').textContent='🔍 Reconocer texto';
+  document.getElementById('progress-wrap').style.display='none';
 }
-
 function resetSubir() {
-  _state.pendingFiles = [];
-  document.getElementById('libro-titulo').value = '';
-  document.getElementById('libro-idioma').value = 'español';
-  renderThumbsUI();
-  updateBtnProc();
+  _state.pendingFiles=[];
+  document.getElementById('libro-titulo').value='';
+  document.getElementById('libro-idioma').value='español';
+  renderThumbsUI(); updateBtnProc();
 }
 
 // ─── LECTOR ────────────────────────────────────────────────────
 function renderPagina() {
-  const lib = _state.libros.find(l => l.id === _state.libroActual);
-  if (!lib) return;
-  const n = _state.paginaActual;
-  const total = lib.paginas.length;
-  const texto = lib.paginas[n]?.texto || '(Página vacía)';
-
-  document.getElementById('lector-titulo').textContent = lib.titulo;
-  document.getElementById('lector-pag').textContent = (n+1)+' / '+total;
-  document.getElementById('pag-num').textContent = (n+1);
-  document.getElementById('pag-total').textContent = 'de '+total;
-  document.getElementById('pag-fill').style.width = Math.round((n+1)/total*100)+'%';
-  document.getElementById('lector-texto').textContent = texto;
-  document.getElementById('lector-body').scrollTop = 0;
-
-  document.getElementById('btn-prev').disabled = n === 0;
-  document.getElementById('btn-next').disabled = n === total-1;
-
-  lib.ultimaPag = n;
-  saveLibro(lib); // fire-and-forget
+  const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
+  const n=_state.paginaActual, total=lib.paginas.length, pag=lib.paginas[n];
+  document.getElementById('lector-titulo').textContent=lib.titulo;
+  document.getElementById('lector-pag').textContent=`${n+1}/${total}`;
+  document.getElementById('pag-num').textContent=n+1;
+  document.getElementById('pag-total').textContent=`de ${total}`;
+  document.getElementById('pag-fill').style.width=Math.round((n+1)/total*100)+'%';
+  if (_state.editando) salirModoEdicion();
+  document.getElementById('lector-texto').textContent=pag?.texto||'(Página vacía)';
+  document.getElementById('nota-indicator').style.display=pag?.nota?'':'none';
+  document.getElementById('lector-body').scrollTop=0;
+  document.getElementById('btn-prev').disabled=n===0;
+  document.getElementById('btn-next').disabled=n===total-1;
+  renderMarcadoresBarra(lib,total);
+  actualizarBtnMarcador(lib,n);
+  lib.ultimaPag=n; saveLibro(lib);
 }
-
+function renderMarcadoresBarra(lib,total) {
+  const barra=document.getElementById('pag-barra');
+  barra.querySelectorAll('.marcador-dot').forEach(d=>d.remove());
+  (lib.marcadores||[]).forEach(m=>{
+    const dot=document.createElement('div');
+    dot.className='marcador-dot';
+    dot.style.left=Math.round((m+1)/total*100)+'%';
+    dot.title=`Pág. ${m+1}`;
+    dot.onclick=()=>{_state.paginaActual=m;renderPagina();};
+    barra.appendChild(dot);
+  });
+}
 function cambiarPag(delta) {
-  const lib = _state.libros.find(l => l.id === _state.libroActual);
-  if (!lib) return;
-  const nueva = _state.paginaActual + delta;
-  if (nueva < 0 || nueva >= lib.paginas.length) return;
-  _state.paginaActual = nueva;
-  renderPagina();
+  const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
+  const n=_state.paginaActual+delta;
+  if (n<0||n>=lib.paginas.length) return;
+  _state.paginaActual=n; renderPagina();
 }
-
-// Swipe para cambiar página
-let _touchStartX = 0;
-document.addEventListener('touchstart', e => {
-  _touchStartX = e.touches[0].clientX;
-}, {passive: true});
-document.addEventListener('touchend', e => {
-  if (document.getElementById('page-lector').classList.contains('active')) {
-    const dx = e.changedTouches[0].clientX - _touchStartX;
-    if (Math.abs(dx) > 60) cambiarPag(dx < 0 ? 1 : -1);
+let _touchX=0;
+document.addEventListener('touchstart',e=>{_touchX=e.touches[0].clientX;},{passive:true});
+document.addEventListener('touchend',e=>{
+  if (document.getElementById('page-lector').classList.contains('active')&&!_state.editando) {
+    const dx=e.changedTouches[0].clientX-_touchX;
+    if (Math.abs(dx)>60) cambiarPag(dx<0?1:-1);
   }
-}, {passive: true});
+},{passive:true});
 
-// ─── EXPORTAR TXT ──────────────────────────────────────────────
+// ─── EDITAR ────────────────────────────────────────────────────
+function toggleEditar() { _state.editando?guardarEdicion():entrarModoEdicion(); }
+function entrarModoEdicion() {
+  _state.editando=true;
+  const el=document.getElementById('lector-texto');
+  el.contentEditable='true'; el.focus();
+  document.getElementById('btn-edit').textContent='💾';
+}
+function salirModoEdicion() {
+  _state.editando=false;
+  document.getElementById('lector-texto').contentEditable='false';
+  document.getElementById('btn-edit').textContent='✏️';
+}
+function guardarEdicion() {
+  const lib=_state.libros.find(l=>l.id===_state.libroActual);
+  if (lib) {
+    lib.paginas[_state.paginaActual].texto=document.getElementById('lector-texto').textContent;
+    lib.palabras=lib.paginas.reduce((s,p)=>s+p.texto.split(/\s+/).filter(Boolean).length,0);
+    saveLibro(lib); toast('✅ Cambios guardados');
+  }
+  salirModoEdicion();
+}
+
+// ─── BÚSQUEDA ──────────────────────────────────────────────────
+function toggleBusqueda() {
+  if (_state.buscando) { cerrarBusqueda(); return; }
+  _state.buscando=true;
+  document.getElementById('search-panel').style.display='';
+  document.getElementById('search-input').focus();
+  document.getElementById('btn-buscar').classList.add('active');
+}
+function cerrarBusqueda() {
+  _state.buscando=false;
+  document.getElementById('search-panel').style.display='none';
+  document.getElementById('search-input').value='';
+  document.getElementById('search-results').innerHTML='';
+  document.getElementById('btn-buscar').classList.remove('active');
+}
+function buscarDebounced(q) {
+  clearTimeout(_searchTimer);
+  _searchTimer=setTimeout(()=>renderResultados(q),200);
+}
+function renderResultados(q) {
+  const el=document.getElementById('search-results');
+  if (!q.trim()) { el.innerHTML=''; return; }
+  const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
+  const ql=q.toLowerCase(), res=[];
+  lib.paginas.forEach((p,i)=>{
+    const tl=p.texto.toLowerCase(); let idx=tl.indexOf(ql);
+    while (idx!==-1&&res.length<40) {
+      const s=Math.max(0,idx-35), e=Math.min(p.texto.length,idx+ql.length+35);
+      res.push({pag:i,html:`...${escHtml(p.texto.substring(s,idx))}<em>${escHtml(p.texto.substring(idx,idx+q.length))}</em>${escHtml(p.texto.substring(idx+q.length,e))}...`});
+      idx=tl.indexOf(ql,idx+1);
+    }
+  });
+  el.innerHTML=res.length
+    ?res.map(r=>`<div class="search-result-item" onclick="irAPag(${r.pag})"><strong>Página ${r.pag+1}</strong>${r.html}</div>`).join('')
+    :'<div class="search-empty">Sin resultados</div>';
+}
+function irAPag(n) { _state.paginaActual=n; renderPagina(); cerrarBusqueda(); }
+
+// ─── MARCADORES ────────────────────────────────────────────────
+function toggleMarcador() {
+  const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
+  if (!lib.marcadores) lib.marcadores=[];
+  const n=_state.paginaActual, idx=lib.marcadores.indexOf(n);
+  if (idx===-1) { lib.marcadores.push(n); toast('🔖 Página marcada'); }
+  else { lib.marcadores.splice(idx,1); toast('Marcador eliminado'); }
+  saveLibro(lib); actualizarBtnMarcador(lib,n); renderMarcadoresBarra(lib,lib.paginas.length);
+}
+function actualizarBtnMarcador(lib,n) {
+  const btn=document.getElementById('btn-marcador'); if (!btn) return;
+  btn.textContent=(lib.marcadores||[]).includes(n)?'🔖':'🏷️';
+}
+
+// ─── NOTAS ─────────────────────────────────────────────────────
+function abrirNota() {
+  const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
+  const n=_state.paginaActual;
+  document.getElementById('modal-nota-titulo').textContent=`📝 Nota — Página ${n+1}`;
+  document.getElementById('nota-textarea').value=lib.paginas[n]?.nota||'';
+  document.getElementById('modal-nota').classList.add('show');
+}
+function cerrarNota() { document.getElementById('modal-nota').classList.remove('show'); }
+function guardarNota() {
+  const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
+  const texto=document.getElementById('nota-textarea').value.trim();
+  lib.paginas[_state.paginaActual].nota=texto;
+  saveLibro(lib); cerrarNota();
+  document.getElementById('nota-indicator').style.display=texto?'':'none';
+  toast('📝 Nota guardada');
+}
+
+// ─── EXPORTAR ──────────────────────────────────────────────────
+function toggleExportMenu() {
+  _exportOpen=!_exportOpen;
+  document.getElementById('export-popup').classList.toggle('show',_exportOpen);
+}
+function cerrarExportMenu() {
+  _exportOpen=false;
+  document.getElementById('export-popup').classList.remove('show');
+}
 function exportarTxt() {
-  const lib = _state.libros.find(l => l.id === _state.libroActual);
-  if (!lib) return;
-  const contenido = lib.paginas
-    .map((p, i) => `--- Página ${i+1} ---\n\n${p.texto}`)
-    .join('\n\n\n');
-  const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = lib.titulo.replace(/[^\w\s\-áéíóúñÁÉÍÓÚÑüÜ]/g, '').trim() + '.txt';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-  toast('📄 Descargando "' + lib.titulo + '"...');
+  const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
+  const txt=lib.paginas.map((p,i)=>`--- Página ${i+1} ---\n\n${p.texto}${p.nota?'\n\n[Nota: '+p.nota+']':''}`).join('\n\n\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));
+  a.download=lib.titulo.replace(/[^\w\s\-áéíóúñÁÉÍÓÚÑüÜ]/g,'').trim()+'.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  toast('📄 Descargando TXT...');
+}
+function exportarPDF() {
+  const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
+  const pags=lib.paginas.map((p,i)=>
+    `<div class="pag"><h3>Página ${i+1}</h3><pre>${escHtml(p.texto)}</pre>`+
+    (p.nota?`<div class="nota">📝 ${escHtml(p.nota)}</div>`:'')+
+    `</div><div style="page-break-after:always"></div>`).join('');
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${escHtml(lib.titulo)}</title>
+    <style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.8;padding:20px;color:#222}
+    h1{text-align:center;margin-bottom:30px}h3{color:#888;font-size:10pt;text-align:center;margin:0 0 10px}
+    pre{white-space:pre-wrap;font-family:Georgia,serif;font-size:12pt;margin:0}
+    .nota{margin-top:16px;padding:10px;background:#fff9e6;border-left:3px solid #c9832a}
+    .pag{max-width:600px;margin:0 auto;padding:20px 0}</style></head><body>
+    <h1>${escHtml(lib.titulo)}</h1>${pags}</body></html>`);
+  w.document.close(); setTimeout(()=>w.print(),500);
+  toast('📑 Abriendo PDF...');
+}
+function toggleFullscreen() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>toast('No disponible'));
+  else document.exitFullscreen();
 }
 
-// ─── FUENTE ────────────────────────────────────────────────────
-function cambiarFuente(delta) {
-  _state.fontSize = Math.max(14, Math.min(30, _state.fontSize + delta));
-  document.documentElement.style.setProperty('--font-size', _state.fontSize+'px');
-  try { localStorage.setItem('lector_font', _state.fontSize); } catch(e) {}
+// ─── FUENTE / DARK ─────────────────────────────────────────────
+function cambiarFuente(d) {
+  _state.fontSize=Math.max(14,Math.min(30,_state.fontSize+d));
+  document.documentElement.style.setProperty('--font-size',_state.fontSize+'px');
+  try{localStorage.setItem('lector_font',_state.fontSize);}catch(e){}
 }
-
-// ─── DARK MODE ─────────────────────────────────────────────────
 function toggleDark() {
-  _state.dark = !_state.dark;
-  document.body.classList.toggle('dark', _state.dark);
-  document.querySelectorAll('#btn-dark').forEach(b => b.textContent = _state.dark ? '☀️' : '🌙');
-  try { localStorage.setItem('lector_dark', _state.dark ? '1' : '0'); } catch(e) {}
+  _state.dark=!_state.dark;
+  document.body.classList.toggle('dark',_state.dark);
+  document.querySelectorAll('#btn-dark').forEach(b=>b.textContent=_state.dark?'☀️':'🌙');
+  try{localStorage.setItem('lector_dark',_state.dark?'1':'0');}catch(e){}
 }
 
-// ─── TOAST ─────────────────────────────────────────────────────
+// ─── TOAST / UTILS ─────────────────────────────────────────────
 let _toastTimer;
 function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+  _toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-
-// ─── UTILS ─────────────────────────────────────────────────────
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ─── INIT ──────────────────────────────────────────────────────
 async function init() {
-  // Migrar libros existentes de localStorage a IndexedDB
   try {
-    const legacy = localStorage.getItem(LEGACY_KEY);
+    const legacy=localStorage.getItem(LEGACY_KEY);
     if (legacy) {
-      const libros = JSON.parse(legacy);
-      if (Array.isArray(libros) && libros.length) {
-        for (const l of libros) await saveLibro(l);
+      const libros=JSON.parse(legacy);
+      if (Array.isArray(libros)&&libros.length) {
+        for (const l of libros) { if(!l.marcadores)l.marcadores=[]; await saveLibro(l); }
         localStorage.removeItem(LEGACY_KEY);
       }
     }
-  } catch(e) {}
-
-  _state.libros = await loadLibros();
-
-  const darkSaved = localStorage.getItem('lector_dark');
-  if (darkSaved === '1') { _state.dark = true; document.body.classList.add('dark'); }
-
-  const fontSaved = parseInt(localStorage.getItem('lector_font') || '19');
-  _state.fontSize = fontSaved;
-  document.documentElement.style.setProperty('--font-size', fontSaved+'px');
-
+  } catch(e){}
+  _state.libros=await loadLibros();
+  if (localStorage.getItem('lector_dark')==='1') { _state.dark=true; document.body.classList.add('dark'); }
+  const fs=parseInt(localStorage.getItem('lector_font')||'19');
+  _state.fontSize=fs; document.documentElement.style.setProperty('--font-size',fs+'px');
   renderBiblioteca();
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
-
 init();
 </script>
 </body>
