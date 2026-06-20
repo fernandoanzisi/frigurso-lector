@@ -8,7 +8,6 @@
 <meta name="theme-color" content="#e8b86d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
   :root {
     --bg: #f5f0e8;
@@ -263,6 +262,16 @@
 
     <input type="text" class="input-field" id="libro-titulo" placeholder="Título del libro (ej: El Principito)">
 
+    <select class="input-field" id="libro-idioma">
+      <option value="auto">Detectar idioma automáticamente</option>
+      <option value="español" selected>Español</option>
+      <option value="inglés">Inglés</option>
+      <option value="portugués">Portugués</option>
+      <option value="francés">Francés</option>
+      <option value="alemán">Alemán</option>
+      <option value="italiano">Italiano</option>
+    </select>
+
     <div class="drop-zone" id="drop-zone"
       ondragover="event.preventDefault();this.classList.add('drag-over')"
       ondragleave="this.classList.remove('drag-over')"
@@ -296,6 +305,7 @@
       <button class="btn-icon" style="width:36px;height:36px;font-size:16px" onclick="goBib()">←</button>
       <div class="lector-titulo" id="lector-titulo">—</div>
       <div class="lector-pag" id="lector-pag">1 / 1</div>
+      <button class="btn-icon" style="width:36px;height:36px;font-size:16px" onclick="exportarTxt()" title="Exportar TXT">⬇️</button>
       <button class="btn-icon" style="width:36px;height:36px;font-size:16px" onclick="toggleDark()">🌙</button>
     </div>
 
@@ -324,27 +334,69 @@
 
 <script>
 // ─── ESTADO ────────────────────────────────────────────────────
-const STORAGE_KEY = 'lector_libros_v1';
+const LEGACY_KEY = 'lector_libros_v1';
 let _state = {
-  libros: [],        // [{id, titulo, paginas:[{texto}], creado, ultimaPag}]
+  libros: [],
   libroActual: null,
   paginaActual: 0,
   dark: false,
   fontSize: 19,
-  pendingFiles: [],  // archivos seleccionados antes de procesar
+  pendingFiles: [],
 };
 let _procesando = false;
 let _cancelar = false;
 
-// ─── PERSISTENCIA ──────────────────────────────────────────────
-function save() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_state.libros)); } catch(e) {}
+// ─── INDEXEDDB ─────────────────────────────────────────────────
+const DB_NAME = 'lector_db';
+const DB_VER = 1;
+const STORE = 'libros';
+let _db = null;
+
+function openDB() {
+  if (_db) return Promise.resolve(_db);
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE))
+        db.createObjectStore(STORE, { keyPath: 'id' });
+    };
+    req.onsuccess = e => { _db = e.target.result; res(_db); };
+    req.onerror = () => rej(req.error);
+  });
 }
-function load() {
-  try {
-    const d = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    _state.libros = Array.isArray(d) ? d : [];
-  } catch(e) { _state.libros = []; }
+
+async function saveLibro(libro) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).put(libro);
+    tx.oncomplete = res;
+    tx.onerror = () => rej(tx.error);
+  });
+}
+
+async function deleteLibro(id) {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).delete(id);
+    tx.oncomplete = res;
+    tx.onerror = () => rej(tx.error);
+  });
+}
+
+async function loadLibros() {
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).getAll();
+    req.onsuccess = () => {
+      const libros = (req.result || []).sort((a, b) => b.id.localeCompare(a.id));
+      res(libros);
+    };
+    req.onerror = () => rej(req.error);
+  });
 }
 
 // ─── NAVEGACIÓN ────────────────────────────────────────────────
@@ -355,11 +407,12 @@ function goPage(id) {
   hdr.style.display = id === 'lector' ? 'none' : '';
   window.scrollTo(0, 0);
 }
-function goBib() {
+async function goBib() {
   _state.pendingFiles = [];
   renderThumbsUI();
   updateBtnProc();
   goPage('bib');
+  _state.libros = await loadLibros();
   renderBiblioteca();
 }
 function goSubir() { goPage('subir'); }
@@ -402,10 +455,10 @@ function renderBiblioteca() {
   }).join('');
 }
 
-function borrarLibro(id) {
+async function borrarLibro(id) {
   if (!confirm('¿Borrar este libro? No se puede deshacer.')) return;
+  await deleteLibro(id);
   _state.libros = _state.libros.filter(l => l.id !== id);
-  save();
   renderBiblioteca();
 }
 
@@ -444,8 +497,34 @@ function updateBtnProc() {
   btn.disabled = _state.pendingFiles.length === 0 || _procesando;
 }
 
+async function ocrConGemini(file, idioma) {
+  const base64 = await new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = e => res(e.target.result.split(',')[1]);
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+
+  const langHint = idioma && idioma !== 'auto' ? `El texto está en ${idioma}. ` : '';
+  const prompt = langHint +
+    'Extraé todo el texto de esta imagen exactamente como aparece. ' +
+    'Conservá los párrafos, los saltos de línea entre párrafos y la puntuación. ' +
+    'No agregues nada, no resumas, solo transcribí el texto tal cual está escrito. ' +
+    'Si hay números de página, títulos o encabezados incluílos también.';
+
+  const resp = await fetch('/api/gemini', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: base64, mimeType: file.type || 'image/jpeg', hint: prompt })
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.error || 'Error en el servidor');
+  return data.text || '';
+}
+
 async function procesarLibro() {
   const titulo = (document.getElementById('libro-titulo').value.trim()) || 'Sin título';
+  const idioma = document.getElementById('libro-idioma').value;
   const files = _state.pendingFiles;
   if (!files.length) { toast('Seleccioná al menos una imagen'); return; }
   if (_procesando) return;
@@ -457,43 +536,36 @@ async function procesarLibro() {
   document.getElementById('btn-proc').textContent = '⏳ Procesando...';
 
   const paginas = [];
+  const label = document.getElementById('progress-label');
+  const fill = document.getElementById('progress-fill');
+
   for (let i = 0; i < files.length; i++) {
     if (_cancelar) break;
-    const label = document.getElementById('progress-label');
-    const fill = document.getElementById('progress-fill');
+    label.textContent = 'Procesando página ' + (i+1) + ' de ' + files.length + '...';
+    fill.style.width = Math.round(i / files.length * 100) + '%';
 
     try {
-      const result = await Tesseract.recognize(files[i], 'spa', {
-        logger: m => {
-          if (m.status === 'recognizing text') {
-            const pct = Math.round(m.progress * 100);
-            label.textContent = 'Página '+(i+1)+' de '+files.length+' — '+pct+'%';
-            fill.style.width = Math.round((i + m.progress) / files.length * 100)+'%';
-          } else {
-            label.textContent = 'Página '+(i+1)+' de '+files.length+' — '+m.status+'...';
-          }
-        }
-      });
-      paginas.push({ texto: result.data.text || '' });
+      const texto = await ocrConGemini(files[i], idioma);
+      paginas.push({ texto });
     } catch(e) {
-      paginas.push({ texto: '[Error al procesar esta página: '+e.message+']' });
+      paginas.push({ texto: '[Error en página ' + (i+1) + ': ' + e.message + ']' });
     }
-  }
 
-  document.getElementById('progress-fill').style.width = '100%';
-  document.getElementById('progress-label').textContent = '✅ ¡Listo!';
+    fill.style.width = Math.round((i+1) / files.length * 100) + '%';
+    label.textContent = (i+1) + ' de ' + files.length + ' páginas procesadas ✓';
+  }
 
   if (!_cancelar && paginas.length) {
     const libro = {
-      id: 'l'+Date.now(),
+      id: 'l' + Date.now(),
       titulo,
       paginas,
       creado: new Date().toLocaleDateString('es-AR'),
       ultimaPag: 0,
     };
+    await saveLibro(libro);
     _state.libros.unshift(libro);
-    save();
-    toast('📚 "'+titulo+'" guardado — '+paginas.length+' páginas');
+    toast('📚 "' + titulo + '" guardado — ' + paginas.length + ' páginas');
     setTimeout(() => {
       resetSubir();
       goBib();
@@ -509,6 +581,7 @@ async function procesarLibro() {
 function resetSubir() {
   _state.pendingFiles = [];
   document.getElementById('libro-titulo').value = '';
+  document.getElementById('libro-idioma').value = 'español';
   renderThumbsUI();
   updateBtnProc();
 }
@@ -531,11 +604,9 @@ function renderPagina() {
 
   document.getElementById('btn-prev').disabled = n === 0;
   document.getElementById('btn-next').disabled = n === total-1;
-  document.getElementById('lector-pag').textContent = (n+1)+' / '+total;
 
-  // Guardar progreso
   lib.ultimaPag = n;
-  save();
+  saveLibro(lib); // fire-and-forget
 }
 
 function cambiarPag(delta) {
@@ -559,6 +630,24 @@ document.addEventListener('touchend', e => {
   }
 }, {passive: true});
 
+// ─── EXPORTAR TXT ──────────────────────────────────────────────
+function exportarTxt() {
+  const lib = _state.libros.find(l => l.id === _state.libroActual);
+  if (!lib) return;
+  const contenido = lib.paginas
+    .map((p, i) => `--- Página ${i+1} ---\n\n${p.texto}`)
+    .join('\n\n\n');
+  const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = lib.titulo.replace(/[^\w\s\-áéíóúñÁÉÍÓÚÑüÜ]/g, '').trim() + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  toast('📄 Descargando "' + lib.titulo + '"...');
+}
+
 // ─── FUENTE ────────────────────────────────────────────────────
 function cambiarFuente(delta) {
   _state.fontSize = Math.max(14, Math.min(30, _state.fontSize + delta));
@@ -570,8 +659,7 @@ function cambiarFuente(delta) {
 function toggleDark() {
   _state.dark = !_state.dark;
   document.body.classList.toggle('dark', _state.dark);
-  const btns = document.querySelectorAll('#btn-dark');
-  btns.forEach(b => b.textContent = _state.dark ? '☀️' : '🌙');
+  document.querySelectorAll('#btn-dark').forEach(b => b.textContent = _state.dark ? '☀️' : '🌙');
   try { localStorage.setItem('lector_dark', _state.dark ? '1' : '0'); } catch(e) {}
 }
 
@@ -591,21 +679,30 @@ function escHtml(s) {
 }
 
 // ─── INIT ──────────────────────────────────────────────────────
-function init() {
-  load();
+async function init() {
+  // Migrar libros existentes de localStorage a IndexedDB
+  try {
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if (legacy) {
+      const libros = JSON.parse(legacy);
+      if (Array.isArray(libros) && libros.length) {
+        for (const l of libros) await saveLibro(l);
+        localStorage.removeItem(LEGACY_KEY);
+      }
+    }
+  } catch(e) {}
 
-  // Dark mode desde localStorage
+  _state.libros = await loadLibros();
+
   const darkSaved = localStorage.getItem('lector_dark');
   if (darkSaved === '1') { _state.dark = true; document.body.classList.add('dark'); }
 
-  // Font size
   const fontSaved = parseInt(localStorage.getItem('lector_font') || '19');
   _state.fontSize = fontSaved;
   document.documentElement.style.setProperty('--font-size', fontSaved+'px');
 
   renderBiblioteca();
 
-  // PWA service worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }

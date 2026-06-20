@@ -1,4 +1,5 @@
-const CACHE = 'lector-v1';
+// Incrementar esta versión en cada deploy para limpiar el caché viejo
+const CACHE = 'lector-v2';
 const PRECACHE = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
@@ -25,6 +26,19 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   if (e.request.url.includes('/api/')) return;
 
+  // Network-first para HTML: garantiza que el usuario siempre reciba la versión más nueva
+  const isHTML = e.request.headers.get('Accept')?.includes('text/html');
+  if (isHTML) {
+    e.respondWith(
+      fetch(e.request).then(res => {
+        if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+        return res;
+      }).catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Cache-first para el resto de assets
   e.respondWith(
     caches.match(e.request).then(cached => {
       const fresh = fetch(e.request).then(res => {
