@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lector de Libros</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#e8b86d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --bg2: #ede8df;
+    --card: #fff;
+    --text: #2c2416;
+    --text2: #5a4e3a;
+    --text3: #9a8e7a;
+    --accent: #c9832a;
+    --accent2: #e8b86d;
+    --border: #ddd5c4;
+    --red: #c0392b;
+    --green: #27ae60;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --font-read: 'Georgia', 'Times New Roman', serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-size: 19px;
+    --line-height: 1.85;
+  }
+  .dark {
+    --bg: #1a1a2e;
+    --bg2: #16213e;
+    --card: #0f3460;
+    --text: #e8dcc8;
+    --text2: #c4b49a;
+    --text3: #7a6e5e;
+    --accent: #e8b86d;
+    --accent2: #d4a55a;
+    --border: #2a3a5a;
+    --shadow: 0 2px 16px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: var(--font-ui); background: var(--bg); color: var(--text); min-height: 100dvh; transition: background 0.3s, color 0.3s; }
+  button { font-family: var(--font-ui); cursor: pointer; border: none; outline: none; }
+
+  /* ── HEADER ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    box-shadow: var(--shadow);
+  }
+  .header-title { font-size: 17px; font-weight: 700; color: var(--text); flex: 1; }
+  .header-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .btn-icon {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--bg);
+    border: 1px solid var(--border); color: var(--text2); font-size: 18px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .btn-icon:active { opacity: 0.7; }
+
+  /* ── PAGES ── */
+  .page { display: none; min-height: calc(100dvh - 60px); }
+  .page.active { display: block; }
+
+  /* ── BIBLIOTECA ── */
+  .biblioteca { padding: 16px; }
+  .bib-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .bib-title { font-size: 14px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+  .btn-add {
+    padding: 10px 20px; border-radius: 99px; background: var(--accent); color: #fff;
+    font-size: 13px; font-weight: 700;
+  }
+  .btn-add:active { opacity: 0.85; }
+  .libros-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .libro-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s;
+    position: relative;
+  }
+  .libro-card:active { transform: scale(0.97); }
+  .libro-cover {
+    height: 190px; background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex; align-items: center; justify-content: center; font-size: 50px;
+    position: relative; overflow: hidden;
+  }
+  .libro-cover img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .libro-cover-emoji { position: relative; z-index: 1; }
+  .libro-info { padding: 10px 12px; }
+  .libro-titulo { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; line-height: 1.3; }
+  .libro-meta { font-size: 11px; color: var(--text3); }
+  .libro-badge {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.55); color: #fff; font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 99px;
+  }
+  .libro-del {
+    position: absolute; top: 6px; left: 6px;
+    background: rgba(192,57,43,0.85); color: #fff; font-size: 14px;
+    width: 28px; height: 28px; border-radius: 50%; display: none;
+    align-items: center; justify-content: center;
+  }
+  .libro-card:hover .libro-del { display: flex; }
+  .empty-state { text-align: center; padding: 60px 20px; }
+  .empty-icon { font-size: 64px; margin-bottom: 16px; }
+  .empty-text { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .empty-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+
+  /* ── SUBIR ── */
+  .subir-wrap { padding: 16px; max-width: 620px; margin: 0 auto; }
+  .subir-titulo { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+  .subir-sub { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
+  .input-field {
+    width: 100%; padding: 12px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--card); color: var(--text);
+    font-size: 15px; font-family: var(--font-ui); margin-bottom: 14px;
+  }
+  .input-field:focus { outline: none; border-color: var(--accent); }
+  .drop-zone {
+    border: 2px dashed var(--accent2); border-radius: 16px;
+    padding: 36px 20px; text-align: center; background: var(--bg2);
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 14px;
+  }
+  .drop-zone.drag-over { border-color: var(--accent); background: rgba(201,131,42,0.08); }
+  .drop-icon { font-size: 48px; margin-bottom: 12px; }
+  .drop-text { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .drop-sub { font-size: 12px; color: var(--text3); }
+  .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .thumb-item {
+    width: 80px; height: 100px; border-radius: 8px; overflow: hidden;
+    position: relative; border: 1px solid var(--border); background: var(--bg2);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb-num {
+    position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6);
+    color: #fff; font-size: 10px; font-weight: 700; text-align: center; padding: 2px;
+  }
+  .thumb-del {
+    position: absolute; top: 2px; right: 2px; background: rgba(192,57,43,0.9);
+    color: #fff; font-size: 12px; width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .progress-wrap { margin-bottom: 16px; }
+  .progress-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 600; }
+  .progress-bar { height: 6px; border-radius: 99px; background: var(--border); overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.3s; }
+  .btn-proc {
+    width: 100%; padding: 14px; border-radius: 12px; background: var(--accent); color: #fff;
+    font-size: 16px; font-weight: 800; margin-bottom: 10px;
+  }
+  .btn-proc:disabled { opacity: 0.5; }
+  .btn-proc:active:not(:disabled) { opacity: 0.85; }
+  .btn-cancel-proc {
+    width: 100%; padding: 11px; border-radius: 12px;
+    border: 1px solid var(--border); background: transparent; color: var(--text3);
+    font-size: 14px; font-weight: 600;
+  }
+
+  /* ── LECTOR ── */
+  .lector-wrap { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+  .lector-header {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .lector-titulo { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lector-pag { font-size: 12px; color: var(--text3); font-weight: 600; white-space: nowrap; }
+  .lector-body {
+    flex: 1; overflow-y: auto; padding: 24px 20px 100px;
+    max-width: 720px; margin: 0 auto; width: 100%;
+  }
+  .lector-texto {
+    font-family: var(--font-read); font-size: var(--font-size); line-height: var(--line-height);
+    color: var(--text); text-align: justify; white-space: pre-wrap; word-break: break-word;
+  }
+  .lector-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg2); border-top: 1px solid var(--border);
+    padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+  }
+  .btn-nav {
+    width: 48px; height: 48px; border-radius: 50%; background: var(--card);
+    border: 1px solid var(--border); color: var(--text); font-size: 22px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .btn-nav:disabled { opacity: 0.3; }
+  .btn-nav:active:not(:disabled) { background: var(--accent); color: #fff; }
+  .pag-info { flex: 1; text-align: center; }
+  .pag-num { font-size: 15px; font-weight: 800; color: var(--text); }
+  .pag-total { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .pag-barra { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; margin-top: 5px; }
+  .pag-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.3s; }
+
+  /* Controles de tamaño de fuente */
+  .font-controls { display: flex; align-items: center; gap: 6px; }
+  .btn-font {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--bg);
+    border: 1px solid var(--border); color: var(--text2); font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-font:active { background: var(--accent); color: #fff; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1a1a2e; color: #fff; padding: 10px 20px; border-radius: 99px;
+    font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.25s; z-index: 9999;
+    white-space: nowrap; pointer-events: none; max-width: 90vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── SPINNER ── */
+  .spin { animation: spin 0.9s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── MISC ── */
+  .sep { height: 1px; background: var(--border); margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER (solo visible en biblioteca) -->
+<div class="header" id="main-header">
+  <div style="flex:1">
+    <div class="header-title">📚 Lector de Libros</div>
+    <div class="header-sub" id="header-sub">Mi biblioteca</div>
+  </div>
+  <button class="btn-icon" id="btn-dark" onclick="toggleDark()" title="Modo noche">🌙</button>
+</div>
+
+<!-- PÁGINA: BIBLIOTECA -->
+<div class="page active" id="page-bib">
+  <div class="biblioteca">
+    <div class="bib-header">
+      <div class="bib-title">Mis libros</div>
+      <button class="btn-add" onclick="goSubir()">＋ Agregar</button>
+    </div>
+    <div class="libros-grid" id="libros-grid">
+      <!-- se renderiza con JS -->
+    </div>
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div class="empty-icon">📖</div>
+      <div class="empty-text">Todavía no tenés libros</div>
+      <div class="empty-sub">Subí fotos de cualquier texto y lo convertimos en un libro digital</div>
+      <button class="btn-add" onclick="goSubir()">＋ Agregar primer libro</button>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA: SUBIR -->
+<div class="page" id="page-subir">
+  <div class="subir-wrap">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-top:4px">
+      <button class="btn-icon" onclick="goBib()">←</button>
+      <div>
+        <div class="subir-titulo">Nuevo libro</div>
+        <div class="subir-sub">Subí las fotos de las páginas</div>
+      </div>
+    </div>
+
+    <input type="text" class="input-field" id="libro-titulo" placeholder="Título del libro (ej: El Principito)">
+
+    <div class="drop-zone" id="drop-zone"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="event.preventDefault();this.classList.remove('drag-over');handleDrop(event)"
+      onclick="document.getElementById('file-input').click()">
+      <div class="drop-icon">📷</div>
+      <div class="drop-text">Arrastrá las fotos o tocá para seleccionar</div>
+      <div class="drop-sub">JPG · PNG · WEBP · HEIC — una foto por página</div>
+      <input type="file" id="file-input" accept="image/*" multiple style="display:none"
+        onchange="handleFiles(this.files);this.value=''">
+    </div>
+
+    <div class="thumbs" id="thumbs"></div>
+
+    <div class="progress-wrap" id="progress-wrap" style="display:none">
+      <div class="progress-label" id="progress-label">Procesando página 1 de 5...</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <button class="btn-proc" id="btn-proc" onclick="procesarLibro()" disabled>
+      🚀 Procesar con IA
+    </button>
+    <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
+  </div>
+</div>
+
+<!-- PÁGINA: LECTOR -->
+<div class="page" id="page-lector">
+  <div class="lector-wrap">
+    <div class="lector-header">
+      <button class="btn-icon" style="width:36px;height:36px;font-size:16px" onclick="goBib()">←</button>
+      <div class="lector-titulo" id="lector-titulo">—</div>
+      <div class="lector-pag" id="lector-pag">1 / 1</div>
+      <button class="btn-icon" style="width:36px;height:36px;font-size:16px" onclick="toggleDark()">🌙</button>
+    </div>
+
+    <div class="lector-body" id="lector-body">
+      <div class="lector-texto" id="lector-texto"></div>
+    </div>
+
+    <div class="lector-footer">
+      <div class="font-controls">
+        <button class="btn-font" onclick="cambiarFuente(-1)">A-</button>
+        <button class="btn-font" onclick="cambiarFuente(1)">A+</button>
+      </div>
+      <button class="btn-nav" id="btn-prev" onclick="cambiarPag(-1)">‹</button>
+      <div class="pag-info">
+        <div class="pag-num" id="pag-num">1</div>
+        <div class="pag-total" id="pag-total">de 1</div>
+        <div class="pag-barra"><div class="pag-fill" id="pag-fill" style="width:0%"></div></div>
+      </div>
+      <button class="btn-nav" id="btn-next" onclick="cambiarPag(1)">›</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── ESTADO ────────────────────────────────────────────────────
+const STORAGE_KEY = 'lector_libros_v1';
+let _state = {
+  libros: [],        // [{id, titulo, paginas:[{texto}], creado, ultimaPag}]
+  libroActual: null,
+  paginaActual: 0,
+  dark: false,
+  fontSize: 19,
+  pendingFiles: [],  // archivos seleccionados antes de procesar
+};
+let _procesando = false;
+let _cancelar = false;
+
+// ─── PERSISTENCIA ──────────────────────────────────────────────
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_state.libros)); } catch(e) {}
+}
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    _state.libros = Array.isArray(d) ? d : [];
+  } catch(e) { _state.libros = []; }
+}
+
+// ─── NAVEGACIÓN ────────────────────────────────────────────────
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const hdr = document.getElementById('main-header');
+  hdr.style.display = id === 'lector' ? 'none' : '';
+  window.scrollTo(0, 0);
+}
+function goBib() {
+  _state.pendingFiles = [];
+  renderThumbsUI();
+  updateBtnProc();
+  goPage('bib');
+  renderBiblioteca();
+}
+function goSubir() { goPage('subir'); }
+function goLector(libroId) {
+  const lib = _state.libros.find(l => l.id === libroId);
+  if (!lib || !lib.paginas.length) { toast('Este libro no tiene páginas'); return; }
+  _state.libroActual = libroId;
+  _state.paginaActual = lib.ultimaPag || 0;
+  goPage('lector');
+  renderPagina();
+}
+
+// ─── BIBLIOTECA ────────────────────────────────────────────────
+function renderBiblioteca() {
+  const grid = document.getElementById('libros-grid');
+  const empty = document.getElementById('empty-state');
+  const sub = document.getElementById('header-sub');
+  const libros = _state.libros;
+  sub.textContent = libros.length + (libros.length === 1 ? ' libro' : ' libros');
+  if (!libros.length) {
+    grid.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = libros.map(l => {
+    const pct = l.paginas.length > 1
+      ? Math.round(((l.ultimaPag||0)+1)/l.paginas.length*100) : null;
+    return '<div class="libro-card" onclick="goLector(\''+l.id+'\')">' +
+      '<div class="libro-cover">' +
+        '<span class="libro-cover-emoji">📖</span>' +
+        '<div class="libro-badge">'+l.paginas.length+' pág.</div>' +
+      '</div>' +
+      '<div class="libro-info">' +
+        '<div class="libro-titulo">'+escHtml(l.titulo)+'</div>' +
+        '<div class="libro-meta">'+(pct!==null?pct+'% leído':'Sin leer')+'</div>' +
+      '</div>' +
+      '<button class="libro-del" onclick="event.stopPropagation();borrarLibro(\''+l.id+'\')" title="Borrar">✕</button>' +
+    '</div>';
+  }).join('');
+}
+
+function borrarLibro(id) {
+  if (!confirm('¿Borrar este libro? No se puede deshacer.')) return;
+  _state.libros = _state.libros.filter(l => l.id !== id);
+  save();
+  renderBiblioteca();
+}
+
+// ─── SUBIR ─────────────────────────────────────────────────────
+function handleFiles(files) {
+  const arr = Array.from(files).filter(f => f.type.startsWith('image/'));
+  _state.pendingFiles = [..._state.pendingFiles, ...arr];
+  renderThumbsUI();
+  updateBtnProc();
+}
+function handleDrop(e) {
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  _state.pendingFiles = [..._state.pendingFiles, ...files];
+  renderThumbsUI();
+  updateBtnProc();
+}
+function renderThumbsUI() {
+  const c = document.getElementById('thumbs');
+  if (!_state.pendingFiles.length) { c.innerHTML = ''; return; }
+  c.innerHTML = _state.pendingFiles.map((f, i) => {
+    const url = URL.createObjectURL(f);
+    return '<div class="thumb-item">' +
+      '<img src="'+url+'" alt="pág '+(i+1)+'">' +
+      '<div class="thumb-num">Pág. '+(i+1)+'</div>' +
+      '<div class="thumb-del" onclick="quitarPag('+i+')">✕</div>' +
+    '</div>';
+  }).join('');
+}
+function quitarPag(i) {
+  _state.pendingFiles.splice(i, 1);
+  renderThumbsUI();
+  updateBtnProc();
+}
+function updateBtnProc() {
+  const btn = document.getElementById('btn-proc');
+  btn.disabled = _state.pendingFiles.length === 0 || _procesando;
+}
+
+async function procesarLibro() {
+  const titulo = (document.getElementById('libro-titulo').value.trim()) || 'Sin título';
+  const files = _state.pendingFiles;
+  if (!files.length) { toast('Seleccioná al menos una imagen'); return; }
+  if (_procesando) return;
+
+  _procesando = true;
+  _cancelar = false;
+  updateBtnProc();
+  document.getElementById('progress-wrap').style.display = '';
+  document.getElementById('btn-proc').textContent = '⏳ Procesando...';
+
+  const paginas = [];
+  for (let i = 0; i < files.length; i++) {
+    if (_cancelar) break;
+    const label = document.getElementById('progress-label');
+    const fill = document.getElementById('progress-fill');
+    label.textContent = 'Procesando página '+(i+1)+' de '+files.length+'...';
+    fill.style.width = Math.round((i/files.length)*100)+'%';
+
+    try {
+      const b64 = await fileToBase64(files[i]);
+      const mime = files[i].type || 'image/jpeg';
+      const resp = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ image: b64, mimeType: mime })
+      });
+      if (!resp.ok) throw new Error('Error en la API: '+resp.status);
+      const data = await resp.json();
+      paginas.push({ texto: data.text || '' });
+    } catch(e) {
+      paginas.push({ texto: '[Error al procesar esta página: '+e.message+']' });
+    }
+  }
+
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-label').textContent = '✅ ¡Listo!';
+
+  if (!_cancelar && paginas.length) {
+    const libro = {
+      id: 'l'+Date.now(),
+      titulo,
+      paginas,
+      creado: new Date().toLocaleDateString('es-AR'),
+      ultimaPag: 0,
+    };
+    _state.libros.unshift(libro);
+    save();
+    toast('📚 "'+titulo+'" guardado — '+paginas.length+' páginas');
+    setTimeout(() => {
+      resetSubir();
+      goBib();
+    }, 800);
+  }
+
+  _procesando = false;
+  updateBtnProc();
+  document.getElementById('btn-proc').textContent = '🚀 Procesar con IA';
+  document.getElementById('progress-wrap').style.display = 'none';
+}
+
+function resetSubir() {
+  _state.pendingFiles = [];
+  document.getElementById('libro-titulo').value = '';
+  renderThumbsUI();
+  updateBtnProc();
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ─── LECTOR ────────────────────────────────────────────────────
+function renderPagina() {
+  const lib = _state.libros.find(l => l.id === _state.libroActual);
+  if (!lib) return;
+  const n = _state.paginaActual;
+  const total = lib.paginas.length;
+  const texto = lib.paginas[n]?.texto || '(Página vacía)';
+
+  document.getElementById('lector-titulo').textContent = lib.titulo;
+  document.getElementById('lector-pag').textContent = (n+1)+' / '+total;
+  document.getElementById('pag-num').textContent = (n+1);
+  document.getElementById('pag-total').textContent = 'de '+total;
+  document.getElementById('pag-fill').style.width = Math.round((n+1)/total*100)+'%';
+  document.getElementById('lector-texto').textContent = texto;
+  document.getElementById('lector-body').scrollTop = 0;
+
+  document.getElementById('btn-prev').disabled = n === 0;
+  document.getElementById('btn-next').disabled = n === total-1;
+  document.getElementById('lector-pag').textContent = (n+1)+' / '+total;
+
+  // Guardar progreso
+  lib.ultimaPag = n;
+  save();
+}
+
+function cambiarPag(delta) {
+  const lib = _state.libros.find(l => l.id === _state.libroActual);
+  if (!lib) return;
+  const nueva = _state.paginaActual + delta;
+  if (nueva < 0 || nueva >= lib.paginas.length) return;
+  _state.paginaActual = nueva;
+  renderPagina();
+}
+
+// Swipe para cambiar página
+let _touchStartX = 0;
+document.addEventListener('touchstart', e => {
+  _touchStartX = e.touches[0].clientX;
+}, {passive: true});
+document.addEventListener('touchend', e => {
+  if (document.getElementById('page-lector').classList.contains('active')) {
+    const dx = e.changedTouches[0].clientX - _touchStartX;
+    if (Math.abs(dx) > 60) cambiarPag(dx < 0 ? 1 : -1);
+  }
+}, {passive: true});
+
+// ─── FUENTE ────────────────────────────────────────────────────
+function cambiarFuente(delta) {
+  _state.fontSize = Math.max(14, Math.min(30, _state.fontSize + delta));
+  document.documentElement.style.setProperty('--font-size', _state.fontSize+'px');
+  try { localStorage.setItem('lector_font', _state.fontSize); } catch(e) {}
+}
+
+// ─── DARK MODE ─────────────────────────────────────────────────
+function toggleDark() {
+  _state.dark = !_state.dark;
+  document.body.classList.toggle('dark', _state.dark);
+  const btns = document.querySelectorAll('#btn-dark');
+  btns.forEach(b => b.textContent = _state.dark ? '☀️' : '🌙');
+  try { localStorage.setItem('lector_dark', _state.dark ? '1' : '0'); } catch(e) {}
+}
+
+// ─── TOAST ─────────────────────────────────────────────────────
+let _toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ─── UTILS ─────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── INIT ──────────────────────────────────────────────────────
+function init() {
+  load();
+
+  // Dark mode desde localStorage
+  const darkSaved = localStorage.getItem('lector_dark');
+  if (darkSaved === '1') { _state.dark = true; document.body.classList.add('dark'); }
+
+  // Font size
+  const fontSaved = parseInt(localStorage.getItem('lector_font') || '19');
+  _state.fontSize = fontSaved;
+  document.documentElement.style.setProperty('--font-size', fontSaved+'px');
+
+  renderBiblioteca();
+
+  // PWA service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+}
+
+init();
+</script>
+</body>
+</html>
