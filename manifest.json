@@ -1,7 +1,7 @@
 {
-  "name": "Lector de Libros",
-  "short_name": "Lector",
-  "description": "Convertí fotos y escaneos en libros legibles",
+  "name": "Frigurso Lector",
+  "short_name": "F. Lector",
+  "description": "Frigurso — convertí fotos y escaneos en libros legibles",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a2e",
