@@ -1,6 +1,6 @@
 // Incrementar esta versión en cada deploy para limpiar el caché viejo
-const CACHE = 'lector-v3';
-const PRECACHE = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'lector-v4';
+const PRECACHE = ['/', '/index.html', '/manifest.json', '/libros-data.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
