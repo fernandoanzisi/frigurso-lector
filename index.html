@@ -219,6 +219,7 @@
     <div class="header-sub" id="header-sub">Mi biblioteca</div>
   </div>
   <button class="btn-icon" id="btn-dark" onclick="toggleDark()">🌙</button>
+  <button class="btn-icon" onclick="actualizarApp()" title="Actualizar app" style="font-size:16px">🔄</button>
 </div>
 
 <!-- BIBLIOTECA -->
@@ -809,6 +810,20 @@ function toggleDark() {
   document.body.classList.toggle('dark',_state.dark);
   document.querySelectorAll('#btn-dark').forEach(b=>b.textContent=_state.dark?'☀️':'🌙');
   try{localStorage.setItem('lector_dark',_state.dark?'1':'0');}catch(e){}
+}
+async function actualizarApp() {
+  if (!confirm('¿Actualizar la app? Se va a recargar y descargar la versión más nueva.')) return;
+  try {
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+  } catch(e) {}
+  window.location.reload(true);
 }
 
 // ─── TABS SUBIR ────────────────────────────────────────────────
