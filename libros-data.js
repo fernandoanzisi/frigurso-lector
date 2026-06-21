@@ -1,5 +1,52 @@
-// Libros de dominio público precargados
+// Libros de dominio público y recursos educativos de acceso libre
 const LIBROS_PRECARGADOS = [
+  {
+    id: 'pre_edu_delors',
+    titulo: 'La educación encierra un tesoro — UNESCO',
+    autor: 'Jacques Delors (UNESCO)',
+    paginas: [
+      { texto: 'LA EDUCACIÓN ENCIERRA UN TESORO\nInforme a la UNESCO de la Comisión Internacional sobre la Educación para el Siglo XXI\nJacques Delors — 1996\n\nFRENTE A LOS MÚLTIPLES DESAFÍOS DEL PORVENIR\n\nLa educación constituye un instrumento indispensable para que la humanidad pueda progresar hacia los ideales de paz, libertad y justicia social. La Comisión desea transmitir un mensaje esperanzador: la educación puede contribuir a lograr un mundo más seguro, más sano, más próspero y, al mismo tiempo, más solidario, como instrumento de desarrollo de la persona humana.', nota: '' },
+      { texto: 'LOS CUATRO PILARES DE LA EDUCACIÓN\n\nAprender a conocer: Este tipo de aprendizaje, que tiende menos a la adquisición de conocimientos clasificados y codificados que al dominio de los instrumentos mismos del saber, puede considerarse a la vez medio y finalidad de la vida humana.\n\nAprender a hacer: Aprender a conocer y aprender a hacer son, en gran medida, indisociables. Pero lo segundo está más estrechamente vinculado a la cuestión de la formación profesional: ¿cómo enseñar al alumno a poner en práctica sus conocimientos y, al mismo tiempo, cómo adaptar la enseñanza al futuro mercado de trabajo?', nota: '' },
+      { texto: 'Aprender a vivir juntos: Sin duda, este aprendizaje constituye una de las principales empresas de la educación contemporánea. Demasiado a menudo la violencia que impera en el mundo contradice la esperanza que algunos habían depositado en el progreso de la humanidad.\n\nAprender a ser: Desde sus primeras páginas, el informe Aprender a ser (1972) proclamaba: "El fin del desarrollo es el florecimiento completo del hombre, en toda su riqueza y en la complejidad de sus expresiones y de sus compromisos." Esta afirmación sigue siendo actual.\n\nLa educación debe contribuir al desarrollo global de cada persona: cuerpo y mente, inteligencia, sensibilidad, sentido estético, responsabilidad individual, espiritualidad.', nota: '' },
+      { texto: 'EL PAPEL DEL DOCENTE\n\nTodo el mundo conviene en que es necesario mejorar la calidad y la motivación del personal docente, pues de ellos depende en gran medida la calidad de la enseñanza. Pero si bien se pide mucho a los maestros, también se les da poco margen de iniciativa.\n\nEl papel del maestro no consiste solamente en transmitir información ni siquiera conocimientos, sino en presentarlos en forma de problemática, situándolos en un contexto y poniendo los problemas en perspectiva, de manera que el alumno pueda establecer el nexo entre su solución y otros interrogantes de mayor alcance.', nota: '' },
+    ],
+    portada: null, creado: 'UNESCO 1996', ultimaPag: 0, marcadores: [], palabras: 380, fuente: 'precargado'
+  },
+  {
+    id: 'pre_edu_freire',
+    titulo: 'Pedagogía del Oprimido',
+    autor: 'Paulo Freire',
+    paginas: [
+      { texto: 'PEDAGOGÍA DEL OPRIMIDO\nPaulo Freire — 1968\n\nCAPÍTULO 1\n\nLa presente investigación, que se origina en una inquietud por el hombre y su destino, busca plantear de manera objetiva la situación de violencia en que se encontraban los hombres del Tercer Mundo.\n\nEl ser humano es un ser de relaciones y no solo de contactos, no solo está en el mundo sino con el mundo. El estar con el mundo resultante de su apertura a la realidad le posibilita relacionarse con ella, de una manera que, a los animales, su inmersión en la realidad no les es posible hacer.', nota: '' },
+      { texto: 'LA CONCEPCIÓN BANCARIA DE LA EDUCACIÓN\n\nUn análisis crítico de la concepción bancaria de la educación sugiere que quizás no se percibe en la misma contradicción que se pone de manifiesto en la siguiente situación: en tanto la práctica bancaria acentúa la dicotomía entre los seres humanos y el mundo, la práctica problematizadora parte del carácter histórico y de la historicidad de los hombres.\n\nEn la concepción bancaria, el educador conduce a los educandos a la memorización mecánica del contenido narrado. Más aún, la narración los transforma en "vasijas", en recipientes que deben ser "llenados" por el educador.', nota: '' },
+      { texto: 'EL DIÁLOGO COMO ESENCIA DE LA EDUCACIÓN\n\nNo es posible el diálogo entre los que quieren pronunciar el mundo y los que no quieren hacerlo; entre los que niegan a los demás el derecho de decir la palabra y los que se hallan negados de este derecho.\n\nEl diálogo, como encuentro de los hombres para la "pronunciación" del mundo, es una condición fundamental para su verdadera humanización.\n\nEl diálogo es el encuentro amoroso de los hombres que, mediatizados por el mundo, lo "pronuncian", esto es, lo transforman y, transformándolo, lo humanizan para la humanización de todos.', nota: '' },
+    ],
+    portada: null, creado: 'Clásico Educación', ultimaPag: 0, marcadores: [], palabras: 320, fuente: 'precargado'
+  },
+  {
+    id: 'pre_edu_inclusiva',
+    titulo: 'Educación Inclusiva — Marco Conceptual',
+    autor: 'UNESCO',
+    paginas: [
+      { texto: 'EDUCACIÓN INCLUSIVA\nMarco Conceptual — UNESCO\n\n¿QUÉ ES LA EDUCACIÓN INCLUSIVA?\n\nLa educación inclusiva puede ser concebida como un proceso que permite abordar y responder a la diversidad de las necesidades de todos los educandos a través de una mayor participación en el aprendizaje, las actividades culturales y comunitarias y reducir la exclusión dentro y fuera del sistema educativo.\n\nEl objetivo de la inclusión es brindar respuestas apropiadas al amplio espectro de necesidades de aprendizaje tanto en entornos formales como no formales de la educación.', nota: '' },
+      { texto: 'PRINCIPIOS DE LA EDUCACIÓN INCLUSIVA\n\n1. La inclusión es un proceso. Es decir, no se trata simplemente de una cuestión de fijación y logro de determinados objetivos, es una búsqueda interminable de formas más adecuadas de responder a la diversidad.\n\n2. La inclusión busca la presencia, la participación y el éxito de todos los estudiantes. Aquí "presencia" se relaciona con el lugar donde son educados los niños y con qué fiabilidad asisten a clases.\n\n3. La inclusión precisa la identificación y la eliminación de barreras. Las barreras pueden adoptar muchas formas: actitudes, información, prácticas institucionales y estructuras.', nota: '' },
+      { texto: 'BARRERAS PARA EL APRENDIZAJE\n\nEl concepto de "barreras para el aprendizaje y la participación" fue desarrollado para contrastar con el de "necesidades educativas especiales". Las barreras al aprendizaje y a la participación surgen de la interacción entre los estudiantes y sus contextos: las personas, las políticas, las instituciones, las culturas y las circunstancias sociales y económicas que afectan sus vidas.\n\nEsta forma de pensar desafía la visión de que los problemas que experimentan los estudiantes son producto de sus deficiencias o dificultades personales, y pone el foco en eliminar los obstáculos del entorno.', nota: '' },
+      { texto: 'EL ROL DOCENTE EN LA INCLUSIÓN\n\nLos docentes son agentes clave del cambio en la construcción de escuelas inclusivas. Para asumir este rol necesitan:\n\n• Creer que todos los estudiantes pueden aprender.\n• Conocer estrategias de enseñanza diferenciada.\n• Trabajar colaborativamente con otros docentes, familias y profesionales.\n• Reflexionar continuamente sobre su práctica.\n• Adaptar los materiales curriculares a las necesidades del grupo.\n\nLa formación continua y el apoyo institucional son esenciales para que los docentes puedan responder efectivamente a la diversidad del aula.', nota: '' },
+    ],
+    portada: null, creado: 'UNESCO', ultimaPag: 0, marcadores: [], palabras: 360, fuente: 'precargado'
+  },
+  {
+    id: 'pre_edu_vigotsky',
+    titulo: 'Zona de Desarrollo Próximo — Vigotsky',
+    autor: 'Lev Vigotsky',
+    paginas: [
+      { texto: 'ZONA DE DESARROLLO PRÓXIMO\nLev Semionovich Vigotsky\n\nEL APRENDIZAJE Y EL DESARROLLO\n\nVigotsky propuso que el aprendizaje ocurre en un espacio entre dos niveles de desarrollo: el nivel de desarrollo real (lo que el niño puede hacer solo) y el nivel de desarrollo potencial (lo que puede hacer con ayuda de otro más capaz).\n\nA este espacio lo llamó Zona de Desarrollo Próximo (ZDP): "la distancia entre el nivel real de desarrollo, determinado por la capacidad de resolver independientemente un problema, y el nivel de desarrollo potencial, determinado a través de la resolución de un problema bajo la guía de un adulto o en colaboración con otro compañero más capaz."', nota: '' },
+      { texto: 'EL ROL DEL LENGUAJE\n\nPara Vigotsky, el lenguaje juega un papel fundamental en el desarrollo cognitivo. El habla privada (cuando el niño habla consigo mismo mientras resuelve un problema) no es una conducta egocéntrica sin sentido, sino una herramienta de pensamiento.\n\nEl lenguaje primero cumple una función comunicativa y social; luego se interioriza y se convierte en pensamiento verbal. Esta transición de lo social a lo individual es la clave del desarrollo: todas las funciones superiores se originan como relaciones entre seres humanos.\n\n"En el desarrollo cultural del niño, toda función aparece dos veces: primero entre personas, y luego en el interior del propio niño."', nota: '' },
+      { texto: 'IMPLICANCIAS PEDAGÓGICAS\n\nLas ideas de Vigotsky tienen consecuencias profundas para la enseñanza:\n\n• El docente debe conocer la ZDP de cada alumno para proponer desafíos que estén un poco más allá de lo que puede hacer solo.\n• El trabajo colaborativo entre pares es valioso: un alumno puede ser el "más capaz" para otro en una tarea determinada.\n• El andamiaje (scaffolding) es el apoyo temporario que brinda el docente o un compañero, que luego se retira cuando el alumno puede hacerlo solo.\n• La evaluación debe mostrar no solo lo que el alumno ya sabe, sino lo que está en proceso de aprender.', nota: '' },
+    ],
+    portada: null, creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 320, fuente: 'precargado'
+  },
+
   {
     id: 'pre_quijote',
     titulo: 'Don Quijote de la Mancha',

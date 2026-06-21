@@ -238,7 +238,8 @@
 
     <div class="tabs-subir">
       <div class="tab-subir active" id="tab-foto" onclick="switchTab('foto')">📷 Fotos</div>
-      <div class="tab-subir" id="tab-url" onclick="switchTab('url')">🌐 Desde URL</div>
+      <div class="tab-subir" id="tab-url" onclick="switchTab('url')">🌐 URL</div>
+      <div class="tab-subir" id="tab-texto" onclick="switchTab('texto')">📝 Pegar texto</div>
     </div>
 
     <!-- PANEL FOTOS -->
@@ -270,6 +271,16 @@
         <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
       </div>
       <button class="btn-proc" id="btn-proc" onclick="procesarLibro()" disabled>🔍 Reconocer texto</button>
+      <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
+    </div>
+
+    <!-- PANEL TEXTO -->
+    <div class="tab-panel" id="panel-texto">
+      <input type="text" class="input-field" id="texto-titulo" placeholder="Título del libro o material">
+      <input type="text" class="input-field" id="texto-autor" placeholder="Autor (opcional)">
+      <textarea class="input-field" id="texto-contenido" placeholder="Pegá el texto acá..." style="min-height:220px;resize:vertical;line-height:1.6"></textarea>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px" id="texto-contador">0 palabras · 0 páginas estimadas</div>
+      <button class="btn-proc" id="btn-texto-proc" onclick="importarTexto()">📝 Guardar como libro</button>
       <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
     </div>
 
@@ -781,11 +792,53 @@ function toggleDark() {
 
 // ─── TABS SUBIR ────────────────────────────────────────────────
 function switchTab(tab) {
-  ['foto','url'].forEach(t=>{
+  ['foto','url','texto'].forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('active',t===tab);
     document.getElementById('panel-'+t).classList.toggle('active',t===tab);
   });
 }
+
+// ─── IMPORTAR TEXTO PEGADO ─────────────────────────────────────
+function importarTexto() {
+  const titulo=(document.getElementById('texto-titulo').value.trim()||'Sin título');
+  const autor=document.getElementById('texto-autor').value.trim();
+  const contenido=document.getElementById('texto-contenido').value.trim();
+  if (!contenido) { toast('Pegá algún texto primero'); return; }
+  const tituloFinal=autor?`${titulo} — ${autor}`:titulo;
+  const CHARS=2500;
+  const pages=[];
+  let rem=contenido;
+  while (rem.length>0) {
+    if (rem.length<=CHARS) { pages.push(rem.trim()); break; }
+    let cut=rem.lastIndexOf('\n',CHARS);
+    if (cut<CHARS*0.5) cut=rem.lastIndexOf(' ',CHARS);
+    if (cut<1) cut=CHARS;
+    pages.push(rem.slice(0,cut).trim());
+    rem=rem.slice(cut).trim();
+  }
+  const paginas=pages.filter(p=>p.length>0).map(t=>({texto:t,nota:''}));
+  const palabras=contenido.split(/\s+/).filter(Boolean).length;
+  const libro={id:'l'+Date.now(),titulo:tituloFinal,paginas,portada:null,
+    creado:new Date().toLocaleDateString('es-AR'),ultimaPag:0,marcadores:[],palabras,fuente:'texto'};
+  saveLibro(libro).then(()=>{
+    _state.libros.unshift(libro);
+    toast(`📚 "${tituloFinal}" guardado — ${paginas.length} páginas`);
+    document.getElementById('texto-titulo').value='';
+    document.getElementById('texto-autor').value='';
+    document.getElementById('texto-contenido').value='';
+    document.getElementById('texto-contador').textContent='0 palabras · 0 páginas estimadas';
+    setTimeout(()=>goBib(),800);
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const ta=document.getElementById('texto-contenido');
+  if (ta) ta.addEventListener('input',()=>{
+    const words=ta.value.trim().split(/\s+/).filter(Boolean).length;
+    const pages=Math.max(1,Math.ceil(ta.value.length/2500));
+    document.getElementById('texto-contador').textContent=`${words} palabras · ~${pages} página${pages!==1?'s':''}`;
+  });
+});
 function urlCambia() {
   document.getElementById('url-result').classList.remove('show');
 }
