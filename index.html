@@ -480,7 +480,7 @@ function renderBiblioteca() {
     `<div class="stat-chip"><strong>${totalPags}</strong>páginas</div>`+
     (totalPalab>0?`<div class="stat-chip"><strong>${minLec} min</strong>lectura total</div>`:'');
   grid.innerHTML=libros.map(l=>{
-    const pct=l.paginas.length>1?Math.round(((l.ultimaPag||0)+1)/l.paginas.length*100):null;
+    const pct=(l.paginas.length>1&&(l.ultimaPag||0)>0)?Math.round(((l.ultimaPag||0)+1)/l.paginas.length*100):null;
     const marc=(l.marcadores||[]).length;
     const cover=l.portada?`<img src="${l.portada}" alt="">`:'<span class="libro-cover-emoji">📖</span>';
     return `<div class="libro-card" onclick="goLector('${l.id}')">
