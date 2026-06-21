@@ -1,4 +1,12 @@
 // Libros de dominio público y recursos educativos de acceso libre
+
+function _p(t1, t2, aut, bg, ac, ic) {
+  const t2line = t2 ? `<text x="18" y="237" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="white">${t2}</text>` : '';
+  const yaut = t2 ? 255 : 239;
+  const s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" width="200" height="280"><rect width="200" height="280" fill="${bg}"/><rect width="6" height="280" fill="${ac}"/><text x="100" y="155" text-anchor="middle" font-size="88" font-family="Georgia,serif" fill="${ac}" opacity=".18">${ic}</text><line x1="18" y1="202" x2="182" y2="202" stroke="${ac}" stroke-width="1.5" opacity=".6"/><text x="18" y="218" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="white">${t1}</text>${t2line}<text x="18" y="${yaut}" font-family="Georgia,serif" font-size="10" fill="${ac}">${aut}</text></svg>`;
+  return 'data:image/svg+xml,' + encodeURIComponent(s);
+}
+
 const LIBROS_PRECARGADOS = [
 
   // ── EDUCACIÓN ──────────────────────────────────────────────────────────────
@@ -15,7 +23,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'CAPÍTULO XVII — LOS FUNDAMENTOS DE LA FACILIDAD EN LA ENSEÑANZA\n\nLa naturaleza espera el momento oportuno. El jardinero no puede hacer que el árbol crezca más rápido de lo que la naturaleza permite; pero puede preparar el terreno, podar, regar.\n\nAsí el maestro: no puede forzar el desarrollo del alumno, pero puede preparar el ambiente, eliminar obstáculos y estimular el proceso natural.\n\nFUNDAMENTOS:\n1. Comenzar temprano, antes de que la mente se endurezca.\n2. Proceder de lo simple a lo complejo.\n3. Proceder de lo conocido a lo desconocido.\n4. No enseñar demasiadas cosas a la vez.\n5. Avanzar despacio pero sin pausa.', nota: '' },
       { texto: 'CAPÍTULO XVIII — LOS FUNDAMENTOS DE LA SOLIDEZ EN LA ENSEÑANZA\n\nEL ORDEN es la base de todo. Como en la naturaleza todo sigue un orden —las estaciones, el crecimiento de los seres vivos— así también en la enseñanza.\n\nNada debe enseñarse sin una razón clara. El maestro que no puede explicar por qué enseña algo, no debería enseñarlo.\n\nLa PRÁCTICA debe seguir siempre a la teoría. El alumno no aprende verdaderamente hasta que puede aplicar lo aprendido.\n\nLa REPETICIÓN es necesaria pero no debe ser mecánica: repetir comprendiendo, en contextos distintos, con aplicaciones variadas.', nota: '' },
     ],
-    portada: null, creado: 'Clásico Pedagogía 1638', ultimaPag: 0, marcadores: [], palabras: 520, fuente: 'precargado'
+    portada: _p('Didáctica Magna','','Juan Amós Comenio','#1a3a5c','#f0c040','◆'), creado: 'Clásico Pedagogía 1638', ultimaPag: 0, marcadores: [], palabras: 520, fuente: 'precargado'
   },
 
   {
@@ -30,7 +38,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'LIBRO CUARTO — ADOLESCENCIA\n\nEntramos en el orden moral; acabamos de dar un segundo nacimiento al hombre. Hasta ahora no teníamos más que un ser individual; ahora nos interesa el hombre en sus relaciones con los demás.\n\nLas primeras nociones de bien y de mal no son racionales sino afectivas. Se comprende antes de poder explicar. El corazón del niño es sensible antes de que su razón sea activa.\n\nPor eso, la educación moral debe comenzar por el ejemplo, no por el discurso. El niño que ve bondad, aprende bondad. El que ve justicia, aprende a ser justo.', nota: '' },
       { texto: 'LIBRO QUINTO — CONCLUSIONES\n\nNo sé si vuestro alumno llegará o no a ser un hombre virtuoso, sabio, feliz. Pero sé que a vuestra edad podrá juzgar, conocer, amar todo lo que es bueno, bello, amable.\n\nHe intentado describir un ser de razón. He intentado mostrar cómo este ser puede formarse. Me quedan muchas cosas por decir; pero lo esencial está dicho.\n\nQue la naturaleza sea vuestra guía. Que el respeto al niño sea vuestra regla. Que la libertad vigilada sea vuestro método. Y que el amor a la humanidad sea vuestro fin.', nota: '' },
     ],
-    portada: null, creado: 'Clásico Pedagogía 1762', ultimaPag: 0, marcadores: [], palabras: 560, fuente: 'precargado'
+    portada: _p('Emilio o De la','educación','Jean-Jacques Rousseau','#2d5016','#a8d58a','○'), creado: 'Clásico Pedagogía 1762', ultimaPag: 0, marcadores: [], palabras: 560, fuente: 'precargado'
   },
 
   {
@@ -45,7 +53,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'CAPÍTULO V — LA NATURALEZA DE LA LIBERTAD\n\nLa libertad que importa es la intelectual: la libertad de observar y juzgar que se ejerce al servicio de propósitos que son intrínsecamente valiosos.\n\nLa libertad de movimiento, de trabajo manual, de expresión no es un fin en sí misma. Es un medio para lograr la libertad del espíritu. Quien confunde las dos, pone los medios en lugar del fin.\n\nEl alumno que puede hacer lo que quiere sin dirección ni propósito no es libre: es esclavo de sus impulsos momentáneos. La verdadera libertad incluye la capacidad de elegir con criterio.', nota: '' },
       { texto: 'CAPÍTULO VI — EL PROPÓSITO Y EL PLAN\n\nEl propósito auténtico nace siempre de un impulso. Pero hay una gran diferencia entre un impulso y un propósito. Un propósito supone observación de las condiciones del ambiente; supone conocimiento de lo que ha ocurrido en situaciones similares en el pasado; supone juicio que pone en relación lo observado con lo que se recuerda.\n\nEl rol del maestro es ayudar al alumno a transformar sus impulsos en propósitos, sus deseos en planes. Y eso requiere diálogo, guía, y la creación de condiciones que hagan posible pensar.', nota: '' },
     ],
-    portada: null, creado: 'Clásico Pedagogía 1938', ultimaPag: 0, marcadores: [], palabras: 540, fuente: 'precargado'
+    portada: _p('Experiencia y','Educación','John Dewey','#1a237e','#7986cb','⊕'), creado: 'Clásico Pedagogía 1938', ultimaPag: 0, marcadores: [], palabras: 540, fuente: 'precargado'
   },
 
   {
@@ -60,7 +68,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'LA EDUCACIÓN A LO LARGO DE TODA LA VIDA\n\nLa educación a lo largo de la vida se presenta como una de las llaves de acceso al siglo XXI. Esta noción va más allá de la distinción tradicional entre educación inicial y educación permanente, y responde al reto de un mundo que cambia rápidamente.\n\nEsta necesidad persiste por lo demás en la vida adulta, a medida que van surgiendo nuevas exigencias: adaptarse a los cambios en el mercado de trabajo, comprender mejor la evolución del mundo, vivir de una manera más satisfactoria y participar activamente en la vida social y política.', nota: '' },
       { texto: 'LA EDUCACIÓN Y LA COHESIÓN SOCIAL\n\nEs preciso que la educación contribuya a la cohesión social: frente a las fuerzas centrífugas que amenazan la sociedad, la educación debe ser un factor de integración.\n\nLa escuela debe ser el lugar donde los niños aprendan a vivir juntos, a comprender al otro en su diversidad, a resolver los conflictos de manera pacífica, a valorar los derechos humanos.\n\nConclusión: la educación es la utopía necesaria. Sin ella, nada de lo que los hombres anhelan —la paz, la justicia, la prosperidad compartida— es posible.', nota: '' },
     ],
-    portada: null, creado: 'UNESCO 1996', ultimaPag: 0, marcadores: [], palabras: 510, fuente: 'precargado'
+    portada: _p('La educación','encierra un tesoro','Jacques Delors / UNESCO','#00695c','#80cbc4','★'), creado: 'UNESCO 1996', ultimaPag: 0, marcadores: [], palabras: 510, fuente: 'precargado'
   },
 
   {
@@ -75,7 +83,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'CAPÍTULO 3 — LA DIALOGICIDAD\n\nDecir la palabra verdadera es transformar el mundo. Existir humanamente es pronunciar el mundo, transformarlo. El mundo pronunciado, a su vez, retorna problematizado a los que lo pronuncian, exigiendo de ellos un nuevo pronunciamiento.\n\nLos hombres no se hacen en el silencio, sino en la palabra, en el trabajo, en la acción-reflexión.\n\nPor esto, el diálogo es una exigencia existencial. Y si el diálogo es el encuentro en que se solidarizan el reflexionar y el actuar de sus sujetos orientados hacia el mundo que debe ser transformado y humanizado, no puede reducirse a un mero depósito de ideas.', nota: '' },
       { texto: 'CAPÍTULO 4 — LA ANTIDIALOGICIDAD\n\nLa acción antidialógica es necesariamente dominadora y se divide en: conquista, dividir para oprimir, manipulación e invasión cultural.\n\nLa acción dialógica, en cambio, es: colaboración, unión, organización y síntesis cultural.\n\nConclusion de Freire: No hay palabra verdadera que no sea una unión inquebrantable entre acción y reflexión. No hay transformación sin nombrar el mundo. Y no hay nombre verdadero que no sea también acto de amor.\n\nEducar es un acto político. No hay educación neutral.', nota: '' },
     ],
-    portada: null, creado: 'Clásico Educación', ultimaPag: 0, marcadores: [], palabras: 500, fuente: 'precargado'
+    portada: _p('Pedagogía','del Oprimido','Paulo Freire','#7f1d1d','#fca5a5','▲'), creado: 'Clásico Educación', ultimaPag: 0, marcadores: [], palabras: 500, fuente: 'precargado'
   },
 
   {
@@ -90,7 +98,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'DISEÑO UNIVERSAL PARA EL APRENDIZAJE (DUA)\n\nEl DUA es un marco que guía el diseño de metas, evaluaciones, métodos y materiales educativos flexibles que pueden ser personalizados y ajustados para las necesidades individuales.\n\nTres principios del DUA:\n1. Proporcionar múltiples medios de representación (el QUÉ del aprendizaje).\n2. Proporcionar múltiples medios de acción y expresión (el CÓMO del aprendizaje).\n3. Proporcionar múltiples medios de compromiso (el POR QUÉ del aprendizaje).\n\nEl DUA no es una receta sino un enfoque: diseñar desde el principio para la diversidad, no adaptar para unos pocos.', nota: '' },
       { texto: 'EVALUACIÓN INCLUSIVA\n\nLa evaluación en un marco inclusivo implica repensar qué evaluamos, cómo evaluamos y para qué evaluamos.\n\nUna evaluación inclusiva:\n— Evalúa el progreso de cada alumno respecto a sus propias posibilidades, no solo en relación a la norma del grupo.\n— Utiliza diversidad de instrumentos: observación, portafolios, autoevaluación, evaluación entre pares.\n— Tiene en cuenta el proceso, no solo el resultado final.\n— Es formativa: orienta la enseñanza y el aprendizaje, no solo certifica.\n\nLa evaluación inclusiva es una oportunidad para aprender, no solo para ser juzgado.', nota: '' },
     ],
-    portada: null, creado: 'UNESCO', ultimaPag: 0, marcadores: [], palabras: 510, fuente: 'precargado'
+    portada: _p('Educación','Inclusiva','UNESCO','#1565c0','#90caf9','♦'), creado: 'UNESCO', ultimaPag: 0, marcadores: [], palabras: 510, fuente: 'precargado'
   },
 
   {
@@ -105,7 +113,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'IMPLICANCIAS PEDAGÓGICAS\n\nLas ideas de Vigotsky tienen consecuencias profundas para la enseñanza:\n\n• El docente debe conocer la ZDP de cada alumno para proponer desafíos que estén un poco más allá de lo que puede hacer solo: ni demasiado fácil (aburre) ni demasiado difícil (frustra).\n\n• La evaluación debe mostrar no solo lo que el alumno ya sabe, sino lo que está en proceso de aprender.\n\n• El contexto social y cultural no es un telón de fondo del aprendizaje: es parte constitutiva del mismo.\n\n• La interacción entre pares es una fuente poderosa de aprendizaje.', nota: '' },
       { texto: 'VIGOTSKY Y LA EDUCACIÓN ESPECIAL\n\nVigotsky fue uno de los primeros en estudiar el desarrollo de niños con discapacidades desde una perspectiva no deficitaria.\n\nSu idea central: la discapacidad no determina el destino de un niño. Lo que importa es el camino que se le ofrece para el desarrollo.\n\n"El niño con discapacidad no es simplemente un niño menos desarrollado: es un niño que se ha desarrollado de otra manera."\n\nEsto fue revolucionario en su época y sigue siendo la base de la educación inclusiva actual: partir de las capacidades, no de las limitaciones.', nota: '' },
     ],
-    portada: null, creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 520, fuente: 'precargado'
+    portada: _p('Pensamiento y','Lenguaje','Lev Vigotsky','#4a148c','#ce93d8','△'), creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 520, fuente: 'precargado'
   },
 
   {
@@ -119,7 +127,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'EL ROL DEL DOCENTE SEGÚN PIAGET\n\nPara Piaget, el docente no debe ser un transmisor de conocimientos sino un facilitador del desarrollo.\n\n"El objetivo principal de la educación es crear hombres capaces de hacer cosas nuevas, no simplemente de repetir lo que otras generaciones han hecho."\n\nEl docente piagetiano:\n— Crea ambientes ricos en materiales y situaciones para explorar.\n— Formula preguntas que generan conflicto cognitivo.\n— Deja tiempo para que el alumno elabore sus propias conclusiones.\n— Evalúa el proceso de razonamiento, no solo el resultado.', nota: '' },
       { texto: 'CRÍTICAS Y ACTUALIZACIONES\n\nLa teoría de Piaget ha sido muy influyente pero también ha recibido críticas:\n\n— Subestimó las capacidades de los niños pequeños.\n— Las etapas no son tan rígidas ni universales como propuso.\n— No consideró suficientemente el rol de la cultura y el contexto social (aquí es donde Vigotsky completa a Piaget).\n\nLa síntesis actual: el desarrollo cognitivo es a la vez un proceso interno de construcción (Piaget) y un proceso social y cultural (Vigotsky). Ambas perspectivas son necesarias para comprender cómo aprenden los niños.', nota: '' },
     ],
-    portada: null, creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 480, fuente: 'precargado'
+    portada: _p('Desarrollo','Cognitivo','Jean Piaget','#c2410c','#ffb74d','●'), creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 480, fuente: 'precargado'
   },
 
   {
@@ -133,7 +141,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'IMPLICANCIAS PARA EL AULA\n\nSi hay múltiples tipos de inteligencia, entonces:\n\n— No existe "el alumno inteligente" y "el alumno que no puede". Existen alumnos con distintos perfiles de inteligencia.\n\n— Un alumno que fracasa en lengua y matemática puede tener una inteligencia musical o corporal muy desarrollada.\n\n— La escuela tradicional valora casi exclusivamente las inteligencias lingüística y lógico-matemática. Una escuela que valore la diversidad aprovecha todos los talentos.\n\n— La enseñanza puede enriquecerse presentando los contenidos de múltiples maneras: con movimiento, música, imágenes, debates.', nota: '' },
       { texto: 'CÓMO APLICARLO EN EL AULA\n\nEstrategias prácticas:\n\n• Observar a los alumnos en distintas actividades para identificar sus puntos fuertes.\n• Diseñar actividades variadas que permitan a distintos tipos de inteligencia brillar.\n• Evaluar de maneras diversas: no solo prueba escrita, también exposición oral, proyecto, producción artística.\n• Usar la inteligencia fuerte de un alumno como puerta de entrada para trabajar áreas más débiles.\n• Crear momentos de trabajo en equipo donde distintos talentos se complementen.\n\nLa teoría de las inteligencias múltiples no es una receta sino una invitación a ver a cada alumno como un ser complejo y múltiple.', nota: '' },
     ],
-    portada: null, creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 470, fuente: 'precargado'
+    portada: _p('Inteligencias','Múltiples','Howard Gardner','#1b5e20','#81c784','★'), creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 470, fuente: 'precargado'
   },
 
   {
@@ -147,7 +155,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'LOS ORGANIZADORES PREVIOS\n\nAusubel propuso el uso de "organizadores previos": materiales introductorios que se presentan antes del contenido y que ayudan al alumno a activar o construir los conocimientos previos necesarios.\n\nTipos de organizadores previos:\n— Expositivos: cuando el alumno no tiene conocimientos previos relacionados. Introducen conceptos nuevos de manera general antes de los detalles.\n— Comparativos: cuando el alumno sí tiene conocimientos previos. Establecen semejanzas y diferencias entre lo nuevo y lo conocido.\n\nEl mapa conceptual es una herramienta que puede funcionar como organizador previo y también como instrumento de evaluación.', nota: '' },
       { texto: 'IMPLICANCIAS PARA LA ENSEÑANZA\n\nLa teoría de Ausubel sugiere que:\n\n1. Antes de enseñar algo nuevo, hay que explorar qué saben los alumnos sobre ese tema. Las ideas previas —aunque incorrectas— son el punto de partida del aprendizaje.\n\n2. Hay que presentar el contenido de manera organizada y relacionada, no como datos sueltos.\n\n3. Los ejemplos son fundamentales: conectan el concepto abstracto con experiencias concretas del alumno.\n\n4. La evaluación debe verificar si el alumno comprendió y puede relacionar, no solo si memorizó.\n\n5. El repaso debe ser espaciado y con variación: volver a los contenidos en distintos contextos consolida el aprendizaje significativo.', nota: '' },
     ],
-    portada: null, creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 490, fuente: 'precargado'
+    portada: _p('Aprendizaje','Significativo','David Ausubel','#006064','#4dd0e1','◇'), creado: 'Psicología Educacional', ultimaPag: 0, marcadores: [], palabras: 490, fuente: 'precargado'
   },
 
   {
@@ -162,7 +170,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'EL TRABAJO CON FAMILIAS\n\nLa atención a la diversidad requiere el trabajo conjunto entre escuela y familia.\n\nBuenas prácticas:\n• Entrevistas periódicas para compartir observaciones y acordar estrategias.\n• Comunicación clara y respetuosa, evitando el lenguaje técnico que excluye.\n• Involucrar a la familia en la elaboración de las adaptaciones.\n• Informar regularmente sobre los progresos, no solo sobre las dificultades.\n• Reconocer que la familia conoce a su hijo de maneras que la escuela no puede.\n\nLa familia y la escuela son aliadas, no adversarias. Cuando trabajan juntas, el alumno gana.', nota: '' },
       { texto: 'EVALUACIÓN EN CONTEXTOS DIVERSOS\n\nUna evaluación que atiende la diversidad:\n\n— Evalúa el progreso de cada alumno respecto a sus propias posibilidades.\n— Usa múltiples instrumentos y formatos.\n— Incluye instancias de autoevaluación y coevaluación.\n— Se realiza en distintos momentos (diagnóstica, formativa, sumativa).\n— Tiene en cuenta el contexto del alumno.\n\nLa calificación no es el único objetivo de la evaluación. La evaluación bien entendida es una conversación entre docente y alumno sobre el aprendizaje: qué se logró, qué falta, cómo seguir.', nota: '' },
     ],
-    portada: null, creado: 'Recursos Educativos', ultimaPag: 0, marcadores: [], palabras: 520, fuente: 'precargado'
+    portada: _p('Atención a la','Diversidad','UNESCO / OEI','#880e4f','#f48fb1','●'), creado: 'Recursos Educativos', ultimaPag: 0, marcadores: [], palabras: 520, fuente: 'precargado'
   },
 
   {
@@ -177,7 +185,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'VIOLENCIA ESCOLAR: PREVENCIÓN Y RESPUESTA\n\nLa violencia escolar incluye:\n— Agresión física, verbal o psicológica entre pares.\n— Acoso escolar (bullying): agresión sistemática con desequilibrio de poder.\n— Ciberbullying: acoso a través de medios digitales.\n— Violencia de adultos hacia alumnos.\n\nPrevención:\n• Construir un clima escolar de respeto y pertenencia.\n• Trabajar explícitamente las habilidades socioemocionales.\n• Establecer protocolos claros de intervención.\n• Involucrar a las familias.\n\nRespuesta: ante situaciones de violencia, actuar rápido, escuchar a todas las partes y proteger a quien fue dañado.', nota: '' },
       { texto: 'HABILIDADES SOCIOEMOCIONALES\n\nLas habilidades socioemocionales son capacidades que permiten a las personas relacionarse de manera efectiva, gestionar sus emociones y tomar decisiones responsables.\n\nHabilidades clave:\n— Autoconciencia: conocer las propias emociones y pensamientos.\n— Autogestión: regular las emociones y el comportamiento.\n— Conciencia social: empatizar con los demás, comprender perspectivas diferentes.\n— Habilidades relacionales: comunicarse, cooperar, resolver conflictos.\n— Toma de decisiones responsable.\n\nEstas habilidades se enseñan y se aprenden. La escuela es un lugar privilegiado para desarrollarlas, especialmente cuando los docentes las modelan en su propio comportamiento.', nota: '' },
     ],
-    portada: null, creado: 'Recursos Educativos', ultimaPag: 0, marcadores: [], palabras: 530, fuente: 'precargado'
+    portada: _p('Convivencia','Escolar','UNESCO / OEI','#33691e','#aed581','♡'), creado: 'Recursos Educativos', ultimaPag: 0, marcadores: [], palabras: 530, fuente: 'precargado'
   },
 
   {
@@ -191,7 +199,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'FAMILIAS EN SITUACIÓN DE VULNERABILIDAD\n\nAlgunas familias tienen mayores dificultades para involucrarse en la escuela:\n— Familias con trabajo en horario escolar o múltiples empleos.\n— Familias con experiencias propias negativas en la escuela.\n— Familias de contextos migrantes o culturalmente diferentes.\n— Familias en situación de crisis (económica, de salud, violencia doméstica).\n\nLa escuela puede:\n• Ofrecer distintos horarios y modalidades de reunión.\n• Ir al encuentro de las familias (visitas domiciliarias).\n• Evitar el lenguaje que culpabiliza.\n• Reconocer el esfuerzo de cada familia, cualquiera sea su situación.', nota: '' },
       { texto: 'EL DOCENTE COMO PUENTE\n\nEl docente ocupa una posición privilegiada para tender puentes entre la escuela y las familias.\n\nPara construir esa relación:\n• Conocer las historias familiares de sus alumnos (con discreción).\n• Valorar el capital cultural de cada familia, aunque sea diferente al escolar.\n• Compartir lo que observa en el aula de manera empática y constructiva.\n• Involucrar a las familias en actividades significativas del aula.\n• Ser el referente al que la familia puede recurrir con confianza.\n\nUna familia que confía en el docente de su hijo es un aliado poderoso para el aprendizaje.', nota: '' },
     ],
-    portada: null, creado: 'Recursos Educativos', ultimaPag: 0, marcadores: [], palabras: 480, fuente: 'precargado'
+    portada: _p('Familias','y Escuelas','UNESCO / OEI','#bf360c','#ff8a65','◆'), creado: 'Recursos Educativos', ultimaPag: 0, marcadores: [], palabras: 480, fuente: 'precargado'
   },
 
   // ── LITERATURA ARGENTINA ───────────────────────────────────────────────────
@@ -205,7 +213,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'Tenía en su casa una ama que pasaba de los cuarenta, y una sobrina que no llegaba a los veinte, y un mozo de campo y plaza que así ensillaba el rocín como tomaba la podadera. Frisaba la edad de nuestro hidalgo con los cincuenta años; era de complexión recia, seco de carnes, enjuto de rostro; gran madrugador y amigo de la caza.\n\nQuieren decir que tenía el sobrenombre de Quijada o Quesada, que en esto hay alguna diferencia en los autores que deste caso escriben; aunque por conjeturas verosímiles se deja entender que se llamaba Quijana.', nota: '' },
       { texto: 'Es, pues, de saber que este sobredicho hidalgo, los ratos que estaba ocioso —que eran los más del año— se daba a leer libros de caballerías con tanta afición y gusto, que olvidó casi de todo punto el ejercicio de la caza y aun la administración de su hacienda.\n\nEn resolución, él se enfrascó tanto en su lectura, que se le pasaban las noches leyendo de claro en claro, y los días de turbio en turbio; y así, del poco dormir y del mucho leer, se le secó el cerebro de manera que vino a perder el juicio.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 280, fuente: 'precargado'
+    portada: _p('Don Quijote','de la Mancha','Miguel de Cervantes','#4e342e','#d7ccc8','◆'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 280, fuente: 'precargado'
   },
 
   {
@@ -217,7 +225,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'Vengan santos milagrosos,\nvengan todos en mi ayuda,\nque la lengua se me añuda\ny se me turba la vista;\npido a mi Dios que me asista\nen una ocasión tan ruda.\n\nMas ande otro criollo pasa\nMartín Fierro ha de pasar;\nnada lo hace recular\nni las fantasmas lo espantan;\ny dende que todos cantan\nyo también quiero cantar.\n\nCantando me he de morir,\ncantando me han de enterrar,\ny cantando he de llegar\nal pie del Eterno Padre.', nota: '' },
       { texto: 'Soy gaucho, y entiendaló\ncomo mi lengua lo explica:\npara mí la tierra es chica\ny pudiera ser mayor;\nni la víbora me pica\nni quema mi frente el sol.\n\nNací como nace el peje\nen el fondo de la mar;\nnaides me puede quitar\naquello que Dios me dio:\nlo que al mundo truje yo\ndel mundo lo he de llevar.\n\nMi gloria es vivir tan libre\ncomo el pájaro del cielo;\nno hago nido en este suelo\nande hay tanto que sufrir;\ny naides me ha de seguir\ncuando yo remuento el vuelo.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 220, fuente: 'precargado'
+    portada: _p('Martín Fierro','','José Hernández','#92400e','#fcd34d','◆'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 220, fuente: 'precargado'
   },
 
   {
@@ -229,7 +237,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'El hombre de la ciudad viste el traje europeo, vive de la vida civilizada tal como la conocemos en todas partes. Saliendo del recinto de la ciudad, todo cambia de aspecto: el hombre de campo lleva otro traje, que llamaré americano; sus hábitos de vida son diferentes; sus necesidades, peculiares y limitadas; parecen dos sociedades distintas, dos pueblos extraños uno al otro.\n\nEsta dicotomía —ciudad y campo, civilización y barbarie— es el eje sobre el que gira toda la historia argentina del siglo XIX, según Sarmiento.', nota: '' },
       { texto: 'EL GAUCHO\n\nEl gaucho es el producto natural de la pampa. Vive en ella, la conoce como nadie, se mueve en ella con la libertad y la gracia del que habita su propio elemento.\n\nPero esa libertad que el gaucho encarna, esa desconfianza de la ley y la ciudad, esa violencia que brota cuando se siente amenazado, son también —dice Sarmiento— las fuerzas que impiden el progreso.\n\nFacundo Quiroga es, para Sarmiento, la encarnación de esa barbarie: un caudillo surgido de la pampa que resume todas las contradicciones de la Argentina de su tiempo.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 280, fuente: 'precargado'
+    portada: _p('Facundo','Civil. y Barbarie','D. F. Sarmiento','#78350f','#d6d3d1','⊕'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 280, fuente: 'precargado'
   },
 
   {
@@ -241,7 +249,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'El Matadero de la Convalecencia o del Alto, sito en las quintas al sur de la ciudad, es una gran playa en forma rectangular. Esta playa, con declive al sur, está cortada por un zanjón labrado por la corriente de las aguas pluviales, en cuyos bordes laterales se muestran innumerables cuevas de ratones.\n\nEra el Matadero de Buenos Aires el lugar donde, durante el gobierno de Rosas, se concentraba lo más brutal y violento del orden social. Echeverría lo convierte en metáfora del régimen: un espacio donde la barbarie política se exhibe sin disimulo.', nota: '' },
       { texto: 'El cuento termina con la muerte del joven unitario que se niega a humillarse ante los federales del matadero. Su muerte es la del que prefiere morir libre antes que vivir sometido.\n\n"Primero degollarme que desnudarme, infame canalla."\n\nEcheverría escribió El Matadero en secreto, bajo la persecución de Rosas. No pudo publicarlo en vida. Es el primer cuento argentino y uno de los textos fundacionales de la literatura latinoamericana. En él conviven el realismo crudo y la denuncia política.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 280, fuente: 'precargado'
+    portada: _p('El Matadero','','Esteban Echeverría','#1c1c1c','#d4d4d8','■'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 280, fuente: 'precargado'
   },
 
   {
@@ -253,7 +261,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'La casa de Amalia se convierte en un refugio frente al terror rosista. Allí, Eduardo y Amalia se enamoran mientras afuera el régimen aprieta sus garras sobre Buenos Aires.\n\nMármol construye una novela de amor, acción y denuncia política. Amalia es, a la vez, una historia de amor romántico y un documento histórico sobre la época de Rosas. El autor escribía por entregas en el periódico La Semana, en Montevideo, exiliado como tantos intelectuales argentinos de la época.\n\nLa obra es fundacional en la literatura argentina: establece los géneros del romanticismo y la novela política que marcarán la literatura del siglo XIX.', nota: '' },
       { texto: 'DANIEL BELLO Y AMALIA\n\nDaniel Bello es el personaje más complejo de la novela: un hombre que simula adherir al rosismo para sobrevivir y proteger a sus amigos unitarios, moviéndose en las sombras de la sociedad porteña.\n\nAmalia, en cambio, es la heroína romántica: valiente, leal, capaz de arriesgar su vida por amor y por principios.\n\nLa novela termina trágicamente, como corresponde al romanticismo: el amor no puede sobrevivir al terror político. Eduardo y Amalia son asesinados por la Mazorca en la noche de su boda.\n\nAmalia es una declaración de que no hay vida privada posible bajo la tiranía.', nota: '' },
     ],
-    portada: null, creado: 'Clásico Argentino', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
+    portada: _p('Amalia','','José Mármol','#6a1b9a','#ce93d8','♡'), creado: 'Clásico Argentino', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
   },
 
   {
@@ -266,7 +274,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'LA ABEJA HARAGANA\n\nHabía una vez en una colmena una abeja que no quería trabajar. Mientras las otras abejas salían temprano a buscar miel, ella se quedaba durmiendo.\n\nUn día la reina la llamó y le dijo: "Si no trabajas, no podrás quedarte en la colmena. Esta noche, cuando las puertas se cierren, quedarás afuera."\n\nLa abeja haragana no le dio importancia. Pero esa noche, cuando quiso entrar, las puertas estaban cerradas. Entonces comprendió su error. Tuvo que pasar la noche sola en una flor.\n\nA la mañana siguiente, la abeja haragana comenzó a trabajar como las demás. Aprendió que en la comunidad, cada uno debe hacer su parte.', nota: '' },
       { texto: 'EL LORO PELADO\n\nHabía una vez un loro que tenía las plumas más brillantes de la selva. Tanto le gustaba exhibirlas que se pasaba el día peinándoselas y mirándose en el río.\n\nUn día hubo un incendio en la selva. Todos los animales huyeron, pero el loro se quedó mirándose en el reflejo del agua. Cuando quiso escapar, el fuego ya era muy grande. Voló entre las llamas y se salvó, pero perdió todas sus plumas.\n\nDesde entonces el loro fue "el loro pelado". Se sentía muy avergonzado. Pero los otros animales le dijeron: "No importa cómo te veas por fuera, sino lo que eres por dentro."', nota: '' },
     ],
-    portada: null, creado: 'Clásico Argentino', ultimaPag: 0, marcadores: [], palabras: 380, fuente: 'precargado'
+    portada: _p('Cuentos de','la Selva','Horacio Quiroga','#2e7d32','#a5d6a7','○'), creado: 'Clásico Argentino', ultimaPag: 0, marcadores: [], palabras: 380, fuente: 'precargado'
   },
 
   {
@@ -278,7 +286,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'RIMA IV\n\nNo digáis que, agotado su tesoro,\nde asuntos falta, enmudeció la lira;\npodrá no haber poetas; pero siempre\nhabrá poesía.\n\nMientras las ondas de la luz al beso\npalpiten encendidas;\nmientras el sol las desgarradas nubes\nde fuego y oro vista;\nmientras el aire en su regazo lleve\nperfumes y armonías;\nmientras haya en el mundo primavera,\n¡habrá poesía!\n\nRIMA XXI\n\n¿Qué es poesía? —dices mientras clavas\nen mi pupila tu pupila azul—.\n¿Qué es poesía? ¿Y tú me lo preguntas?\nPoesía... eres tú.', nota: '' },
       { texto: 'LA LEYENDA DE LOS OJOS VERDES\n\nHace mucho tiempo que tenía ganas de escribir algo con este título. Hoy, que se me ha presentado ocasión, lo hago con placer. La razón es que nada me seduce como lo poético, lo indefinido, lo vago.\n\nFernando de Argensola halló, un día de verano, a orillas de un lago, a una mujer de inusitada belleza. Sus ojos eran de un color que Fernando nunca antes había visto: el color del agua profunda, verde, transparente, luminosa.\n\nLa joven lo miró con una fijeza extraña, y una sonrisa apenas perceptible se dibujó en sus labios. Desde ese momento, Fernando no pudo olvidarla. Volvió al lago una y otra vez, buscando esos ojos verdes que lo habían atrapado para siempre.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 310, fuente: 'precargado'
+    portada: _p('Rimas','y Leyendas','Gustavo A. Bécquer','#ad1457','#f48fb1','♫'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 310, fuente: 'precargado'
   },
 
   {
@@ -290,7 +298,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'SEMPRONIO.— ¿Qué es esto? ¿Qué cosa puede ser ésta tan grave que haya echo perder el color que en la cara traes?\nCALISTO.— ¡Vete de aquí! No me hables; si no, quizá ante del tiempo de mi rabiosa muerte mis manos causarán tu arrebatado fin.\nSEMPRONIO.— Iré, pues solo quieres penar. ¡Oh soberano Dios! ¡Cuán altos son tus misterios! ¡Cuánta premia pusiste en el amor!\n\nLa Celestina, la vieja hechicera, entra en escena. Es ella quien mediará entre Calisto y Melibea, movida por el dinero. Su figura domina la obra: astuta, pragmática, sin escrúpulos, pero dotada de una vitalidad y una sabiduría que la convierten en uno de los personajes más fascinantes de la literatura española.', nota: '' },
       { texto: 'CELESTINA.— Todo lo puedo, todo lo sé, todo lo entiendo. Esta vieja que aquí ves ha hecho temblar a los más poderosos de esta ciudad. Con mi lengua y mis artes, he unido lo que parecía imposible unir.\n\nLa Celestina es la primera gran obra de la literatura española que no es ni poesía épica ni teatro sacro: es el retrato de una sociedad, con sus hipocresías, sus deseos, sus miedos y sus vicios.\n\nEl final es trágico para todos: Celestina muere a manos de sus cómplices; Calisto cae de una escalera; Melibea se arroja desde una torre. El amor que prometía todo acaba destruyendo todo.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
+    portada: _p('La Celestina','','Fernando de Rojas','#6d4c41','#d7ccc8','◆'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
   },
 
   {
@@ -302,7 +310,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'Mi viuda madre, como sin marido y sin abrigo se viese, determinó arrimarse a los buenos por ser uno dellos, y vínose a vivir a la ciudad y alquiló una casilla y metióse a guisar de comer a ciertos estudiantes.\n\nElla y un hombre moreno de aquellos que las bestias curaban vinieron en conocimiento. Éste algunas veces se venía a nuestra casa y se iba a la mañana; otras veces de día llegaba a la puerta en achaque de comprar huevos y entrábase en casa.\n\nAl principio de su entrada pesábame a mí y habíale mala voluntad, viendo las colaciones que a mi madre hacía; mas de que vi que con su venida mejoraba el comer, fuile queriendo bien.', nota: '' },
       { texto: 'EL CIEGO\n\nFue mi madre a un hidalgo que estaba en la Iglesia Mayor, que se llamaba el señor ciego. Este ciego me tomó por suyo. Como este Lázaro vio que tenía habilidad, hízome su mozo.\n\nEl ciego era astuto y lleno de avisos. Si topaba con algún hombre que le pedía se sirviese de él para lo que le mandase, él le respondía: "¡Tomaremos que servís para poco!"\n\nLo que yo sufrí de aquel mal ciego, Dios se lo perdone; que con todo su saber me mataba de hambre. Si no fuera por ciertas cositas, habilidades que aprendí para comer, muchas veces me muriera de hambre.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
+    portada: _p('Lazarillo','de Tormes','Anónimo','#37474f','#b0bec5','◇'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
   },
 
   {
@@ -314,7 +322,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'ACTO SEGUNDO — ESCENA SEGUNDA — EL BALCÓN\n\nROMEO.— [Mirando hacia la ventana] ¿Qué luz es ésa que se abre paso por aquella ventana? Es el Oriente, y Julieta es el sol. ¡Alza, bello sol! Es mi dama, ¡oh!, es mi amor. ¡Ojalá lo supiera ella!\n\nJULIETA aparece en el balcón.\n\nROMEO.— Dos de las más bellas estrellas del cielo, teniendo que ausentarse, ruegan a sus ojos que brillen en su lugar hasta que vuelvan.\n\nJULIETA.— ¡Ay de mí!\nROMEO.— Habla. ¡Oh! habla otra vez, ángel resplandeciente.', nota: '' },
       { texto: 'JULIETA.— ¡Oh Romeo, Romeo! ¿Por qué eres tú Romeo? Reniega de tu padre y niega tu nombre; o, si no quieres, júrame tan solo que me amas, y dejaré yo de ser una Capuleto.\n\nROMEO.— [Aparte] ¿Le hablaré, o esperaré oír más?\n\nJULIETA.— Solo tu nombre es mi enemigo. Tú eres tú mismo, seas o no Montesco. ¿Qué es Montesco? No es ni mano, ni pie, ni brazo, ni rostro, ni parte alguna del cuerpo humano. ¡Oh, toma otro nombre! ¿Qué tiene un nombre? Lo que llamamos rosa con cualquier otro nombre olería igualmente dulce.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
+    portada: _p('Romeo y Julieta','','William Shakespeare','#1a237e','#9fa8da','♡'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
   },
 
   {
@@ -326,7 +334,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'No sé decir bien cómo entré en ella,\ntan lleno estaba de sueño en aquel momento\nen que abandoné el verdadero camino.\n\nPero cuando llegué al pie de una colina,\nalcé los ojos y vi sus hombros\nvestidos ya con los rayos del planeta\nque guía a los hombres por todo camino recto.\n\nEntonces se calmó un poco el miedo\nque había durado en el lago de mi corazón\nla noche que pasé con tanta angustia.\n\nY como el que con aliento jadeante\nha salido del mar a la orilla,\nse vuelve hacia el agua peligrosa y la contempla,\nasí mi ánimo, que aún huía,\nse volvió a mirar el paso que jamás dejó vivo a nadie.', nota: '' },
       { texto: 'CANTO TERCERO — LA PUERTA DEL INFIERNO\n\nPOR MÍ SE VA A LA CIUDAD DEL LLANTO,\nPOR MÍ SE VA AL DOLOR ETERNO,\nPOR MÍ SE VA HACIA LA GENTE PERDIDA.\n\nLA JUSTICIA MOVIÓ A MI EXCELSO HACEDOR;\nME HICIERON LA DIVINA POTESTAD,\nLA SUMA SABIDURÍA Y EL PRIMER AMOR.\n\nANTES QUE YO NO HABÍA COSAS CREADAS\nSINO ETERNAS, Y YO ETERNO DURO.\n¡VOSOTROS QUE ENTRÁIS, ABANDONAD TODA ESPERANZA!\n\nMaestro, estas palabras son duras para mí.\nY él, como hombre experimentado, me respondió:\nAquí conviene dejar todo recelo;\nconviene que aquí muera toda cobardía.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
+    portada: _p('La Divina','Comedia','Dante Alighieri','#311b92','#b39ddb','∞'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
   },
 
   {
@@ -338,7 +346,7 @@ const LIBROS_PRECARGADOS = [
       { texto: '¿Cuál de los dioses los puso en esa discordia y querella?\nEl hijo de Leto y de Zeus, Apolo. Pues indignado con el rey,\nsuscitó en el ejército una maligna epidemia\ny los hombres perecían, porque el Atrida había afrentado\na Crises, sacerdote de Apolo.\n\nEste había llegado a las veloces naves de los aqueos\na rescatar a su hija y traía un cuantioso rescate,\nostentando las insignias de Apolo el que hiere de lejos\nen el cetro de oro y la cinta sagrada.', nota: '' },
       { texto: 'Atridas y demás aqueos de hermosas grebas:\nos quieran los dioses que moran en los palacios del Olimpo\nconcederos destruir la ciudad de Príamo y regresar felizmente a casa;\npero liberad a mi hija y aceptad el rescate,\nrespetando al hijo de Zeus, Apolo el que hiere de lejos.\n\nEntonces todos los aqueos asintieron con aclamaciones,\nrespetando al sacerdote y aceptando el glorioso rescate.\nPero no fue del agrado del Atrida Agamenón,\nque lo despidió duramente y añadió graves palabras:\nNo te encuentre yo, anciano, junto a las cóncavas naves,\nni ahora mientras te demoras ni si vuelves de nuevo.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 290, fuente: 'precargado'
+    portada: _p('La Ilíada','','Homero','#4a3728','#f9a825','★'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 290, fuente: 'precargado'
   },
 
   {
@@ -350,7 +358,7 @@ const LIBROS_PRECARGADOS = [
       { texto: 'Es imposible decir cómo la idea entró primeramente en mi cerebro; pero, una vez concebida, me obsesionó noche y día. No había objeto. No había pasión. Amaba al viejo. Nunca me había hecho ningún mal. Creo que fue su ojo —el ojo de un buitre, un ojo pálido azulado con una película sobre él. Cada vez que se posaba sobre mí, se me helaba la sangre, y así, lentamente, se me fue metiendo en la cabeza la idea de quitarle la vida al viejo para librarme para siempre de aquel ojo.', nota: '' },
       { texto: 'LA MÁSCARA DE LA MUERTE ROJA\n\nLa Muerte Roja había devastado el país durante largo tiempo. Jamás pestilencia alguna fue tan fatal ni tan espantosa. La sangre era su sello distintivo y su emblema.\n\nSentíanse agudos dolores, un vértigo repentino y luego brotaba un sudor abundante por los poros, y de esto resultaba la disolución del ser. Las manchas escarlatas en el cuerpo de la víctima eran el bando que la ponía fuera del socorro y de la simpatía de sus semejantes.\n\nSin embargo, el Príncipe Próspero era feliz e intrépido y sagaz. Cuando sus dominios quedaron semidespoblados, convocó a un millar de caballeros y damas para recluirse en una de sus abadías.', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
+    portada: _p('Cuentos','','Edgar Allan Poe','#1e1b4b','#a5b4fc','◆'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
   },
 
   {
@@ -362,7 +370,7 @@ const LIBROS_PRECARGADOS = [
       { texto: '"He aquí que estoy harto de mi sabiduría, como la abeja que ha recogido demasiada miel; necesito manos que se extiendan hacia mí.\n\nQuisiera regalar y distribuir hasta que los sabios de entre los hombres hayan vuelto a gozarse en su locura y los pobres en su riqueza.\n\nPara ello debo descender a las profundidades: como lo haces tú al atardecer cuando te hundes detrás del mar y llevas tu luz incluso al mundo subterráneo, ¡astro exuberante!\n\nComo tú, debo declinar, como dicen los hombres a quienes quiero bajar."', nota: '' },
       { texto: 'DE LAS TRES TRANSFORMACIONES\n\nTres transformaciones del espíritu os menciono:\ncómo el espíritu se convierte en camello,\nel camello en león,\ny el león, por último, en niño.\n\nEl espíritu-camello carga con lo más pesado, lo que más duele, lo que más exige. El espíritu-camello dice: "Sí, lo cargo."\n\nEl espíritu-león conquista la libertad: dice "No" a los viejos valores. Pero no puede crear valores nuevos.\n\nEl espíritu-niño crea valores nuevos: es inocencia, olvido, un nuevo comienzo, un juego, una rueda que gira por sí misma.\n\nPara el juego del crear, hermanos míos, se necesita un santo decir "Sí".', nota: '' },
     ],
-    portada: null, creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
+    portada: _p('Así habló','Zaratustra','Friedrich Nietzsche','#450a0a','#fca5a5','◇'), creado: 'Clásico', ultimaPag: 0, marcadores: [], palabras: 300, fuente: 'precargado'
   },
 
 ];
