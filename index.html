@@ -141,9 +141,9 @@
 
   .lector-body{flex:1;overflow-y:auto;background:var(--page-bg);padding:0}
   .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;min-height:100%;
-    padding:52px 60px calc(140px + env(safe-area-inset-bottom));
+    padding:52px 60px 200px;
     box-shadow:0 0 60px rgba(0,0,0,0.18);will-change:transform,opacity}
-  @media(max-width:520px){.lector-page{padding:32px 24px calc(140px + env(safe-area-inset-bottom))}}
+  @media(max-width:520px){.lector-page{padding:32px 24px 200px}}
   .lector-body{overflow-x:hidden}
   .nota-indicator{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;
     font-size:11px;padding:3px 12px;margin-bottom:20px;font-family:var(--font-ui);cursor:pointer}
@@ -162,7 +162,7 @@
     padding:14px;background:var(--card);white-space:pre-wrap;word-break:break-word}
 
   .lector-footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
-    border-top:1px solid var(--border);padding:8px 10px;padding-bottom:max(8px,env(safe-area-inset-bottom));
+    border-top:1px solid var(--border);padding:10px 10px max(64px,env(safe-area-inset-bottom));
     display:flex;align-items:center;gap:6px;box-shadow:0 -2px 12px rgba(0,0,0,0.08)}
   .btn-nav{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--border);
     color:var(--text);font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
