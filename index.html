@@ -14,12 +14,14 @@
     --bg:#f5f0e8;--bg2:#ede8df;--card:#fff;--text:#2c2416;--text2:#5a4e3a;
     --text3:#9a8e7a;--accent:#c9832a;--accent2:#e8b86d;--border:#ddd5c4;
     --shadow:0 2px 12px rgba(0,0,0,0.08);
-    --font-read:'Georgia','Times New Roman',serif;
+    --font-read:'Georgia','Palatino Linotype','Book Antiqua',Palatino,serif;
     --font-ui:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     --font-size:19px;--line-height:1.85;
+    --page-bg:#d6cfc4;--page-card:#faf6ef;
   }
   .dark {
     --bg:#1a1a2e;--bg2:#16213e;--card:#0f3460;--text:#e8dcc8;--text2:#c4b49a;
+    --page-bg:#0b0a08;--page-card:#1c1812;
     --text3:#7a6e5e;--accent:#e8b86d;--accent2:#d4a55a;--border:#2a3a5a;
     --shadow:0 2px 16px rgba(0,0,0,0.4);
   }
@@ -137,13 +139,25 @@
   .search-result-item em{color:var(--accent);font-style:normal;font-weight:700}
   .search-empty{font-size:13px;color:var(--text3);padding:8px 0;text-align:center}
 
-  .lector-body{flex:1;overflow-y:auto;padding:20px 20px 110px;max-width:720px;margin:0 auto;width:100%}
+  .lector-body{flex:1;overflow-y:auto;background:var(--page-bg);padding:0}
+  .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;min-height:100%;
+    padding:52px 60px 140px;box-shadow:0 0 60px rgba(0,0,0,0.18)}
+  @media(max-width:520px){.lector-page{padding:32px 24px 140px}}
   .nota-indicator{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;
-    font-size:11px;padding:3px 12px;margin-bottom:14px;font-family:var(--font-ui);cursor:pointer}
-  .lector-texto{font-family:var(--font-read);font-size:var(--font-size);line-height:var(--line-height);
-    color:var(--text);text-align:justify;white-space:pre-wrap;word-break:break-word;outline:none}
+    font-size:11px;padding:3px 12px;margin-bottom:20px;font-family:var(--font-ui);cursor:pointer}
+  .lector-texto{font-family:var(--font-read);font-size:var(--font-size);line-height:1.95;
+    color:var(--text);text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
+    outline:none;hyphens:auto;word-spacing:0.04em}
+  .lector-texto .lector-p{text-align:justify;margin:0 0 0.9em}
+  .lector-texto .lector-indent{text-indent:2.2em;margin-top:0;margin-bottom:0}
+  .lector-texto .lector-h{font-family:var(--font-read);font-size:0.78em;font-weight:700;
+    letter-spacing:0.16em;text-align:center;color:var(--accent);
+    margin:2.4em 0 1.8em;line-height:1.5;text-transform:uppercase}
+  .lector-texto .lector-verso{text-align:left;padding-left:2.2em;
+    border-left:3px solid var(--border);margin:1.4em 0;line-height:1.9;
+    font-style:italic;color:var(--text2)}
   .lector-texto[contenteditable=true]{border:2px solid var(--accent);border-radius:8px;
-    padding:12px;background:var(--card)}
+    padding:14px;background:var(--card);white-space:pre-wrap;word-break:break-word}
 
   .lector-footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
     border-top:1px solid var(--border);padding:8px 10px;display:flex;align-items:center;
@@ -321,9 +335,11 @@
     </div>
 
     <div class="lector-body" id="lector-body">
-      <div id="nota-indicator" class="nota-indicator" style="display:none"
-        onclick="abrirNota()">📝 Esta página tiene una nota — tocá para ver</div>
-      <div class="lector-texto" id="lector-texto"></div>
+      <div class="lector-page">
+        <div id="nota-indicator" class="nota-indicator" style="display:none"
+          onclick="abrirNota()">📝 Esta página tiene una nota — tocá para ver</div>
+        <div class="lector-texto" id="lector-texto"></div>
+      </div>
     </div>
 
     <div class="lector-footer">
@@ -608,7 +624,7 @@ function renderPagina() {
   document.getElementById('pag-total').textContent=`de ${total}`;
   document.getElementById('pag-fill').style.width=Math.round((n+1)/total*100)+'%';
   if (_state.editando) salirModoEdicion();
-  document.getElementById('lector-texto').textContent=pag?.texto||'(Página vacía)';
+  document.getElementById('lector-texto').innerHTML=textoAHtml(pag?.texto);
   document.getElementById('nota-indicator').style.display=pag?.nota?'':'none';
   document.getElementById('lector-body').scrollTop=0;
   document.getElementById('btn-prev').disabled=n===0;
@@ -648,7 +664,10 @@ document.addEventListener('touchend',e=>{
 function toggleEditar() { _state.editando?guardarEdicion():entrarModoEdicion(); }
 function entrarModoEdicion() {
   _state.editando=true;
+  const lib=_state.libros.find(l=>l.id===_state.libroActual);
+  const pag=lib?.paginas[_state.paginaActual];
   const el=document.getElementById('lector-texto');
+  el.textContent=pag?.texto||'';
   el.contentEditable='true'; el.focus();
   document.getElementById('btn-edit').textContent='💾';
 }
@@ -665,6 +684,8 @@ function guardarEdicion() {
     saveLibro(lib); toast('✅ Cambios guardados');
   }
   salirModoEdicion();
+  const pag=lib?.paginas[_state.paginaActual];
+  document.getElementById('lector-texto').innerHTML=textoAHtml(pag?.texto);
 }
 
 // ─── BÚSQUEDA ──────────────────────────────────────────────────
@@ -908,6 +929,37 @@ function toast(msg) {
 }
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function textoAHtml(texto) {
+  if (!texto) return '<p class="lector-p">(Página vacía)</p>';
+  const bloques = texto.split(/\n{2,}/);
+  let html = ''; let seq = 0;
+  for (const bloque of bloques) {
+    const lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    if (!lineas.length) continue;
+    const s0 = lineas[0];
+    // Heading: primera línea con >55% letras mayúsculas y sin punto final
+    const letras = s0.replace(/[^A-Za-záéíóúüñA-ZÁÉÍÓÚÜÑ]/g,'').length;
+    const mayus  = s0.replace(/[^A-ZÁÉÍÓÚÜÑ]/g,'').length;
+    const esMayus = letras > 0 && mayus / letras > 0.55;
+    if (s0.length >= 3 && s0.length <= 76 && !/[.,;]$/.test(s0) && esMayus) {
+      html += `<h3 class="lector-h">${lineas.map(l=>escHtml(l)).join('<br>')}</h3>`;
+      seq = 0; continue;
+    }
+    // Verso: 4+ líneas cortas (poesía, estrofas)
+    const avgLen = lineas.reduce((a,l)=>a+l.length,0)/lineas.length;
+    if (lineas.length >= 4 && avgLen < 55) {
+      html += `<p class="lector-verso">${lineas.map(l=>escHtml(l)).join('<br>')}</p>`;
+      seq = 0; continue;
+    }
+    // Párrafo normal
+    const contenido = lineas.map(l=>escHtml(l)).join(' ');
+    const cls = seq > 0 ? 'lector-p lector-indent' : 'lector-p';
+    html += `<p class="${cls}">${contenido}</p>`;
+    seq++;
+  }
+  return html || '<p class="lector-p">(Página vacía)</p>';
 }
 
 // ─── INIT ──────────────────────────────────────────────────────
