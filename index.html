@@ -930,8 +930,17 @@ async function importarDesdeURL() {
 // ─── LIBROS PRECARGADOS ────────────────────────────────────────
 async function cargarLibrosPrecargados() {
   const libros=await loadLibros();
-  if (libros.length>0) return;
-  for (const libro of LIBROS_PRECARGADOS) await saveLibro(libro);
+  if (libros.length===0) {
+    for (const libro of LIBROS_PRECARGADOS) await saveLibro(libro);
+    return;
+  }
+  // Sincronizar: agrega libros nuevos y actualiza portadas sin tocar el progreso del usuario
+  const map=new Map(libros.map(l=>[l.id,l]));
+  for (const plantilla of LIBROS_PRECARGADOS) {
+    const ex=map.get(plantilla.id);
+    if (!ex) { await saveLibro(plantilla); }
+    else if (ex.portada!==plantilla.portada) { await saveLibro({...ex,portada:plantilla.portada}); }
+  }
 }
 
 // ─── TOAST / UTILS ─────────────────────────────────────────────
