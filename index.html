@@ -153,8 +153,8 @@
   .search-result-item em{color:var(--accent);font-style:normal;font-weight:700}
   .search-empty{font-size:13px;color:var(--text3);padding:8px 0;text-align:center}
 
-  .lector-body{flex:1;overflow-y:auto;background:var(--page-bg);padding:0;min-height:0;overscroll-behavior:contain}
-  .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;min-height:100%;
+  .lector-body{flex:1;overflow:hidden;background:var(--page-bg);padding:0;min-height:0}
+  .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;height:100%;overflow:hidden;
     padding:28px 52px 88px;
     box-shadow:0 0 60px rgba(0,0,0,0.18);will-change:transform,opacity}
   @media(max-width:520px){.lector-page{padding:18px 20px 80px}}
@@ -893,9 +893,8 @@ function cambiarPag(delta) {
 let _touchY0=0;
 window.addEventListener('touchstart',e=>{ _touchY0=e.touches[0].clientY; },{passive:true,capture:true});
 window.addEventListener('touchmove',e=>{
-  if (!document.getElementById('page-lector')?.classList.contains('active')) return;
-  const lb=document.getElementById('lector-body');
-  if (lb && lb.scrollTop<=0 && e.touches[0].clientY>_touchY0) e.preventDefault();
+  if (document.getElementById('page-lector')?.classList.contains('active'))
+    e.preventDefault();
 },{passive:false,capture:true});
 
 // Swipe con detección de dirección (filtra scroll vertical)
