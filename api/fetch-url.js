@@ -5,8 +5,9 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { url } = req.body;
+  const { url, charsPerPage } = req.body;
   if (!url) return res.status(400).json({ error: 'Falta URL' });
+  const CHARS_PER_PAGE = (charsPerPage && charsPerPage > 200 && charsPerPage < 5000) ? charsPerPage : 900;
 
   try { new URL(url); } catch { return res.status(400).json({ error: 'URL inválida' }); }
 
@@ -67,8 +68,7 @@ module.exports = async function handler(req, res) {
       .replace(/\n{3,}/g, '\n\n')
       .trim();
 
-    // Dividir en páginas de ~1200 chars, respetando marcadores [[IMG:...]]
-    const CHARS_PER_PAGE = 1200;
+    // Dividir en páginas adaptadas al tamaño de pantalla del cliente
     const pages = [];
     let remaining = text;
     while (remaining.length > 0) {
