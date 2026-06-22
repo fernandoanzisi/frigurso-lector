@@ -579,6 +579,13 @@ async function borrarLibro(id) {
   if (!confirm('¿Borrar este libro?')) return;
   await deleteLibro(id);
   _state.libros=_state.libros.filter(l=>l.id!==id);
+  // Si era un libro precargado, recordar que el usuario lo borró
+  if (LIBROS_PRECARGADOS.some(l=>l.id===id)) {
+    try {
+      const borrados=JSON.parse(localStorage.getItem('lector_borrados')||'[]');
+      if (!borrados.includes(id)) { borrados.push(id); localStorage.setItem('lector_borrados',JSON.stringify(borrados)); }
+    } catch(e){}
+  }
   renderBiblioteca();
 }
 
@@ -1074,14 +1081,12 @@ async function importarDesdeURL() {
 
 // ─── LIBROS PRECARGADOS ────────────────────────────────────────
 async function cargarLibrosPrecargados() {
+  let borrados=[];
+  try { borrados=JSON.parse(localStorage.getItem('lector_borrados')||'[]'); } catch(e){}
   const libros=await loadLibros();
-  if (libros.length===0) {
-    for (const libro of LIBROS_PRECARGADOS) await saveLibro(libro);
-    return;
-  }
-  // Sincronizar: agrega libros nuevos y actualiza portadas sin tocar el progreso del usuario
   const map=new Map(libros.map(l=>[l.id,l]));
   for (const plantilla of LIBROS_PRECARGADOS) {
+    if (borrados.includes(plantilla.id)) continue; // el usuario lo borró, no vuelve a aparecer
     const ex=map.get(plantilla.id);
     if (!ex) { await saveLibro(plantilla); }
     else if (ex.portada!==plantilla.portada) { await saveLibro({...ex,portada:plantilla.portada}); }
