@@ -14,6 +14,10 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'URL inválida' });
   }
 
+  if (/\.pdf(\?|$)/i.test(url)) {
+    return res.status(400).json({ error: 'Es un PDF — usá el tab 📄 PDF para importarlo correctamente' });
+  }
+
   try {
     const resp = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; LectorBot/1.0)' },

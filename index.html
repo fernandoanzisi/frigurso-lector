@@ -1044,11 +1044,11 @@ async function cargarPdfjs() {
   if (_pdfjsReady||window.pdfjsLib) { _pdfjsReady=true; return; }
   await new Promise((res,rej)=>{
     const s=document.createElement('script');
-    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.src='https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js';
     s.onload=res; s.onerror=rej;
     document.head.appendChild(s);
   });
-  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
   _pdfjsReady=true;
 }
 
@@ -1220,6 +1220,13 @@ let _urlProcesando=false;
 async function importarDesdeURL() {
   const url=document.getElementById('url-input').value.trim();
   if (!url) { toast('Ingresá una URL'); return; }
+  // Si es un PDF, redirigir automáticamente al tab PDF
+  if (/\.pdf(\?|$)/i.test(url)||url.toLowerCase().includes('.pdf')) {
+    switchTab('pdf'); switchPdfSrc('url');
+    document.getElementById('pdf-url-input').value=url;
+    toast('📄 Es un PDF — usá el botón Importar PDF');
+    return;
+  }
   if (_urlProcesando) return;
   _urlProcesando=true;
   const btn=document.getElementById('btn-url-proc');

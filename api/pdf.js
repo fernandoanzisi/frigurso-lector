@@ -17,12 +17,12 @@ module.exports = async function handler(req, res) {
     });
     if (!resp.ok) return res.status(502).json({ error: `El servidor devolvió error ${resp.status}` });
 
-    const ct = resp.headers.get('content-type') || '';
-    if (!ct.includes('pdf') && !url.toLowerCase().includes('.pdf')) {
-      return res.status(400).json({ error: 'La URL no parece apuntar a un PDF' });
-    }
-
     const buffer = await resp.arrayBuffer();
+    // Verificar que empiece con la firma de PDF (%PDF)
+    const header = Buffer.from(buffer.slice(0, 4)).toString('ascii');
+    if (!header.startsWith('%PDF')) {
+      return res.status(400).json({ error: 'El archivo descargado no es un PDF válido' });
+    }
     res.setHeader('Content-Type', 'application/octet-stream');
     res.send(Buffer.from(buffer));
   } catch (e) {
