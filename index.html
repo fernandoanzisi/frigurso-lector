@@ -151,11 +151,11 @@
   .search-result-item em{color:var(--accent);font-style:normal;font-weight:700}
   .search-empty{font-size:13px;color:var(--text3);padding:8px 0;text-align:center}
 
-  .lector-body{flex:1;overflow:hidden;background:var(--page-bg);padding:0;min-height:0}
-  .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;height:100%;overflow:hidden;
-    padding:28px 52px 72px;
+  .lector-body{flex:1;overflow-y:auto;background:var(--page-bg);padding:0}
+  .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;min-height:100%;
+    padding:28px 52px 88px;
     box-shadow:0 0 60px rgba(0,0,0,0.18);will-change:transform,opacity}
-  @media(max-width:520px){.lector-page{padding:18px 20px 68px}}
+  @media(max-width:520px){.lector-page{padding:18px 20px 80px}}
   .nota-indicator{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;
     font-size:11px;padding:3px 12px;margin-bottom:20px;font-family:var(--font-ui);cursor:pointer}
   .lector-texto{font-family:var(--font-read);font-size:var(--font-size);line-height:1.95;
@@ -510,18 +510,18 @@ function calcCharsPerPage() {
   const h = window.innerHeight;
   const w = window.innerWidth;
   const isMobile = w < 520;
+  // El footer es position:fixed así que NO resta del alto disponible para el body
   const headerH = document.getElementById('lector-header')?.offsetHeight || 50;
-  const footerH = 64;
   const padTop = isMobile ? 18 : 28;
-  const padBottom = isMobile ? 68 : 72;
+  const padBottom = isMobile ? 80 : 88; // espacio para que el footer no tape contenido
   const padSideTotal = isMobile ? 40 : 104;
-  const textH = h - headerH - footerH - padTop - padBottom;
+  const textH = h - headerH - padTop - padBottom;
   const fontSize = _state.fontSize || 19;
   const lineH = fontSize * 1.95;
-  const lines = Math.max(5, Math.floor(textH / lineH));
+  const lines = Math.max(8, Math.floor(textH / lineH));
   const maxW = Math.min(w - padSideTotal, isMobile ? 9999 : 616);
   const charsPerLine = Math.floor(maxW / (fontSize * 0.52));
-  return Math.max(300, Math.floor(lines * charsPerLine * 0.82));
+  return Math.max(900, Math.floor(lines * charsPerLine));
 }
 
 // Divide texto en páginas respetando marcadores [[IMG:...]]
