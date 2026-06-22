@@ -164,6 +164,9 @@
     outline:none;hyphens:auto;word-spacing:0.04em}
   .lector-texto .lector-p{text-align:justify;margin:0 0 0.9em}
   .lector-texto .lector-indent{text-indent:2.2em;margin-top:0;margin-bottom:0}
+  .lector-img{margin:1.6em 0;text-align:center}
+  .lector-img img{max-width:100%;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.12)}
+  .lector-img figcaption{font-size:0.78em;color:var(--text3);margin-top:6px;font-style:italic}
   .lector-texto .lector-h{font-family:var(--font-read);font-size:0.78em;font-weight:700;
     letter-spacing:0.16em;text-align:center;color:var(--accent);
     margin:2.4em 0 1.8em;line-height:1.5;text-transform:uppercase}
@@ -1320,6 +1323,16 @@ function textoAHtml(texto) {
     const lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
     if (!lineas.length) continue;
     const s0 = lineas[0];
+
+    // Imagen: marcador [[IMG:url|alt]]
+    const imgMatch = s0.match(/^\[\[IMG:(https?:\/\/[^\|]+)\|?(.*?)\]\]$/);
+    if (imgMatch) {
+      const src = imgMatch[1].replace(/"/g, '%22');
+      const alt = escHtml(imgMatch[2] || '');
+      html += `<figure class="lector-img"><img src="${src}" alt="${alt}" loading="lazy">${alt ? `<figcaption>${alt}</figcaption>` : ''}</figure>`;
+      seq = 0; continue;
+    }
+
     // Heading: primera línea con >55% letras mayúsculas y sin punto final
     const letras = s0.replace(/[^A-Za-záéíóúüñA-ZÁÉÍÓÚÜÑ]/g,'').length;
     const mayus  = s0.replace(/[^A-ZÁÉÍÓÚÜÑ]/g,'').length;
