@@ -175,6 +175,13 @@
     font-style:italic;color:var(--text2)}
   .lector-texto[contenteditable=true]{border:2px solid var(--accent);border-radius:8px;
     padding:14px;background:var(--card);white-space:pre-wrap;word-break:break-word}
+  .lector-portada{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:65vh;text-align:center;padding:12px 0 40px}
+  .lector-portada-img{max-width:100%;max-height:58vh;border-radius:10px;
+    box-shadow:0 10px 48px rgba(0,0,0,0.3);margin-bottom:28px;display:block}
+  .lector-portada-titulo{font-family:var(--font-read);font-size:1.25em;font-weight:600;
+    color:var(--text);margin-bottom:6px;line-height:1.3}
+  .lector-portada-autor{font-family:var(--font-read);font-size:0.95em;font-style:italic;color:var(--text2)}
 
   .lector-footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
     border-top:1px solid var(--border);box-shadow:0 -2px 12px rgba(0,0,0,0.08);
@@ -582,7 +589,10 @@ function goSubir() { goPage('subir'); }
 function goLector(id) {
   const lib = _state.libros.find(l=>l.id===id);
   if (!lib||!lib.paginas.length) { toast('Sin páginas'); return; }
-  _state.libroActual=id; _state.paginaActual=lib.ultimaPag||0;
+  _state.libroActual=id;
+  // Si tiene portada y el usuario no había avanzado, mostrar portada primero
+  const ultimaPag = lib.ultimaPag||0;
+  _state.paginaActual = (lib.portada && ultimaPag === 0) ? -1 : ultimaPag;
   goPage('lector'); renderPagina(); iniciarAutoHide();
 }
 
@@ -732,16 +742,39 @@ function resetSubir() {
 // ─── LECTOR ────────────────────────────────────────────────────
 function renderPagina() {
   const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
-  const n=_state.paginaActual, total=lib.paginas.length, pag=lib.paginas[n];
-  const pct=total>1?Math.round((n+1)/total*100):0;
+  const n=_state.paginaActual, total=lib.paginas.length;
   document.getElementById('lector-titulo').textContent=lib.titulo;
+  document.getElementById('lector-body').scrollTop=0;
+  if (_state.editando) salirModoEdicion();
+
+  // Página de portada (n === -1)
+  if (n === -1 && lib.portada) {
+    document.getElementById('pag-info').textContent='Portada';
+    document.getElementById('pag-fill').style.width='0%';
+    document.getElementById('nota-indicator').style.display='none';
+    document.getElementById('btn-edit').style.visibility='hidden';
+    document.getElementById('btn-prev').disabled=true;
+    document.getElementById('btn-next').disabled=false;
+    document.getElementById('lector-texto').innerHTML=
+      `<div class="lector-portada">` +
+      `<img class="lector-portada-img" src="${lib.portada}" alt="Portada">` +
+      `<div class="lector-portada-titulo">${escHtml(lib.titulo)}</div>` +
+      (lib.autor?`<div class="lector-portada-autor">${escHtml(lib.autor)}</div>`:'') +
+      `</div>`;
+    renderMarcadoresBarra(lib,total);
+    actualizarBtnMarcador(lib,-1);
+    return;
+  }
+
+  // Páginas normales
+  const pag=lib.paginas[n>=0?n:0];
+  const pct=total>1?Math.round((n+1)/total*100):0;
   document.getElementById('pag-info').textContent=`Pág ${n+1} de ${total} · ${pct}%`;
   document.getElementById('pag-fill').style.width=pct+'%';
-  if (_state.editando) salirModoEdicion();
+  document.getElementById('btn-edit').style.visibility='';
   document.getElementById('lector-texto').innerHTML=textoAHtml(pag?.texto);
   document.getElementById('nota-indicator').style.display=pag?.nota?'':'none';
-  document.getElementById('lector-body').scrollTop=0;
-  document.getElementById('btn-prev').disabled=n===0;
+  document.getElementById('btn-prev').disabled = lib.portada ? n<=0 : n===0;
   document.getElementById('btn-next').disabled=n===total-1;
   renderMarcadoresBarra(lib,total);
   actualizarBtnMarcador(lib,n);
@@ -763,7 +796,8 @@ function renderMarcadoresBarra(lib,total) {
 function cambiarPag(delta) {
   const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
   const n=_state.paginaActual+delta;
-  if (n<0||n>=lib.paginas.length) return;
+  const minPage = lib.portada ? -1 : 0;
+  if (n<minPage||n>=lib.paginas.length) return;
   const page=document.querySelector('.lector-page');
   if (!page) { _state.paginaActual=n; renderPagina(); return; }
   const dir=delta>0?-1:1;
