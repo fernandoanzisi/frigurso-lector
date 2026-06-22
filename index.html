@@ -260,11 +260,11 @@
 
 <div class="header" id="main-header">
   <div style="flex:1">
-    <div class="header-title">📚 Frigurso Lector</div>
+    <div class="header-title">Frigurso Lector</div>
     <div class="header-sub" id="header-sub">Mi biblioteca</div>
   </div>
-  <button class="btn-icon" id="btn-tema" onclick="ciclaTema()" title="Tema">🌙</button>
-  <button class="btn-icon" onclick="actualizarApp()" title="Actualizar app" style="font-size:16px">🔄</button>
+  <button class="btn-icon" id="btn-tema" onclick="ciclaTema()" title="Tema"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+  <button class="btn-icon" onclick="actualizarApp()" title="Actualizar app"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
 </div>
 
 <!-- BIBLIOTECA -->
@@ -277,7 +277,7 @@
     <div class="stats-bib" id="stats-bib"></div>
     <div class="libros-grid" id="libros-grid"></div>
     <div class="empty-state" id="empty-state" style="display:none">
-      <div class="empty-icon">📖</div>
+      <div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
       <div class="empty-text">Todavía no tenés libros</div>
       <div class="empty-sub">Subí fotos de cualquier texto y lo convertimos en un libro digital</div>
       <button class="btn-add" onclick="goSubir()">＋ Agregar primer libro</button>
@@ -289,7 +289,7 @@
 <div class="page" id="page-subir">
   <div class="subir-wrap">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-top:4px">
-      <button class="btn-icon" onclick="goBib()">←</button>
+      <button class="btn-icon" onclick="goBib()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
       <div>
         <div class="subir-titulo">Agregar libro</div>
         <div class="subir-sub">Foto, escaneo o URL de una página web</div>
@@ -297,10 +297,10 @@
     </div>
 
     <div class="tabs-subir">
-      <div class="tab-subir active" id="tab-foto" onclick="switchTab('foto')">📷 Fotos</div>
-      <div class="tab-subir" id="tab-pdf" onclick="switchTab('pdf')">📄 PDF</div>
-      <div class="tab-subir" id="tab-url" onclick="switchTab('url')">🌐 URL</div>
-      <div class="tab-subir" id="tab-texto" onclick="switchTab('texto')">📝 Texto</div>
+      <div class="tab-subir active" id="tab-foto" onclick="switchTab('foto')">Fotos</div>
+      <div class="tab-subir" id="tab-pdf" onclick="switchTab('pdf')">PDF</div>
+      <div class="tab-subir" id="tab-url" onclick="switchTab('url')">URL</div>
+      <div class="tab-subir" id="tab-texto" onclick="switchTab('texto')">Texto</div>
     </div>
 
     <!-- PANEL FOTOS -->
@@ -331,7 +331,7 @@
         <div class="progress-label" id="progress-label">Procesando...</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
       </div>
-      <button class="btn-proc" id="btn-proc" onclick="procesarLibro()" disabled>🔍 Reconocer texto</button>
+      <button class="btn-proc" id="btn-proc" onclick="procesarLibro()" disabled>Reconocer texto</button>
       <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
     </div>
 
@@ -341,8 +341,8 @@
       <input type="text" class="input-field" id="pdf-autor" placeholder="Autor (opcional)">
 
       <div class="pdf-source-tabs" style="display:flex;gap:8px;margin-bottom:14px">
-        <button class="pdf-src-btn activo" id="pdf-src-archivo" onclick="switchPdfSrc('archivo')" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--accent);background:var(--bg);color:var(--text);font-weight:700;font-size:13px;cursor:pointer">📁 Desde archivo</button>
-        <button class="pdf-src-btn" id="pdf-src-url" onclick="switchPdfSrc('url')" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer">🔗 Desde URL</button>
+        <button class="pdf-src-btn activo" id="pdf-src-archivo" onclick="switchPdfSrc('archivo')" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--accent);background:var(--bg);color:var(--text);font-weight:700;font-size:13px;cursor:pointer">Desde archivo</button>
+        <button class="pdf-src-btn" id="pdf-src-url" onclick="switchPdfSrc('url')" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer">Desde URL</button>
       </div>
 
       <div id="pdf-panel-archivo">
@@ -351,7 +351,7 @@
           ondragleave="this.classList.remove('drag-over')"
           ondrop="event.preventDefault();this.classList.remove('drag-over');handlePdfDrop(event)"
           onclick="document.getElementById('pdf-input').click()">
-          <div class="drop-icon">📄</div>
+          <div class="drop-icon"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
           <div class="drop-text" id="pdf-drop-text">Tocá para seleccionar un PDF</div>
           <div class="drop-sub">El texto se extrae automáticamente — sin OCR</div>
           <input type="file" id="pdf-input" accept=".pdf,application/pdf" style="display:none"
@@ -369,7 +369,7 @@
         <div class="progress-bar"><div class="progress-fill" id="pdf-progress-fill" style="width:0%"></div></div>
       </div>
       <div class="url-result" id="pdf-result"></div>
-      <button class="btn-proc" id="btn-pdf-proc" onclick="procesarPDF()">📄 Importar PDF</button>
+      <button class="btn-proc" id="btn-pdf-proc" onclick="procesarPDF()">Importar PDF</button>
       <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
     </div>
 
@@ -379,7 +379,7 @@
       <input type="text" class="input-field" id="texto-autor" placeholder="Autor (opcional)">
       <textarea class="input-field" id="texto-contenido" placeholder="Pegá el texto acá..." style="min-height:220px;resize:vertical;line-height:1.6"></textarea>
       <div style="font-size:12px;color:var(--text3);margin-bottom:14px" id="texto-contador">0 palabras · 0 páginas estimadas</div>
-      <button class="btn-proc" id="btn-texto-proc" onclick="importarTexto()">📝 Guardar como libro</button>
+      <button class="btn-proc" id="btn-texto-proc" onclick="importarTexto()">Guardar como libro</button>
       <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
     </div>
 
@@ -392,7 +392,7 @@
         <div class="progress-label" id="url-progress-label">Cargando página...</div>
         <div class="progress-bar"><div class="progress-fill" id="url-progress-fill" style="width:60%"></div></div>
       </div>
-      <button class="btn-proc" id="btn-url-proc" onclick="importarDesdeURL()">🌐 Importar página</button>
+      <button class="btn-proc" id="btn-url-proc" onclick="importarDesdeURL()">Importar página</button>
       <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
     </div>
   </div>
@@ -402,10 +402,10 @@
 <div class="page" id="page-lector">
   <div class="lector-wrap">
     <div class="lector-header" id="lector-header">
-      <button class="btn-sm" onclick="goBib()">←</button>
+      <button class="btn-sm" onclick="goBib()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
       <div class="lector-titulo" id="lector-titulo">—</div>
-      <button class="btn-sm" id="btn-buscar" onclick="toggleBusqueda()" title="Buscar">🔍</button>
-      <button class="btn-sm" id="btn-edit" onclick="toggleEditar()" title="Editar">✏️</button>
+      <button class="btn-sm" id="btn-buscar" onclick="toggleBusqueda()" title="Buscar"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <button class="btn-sm" id="btn-edit" onclick="toggleEditar()" title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
       <button class="btn-aa" id="btn-aa" onclick="toggleAaPanel()">Aa</button>
     </div>
 
@@ -421,7 +421,7 @@
     <div class="lector-body" id="lector-body">
       <div class="lector-page">
         <div id="nota-indicator" class="nota-indicator" style="display:none"
-          onclick="abrirNota()">📝 Esta página tiene una nota — tocá para ver</div>
+          onclick="abrirNota()">Esta página tiene una nota — tocá para ver</div>
         <div class="lector-texto" id="lector-texto"></div>
       </div>
     </div>
@@ -453,26 +453,26 @@
     <div style="font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Tema</div>
     <div class="aa-temas" style="margin-bottom:20px">
       <button class="aa-tema" id="aa-tema-blanco" onclick="ciclaTema('blanco')">
-        <div style="font-size:20px;margin-bottom:4px">☀️</div>
+        <div style="width:22px;height:22px;border-radius:50%;background:#faf6ef;border:2px solid #ddd5c4;margin:0 auto 5px"></div>
         <div>Blanco</div>
       </button>
       <button class="aa-tema" id="aa-tema-sepia" onclick="ciclaTema('sepia')">
-        <div style="font-size:20px;margin-bottom:4px">📜</div>
+        <div style="width:22px;height:22px;border-radius:50%;background:#fdf8ee;border:2px solid #d4c5a0;margin:0 auto 5px"></div>
         <div>Sepia</div>
       </button>
       <button class="aa-tema" id="aa-tema-noche" onclick="ciclaTema('noche')">
-        <div style="font-size:20px;margin-bottom:4px">🌙</div>
+        <div style="width:22px;height:22px;border-radius:50%;background:#1c1812;border:2px solid #2a3a5a;margin:0 auto 5px"></div>
         <div>Noche</div>
       </button>
     </div>
 
     <div style="font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Acciones</div>
     <div class="aa-acciones">
-      <button class="aa-accion" id="btn-marcador" onclick="toggleMarcador();toggleAaPanel()">🏷️ Marcador</button>
-      <button class="aa-accion" onclick="abrirNota();toggleAaPanel()">📝 Nota</button>
-      <button class="aa-accion" id="btn-edit" onclick="toggleEditar();toggleAaPanel()">✏️ Editar</button>
-      <button class="aa-accion" onclick="exportarTxt();toggleAaPanel()">📄 Exportar TXT</button>
-      <button class="aa-accion" onclick="repaginarLibro()" style="grid-column:1/-1">📐 Ajustar páginas a esta pantalla</button>
+      <button class="aa-accion" id="btn-marcador" onclick="toggleMarcador();toggleAaPanel()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Marcador</button>
+      <button class="aa-accion" onclick="abrirNota();toggleAaPanel()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Nota</button>
+      <button class="aa-accion" id="btn-edit-aa" onclick="toggleEditar();toggleAaPanel()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editar</button>
+      <button class="aa-accion" onclick="exportarTxt();toggleAaPanel()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exportar TXT</button>
+      <button class="aa-accion" onclick="repaginarLibro()" style="grid-column:1/-1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg> Ajustar páginas a esta pantalla</button>
     </div>
 
   </div>
@@ -483,7 +483,7 @@
 <div class="modal-overlay" id="modal-nota" onclick="event.target===this&&cerrarNota()">
   <div class="modal-sheet">
     <div class="modal-title">
-      <span id="modal-nota-titulo">📝 Nota — Página 1</span>
+      <span id="modal-nota-titulo">Nota — Página 1</span>
       <button class="btn-sm" onclick="cerrarNota()">✕</button>
     </div>
     <textarea class="nota-textarea" id="nota-textarea" placeholder="Escribí tu nota acá..."></textarea>
@@ -497,6 +497,28 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ─── ICONOS SVG ────────────────────────────────────────────────
+function icon(name, size=18) {
+  const a=`xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-3px;flex-shrink:0"`;
+  const p={
+    'search':'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+    'edit':'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+    'save':'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+    'bookmark':'<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
+    'bookmark-fill':'<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" fill="currentColor"/>',
+    'note':'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    'download':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+    'moon':'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+    'sun':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+    'refresh':'<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+    'arrow-left':'<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+    'align':'<line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/>',
+    'file':'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+    'book':'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  };
+  return `<svg ${a}>${p[name]||''}</svg>`;
+}
+
 const LEGACY_KEY = 'lector_libros_v1';
 let _state = {
   libros:[], libroActual:null, paginaActual:0,
@@ -665,7 +687,7 @@ function renderBiblioteca() {
   grid.innerHTML=libros.map(l=>{
     const pct=(l.paginas.length>1&&(l.ultimaPag||0)>0)?Math.round(((l.ultimaPag||0)+1)/l.paginas.length*100):null;
     const marc=(l.marcadores||[]).length;
-    const cover=l.portada?`<img src="${l.portada}" alt="">`:'<span class="libro-cover-emoji">📖</span>';
+    const cover=l.portada?`<img src="${l.portada}" alt="">`:'<span class="libro-cover-emoji"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>';
     return `<div class="libro-card" onclick="goLector('${l.id}')">
       <div class="libro-cover">${cover}<div class="libro-badge">${l.paginas.length} pág.</div></div>
       <div class="libro-info">
@@ -756,7 +778,7 @@ async function procesarLibro() {
   if (_procesando) return;
   _procesando=true; updateBtnProc();
   document.getElementById('progress-wrap').style.display='';
-  document.getElementById('btn-proc').textContent='⏳ Procesando...';
+  document.getElementById('btn-proc').textContent='Procesando...';
   const label=document.getElementById('progress-label');
   const fill=document.getElementById('progress-fill');
   const paginas=[];
@@ -774,11 +796,11 @@ async function procesarLibro() {
     const libro={id:'l'+Date.now(),titulo,paginas,portada,
       creado:new Date().toLocaleDateString('es-AR'),ultimaPag:0,marcadores:[],palabras};
     await saveLibro(libro); _state.libros.unshift(libro);
-    toast(`📚 "${titulo}" guardado — ${paginas.length} páginas`);
+    toast(`"${titulo}" guardado — ${paginas.length} páginas`);
     setTimeout(()=>{resetSubir();goBib();},800);
   }
   _procesando=false; updateBtnProc();
-  document.getElementById('btn-proc').textContent='🔍 Reconocer texto';
+  document.getElementById('btn-proc').textContent='Reconocer texto';
   document.getElementById('progress-wrap').style.display='none';
 }
 function resetSubir() {
@@ -887,19 +909,19 @@ function entrarModoEdicion() {
   const el=document.getElementById('lector-texto');
   el.textContent=pag?.texto||'';
   el.contentEditable='true'; el.focus();
-  document.getElementById('btn-edit').textContent='💾';
+  document.getElementById('btn-edit').innerHTML=icon('save',16);
 }
 function salirModoEdicion() {
   _state.editando=false;
   document.getElementById('lector-texto').contentEditable='false';
-  document.getElementById('btn-edit').textContent='✏️';
+  document.getElementById('btn-edit').innerHTML=icon('edit',16);
 }
 function guardarEdicion() {
   const lib=_state.libros.find(l=>l.id===_state.libroActual);
   if (lib) {
     lib.paginas[_state.paginaActual].texto=document.getElementById('lector-texto').textContent;
     lib.palabras=lib.paginas.reduce((s,p)=>s+p.texto.split(/\s+/).filter(Boolean).length,0);
-    saveLibro(lib); toast('✅ Cambios guardados');
+    saveLibro(lib); toast('Cambios guardados');
   }
   salirModoEdicion();
   const pag=lib?.paginas[_state.paginaActual];
@@ -949,20 +971,21 @@ function toggleMarcador() {
   const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
   if (!lib.marcadores) lib.marcadores=[];
   const n=_state.paginaActual, idx=lib.marcadores.indexOf(n);
-  if (idx===-1) { lib.marcadores.push(n); toast('🔖 Página marcada'); }
+  if (idx===-1) { lib.marcadores.push(n); toast('Página marcada'); }
   else { lib.marcadores.splice(idx,1); toast('Marcador eliminado'); }
   saveLibro(lib); actualizarBtnMarcador(lib,n); renderMarcadoresBarra(lib,lib.paginas.length);
 }
 function actualizarBtnMarcador(lib,n) {
   const btn=document.getElementById('btn-marcador'); if (!btn) return;
-  btn.textContent=(lib.marcadores||[]).includes(n)?'🔖':'🏷️';
+  const marcado=(lib.marcadores||[]).includes(n);
+  btn.innerHTML=icon(marcado?'bookmark-fill':'bookmark')+' Marcador';
 }
 
 // ─── NOTAS ─────────────────────────────────────────────────────
 function abrirNota() {
   const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
   const n=_state.paginaActual;
-  document.getElementById('modal-nota-titulo').textContent=`📝 Nota — Página ${n+1}`;
+  document.getElementById('modal-nota-titulo').textContent=`Nota — Página ${n+1}`;
   document.getElementById('nota-textarea').value=lib.paginas[n]?.nota||'';
   document.getElementById('modal-nota').classList.add('show');
 }
@@ -973,7 +996,7 @@ function guardarNota() {
   lib.paginas[_state.paginaActual].nota=texto;
   saveLibro(lib); cerrarNota();
   document.getElementById('nota-indicator').style.display=texto?'':'none';
-  toast('📝 Nota guardada');
+  toast('Nota guardada');
 }
 
 // ─── EXPORTAR ──────────────────────────────────────────────────
@@ -992,7 +1015,7 @@ function exportarTxt() {
   a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));
   a.download=lib.titulo.replace(/[^\w\s\-áéíóúñÁÉÍÓÚÑüÜ]/g,'').trim()+'.txt';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  toast('📄 Descargando TXT...');
+  toast('Descargando TXT...');
 }
 function exportarPDF() {
   const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
@@ -1025,7 +1048,6 @@ function cambiarFuente(d) {
   try{localStorage.setItem('lector_font',_state.fontSize);}catch(e){}
 }
 const _TEMAS=['blanco','sepia','noche'];
-const _TEMA_ICONS={'blanco':'☀️','sepia':'📜','noche':'🌙'};
 function ciclaTema(t) {
   if (t) { _state.tema=t; }
   else {
@@ -1035,7 +1057,7 @@ function ciclaTema(t) {
   document.body.classList.remove('sepia','noche');
   if (_state.tema!=='blanco') document.body.classList.add(_state.tema);
   const btnTema=document.getElementById('btn-tema');
-  if (btnTema) btnTema.textContent=_TEMA_ICONS[_state.tema]||'🌙';
+  if (btnTema) btnTema.innerHTML=icon(_state.tema==='noche'?'sun':'moon');
   document.querySelectorAll('.aa-tema').forEach(b=>b.classList.remove('activo'));
   const activoBtn=document.getElementById('aa-tema-'+_state.tema);
   if (activoBtn) activoBtn.classList.add('activo');
@@ -1147,7 +1169,7 @@ function handlePdfDrop(e) {
 function handlePdfFile(f) {
   if (!f) return;
   _pdfFile=f;
-  document.getElementById('pdf-drop-text').textContent='📄 '+f.name;
+  document.getElementById('pdf-drop-text').textContent=f.name;
   if (!document.getElementById('pdf-titulo').value) {
     document.getElementById('pdf-titulo').value=f.name.replace(/\.pdf$/i,'').replace(/[_-]/g,' ');
   }
@@ -1243,8 +1265,8 @@ async function procesarPDF() {
       creado:new Date().toLocaleDateString('es-AR'),ultimaPag:0,marcadores:[],palabras,fuente:'pdf'};
     await saveLibro(libro);
     _state.libros.unshift(libro);
-    toast(`📚 "${titulo}" importado — ${paginas.length} páginas`);
-    resultEl.textContent=`✅ ${paginas.length} páginas importadas, ~${palabras.toLocaleString()} palabras`;
+    toast(`"${titulo}" importado — ${paginas.length} páginas`);
+    resultEl.textContent=`${paginas.length} páginas importadas, ~${palabras.toLocaleString()} palabras`;
     resultEl.classList.add('show');
     _pdfFile=null;
     document.getElementById('pdf-drop-text').textContent='Tocá para seleccionar un PDF';
@@ -1253,11 +1275,11 @@ async function procesarPDF() {
     document.getElementById('pdf-url-input').value='';
     setTimeout(()=>{ resultEl.classList.remove('show'); goBib(); },1200);
   } catch(e) {
-    resultEl.textContent='❌ '+e.message;
+    resultEl.textContent='Error: '+e.message;
     resultEl.classList.add('show');
     toast('Error: '+e.message);
   } finally {
-    btn.disabled=false; btn.textContent='📄 Importar PDF';
+    btn.disabled=false; btn.textContent='Importar PDF';
     document.getElementById('pdf-progress-wrap').style.display='none';
   }
 }
@@ -1275,7 +1297,7 @@ function importarTexto() {
     creado:new Date().toLocaleDateString('es-AR'),ultimaPag:0,marcadores:[],palabras,fuente:'texto'};
   saveLibro(libro).then(()=>{
     _state.libros.unshift(libro);
-    toast(`📚 "${tituloFinal}" guardado — ${paginas.length} páginas`);
+    toast(`"${tituloFinal}" guardado — ${paginas.length} páginas`);
     document.getElementById('texto-titulo').value='';
     document.getElementById('texto-autor').value='';
     document.getElementById('texto-contenido').value='';
@@ -1305,7 +1327,7 @@ async function importarDesdeURL() {
   if (/\.pdf(\?|$)/i.test(url)||url.toLowerCase().includes('.pdf')) {
     switchTab('pdf'); switchPdfSrc('url');
     document.getElementById('pdf-url-input').value=url;
-    toast('📄 Es un PDF — usá el botón Importar PDF');
+    toast('Es un PDF — usá el botón Importar PDF');
     return;
   }
   if (_urlProcesando) return;
@@ -1330,9 +1352,9 @@ async function importarDesdeURL() {
       fuente:'url',url};
     await saveLibro(libro); _state.libros.unshift(libro);
     const el=document.getElementById('url-result');
-    el.textContent=`✅ "${titulo}" importado — ${paginas.length} páginas, ~${palabras} palabras`;
+    el.textContent=`"${titulo}" importado — ${paginas.length} páginas, ~${palabras} palabras`;
     el.classList.add('show');
-    toast(`📚 "${titulo}" guardado`);
+    toast(`"${titulo}" guardado`);
     setTimeout(()=>{
       document.getElementById('url-input').value='';
       document.getElementById('url-titulo').value='';
@@ -1341,7 +1363,7 @@ async function importarDesdeURL() {
     },1200);
   } catch(e) {
     const el=document.getElementById('url-result');
-    el.textContent='❌ '+e.message;
+    el.textContent='Error: '+e.message;
     el.classList.add('show');
     toast('Error: '+e.message);
   } finally {
