@@ -151,7 +151,7 @@
   .search-result-item em{color:var(--accent);font-style:normal;font-weight:700}
   .search-empty{font-size:13px;color:var(--text3);padding:8px 0;text-align:center}
 
-  .lector-body{flex:1;overflow-y:auto;background:var(--page-bg);padding:0}
+  .lector-body{flex:1;overflow-y:auto;background:var(--page-bg);padding:0;min-height:0}
   .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;min-height:100%;
     padding:28px 52px 88px;
     box-shadow:0 0 60px rgba(0,0,0,0.18);will-change:transform,opacity}
@@ -897,7 +897,7 @@ document.addEventListener('touchend',e=>{
   const dx=e.changedTouches[0].clientX-_touch.x;
   const dy=e.changedTouches[0].clientY-_touch.y;
   // Solo si es más horizontal que vertical y tiene suficiente distancia
-  if (Math.abs(dx)>Math.abs(dy)*1.3&&Math.abs(dx)>45) { mostrarControles(); cambiarPag(dx<0?1:-1); }
+  if (Math.abs(dx)>Math.abs(dy)*2.5&&Math.abs(dx)>50) { mostrarControles(); cambiarPag(dx<0?1:-1); }
 },{passive:true});
 
 // ─── EDITAR ────────────────────────────────────────────────────
@@ -1006,7 +1006,7 @@ function toggleExportMenu() {
 }
 function cerrarExportMenu() {
   _exportOpen=false;
-  document.getElementById('export-popup').classList.remove('show');
+  document.getElementById('export-popup')?.classList.remove('show');
 }
 function exportarTxt() {
   const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
