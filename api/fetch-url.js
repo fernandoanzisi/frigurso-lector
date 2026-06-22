@@ -52,7 +52,7 @@ module.exports = async function handler(req, res) {
       .trim();
 
     // Dividir en páginas de ~2500 caracteres cortando en párrafos
-    const CHARS_PER_PAGE = 2500;
+    const CHARS_PER_PAGE = 1200;
     const pages = [];
     let remaining = text;
     while (remaining.length > 0) {

@@ -1098,9 +1098,8 @@ async function extraerTextoPDF(source) {
     metaAutor=meta?.info?.Author||'';
   } catch(e){}
 
-  // Unir texto de todas las páginas PDF y re-paginar en ~2500 chars
   const textoTotal=pageTexts.join('\n\n').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
-  const CHARS=2500;
+  const CHARS=1200;
   const paginas=[];
   let rem=textoTotal;
   while (rem.length>0) {
@@ -1177,7 +1176,7 @@ function importarTexto() {
   const contenido=document.getElementById('texto-contenido').value.trim();
   if (!contenido) { toast('Pegá algún texto primero'); return; }
   const tituloFinal=autor?`${titulo} — ${autor}`:titulo;
-  const CHARS=2500;
+  const CHARS=1200;
   const pages=[];
   let rem=contenido;
   while (rem.length>0) {
