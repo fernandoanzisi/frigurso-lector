@@ -1109,6 +1109,12 @@ document.addEventListener('DOMContentLoaded',()=>{
       else if (x>w*0.7) { mostrarControles(); cambiarPag(1); }
       else { mostrarControles(); }
     });
+    // Bloquea pull-to-refresh de Chrome Android cuando se llega al tope del scroll
+    let _tyStart=0;
+    body.addEventListener('touchstart',e=>{ _tyStart=e.touches[0].clientY; },{passive:true});
+    body.addEventListener('touchmove',e=>{
+      if (body.scrollTop<=0 && e.touches[0].clientY>_tyStart) e.preventDefault();
+    },{passive:false});
   }
 });
 async function actualizarApp() {
