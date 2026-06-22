@@ -1265,12 +1265,29 @@ async function importarDesdeURL() {
 
 // ─── LIBROS PRECARGADOS ────────────────────────────────────────
 async function cargarLibrosPrecargados() {
+  // Migración única: detectar libros precargados que el usuario ya borró antes de que
+  // existiera el sistema lector_borrados, para no volver a agregarlos.
+  if (!localStorage.getItem('lector_migrated_borrados')) {
+    const librosActuales=await loadLibros();
+    if (librosActuales.length>0) {
+      // Si hay libros en la DB, cualquier precargado ausente fue borrado por el usuario
+      const existIds=new Set(librosActuales.map(l=>l.id));
+      const ausentes=LIBROS_PRECARGADOS.map(l=>l.id).filter(id=>!existIds.has(id));
+      if (ausentes.length>0) {
+        let ya=[];
+        try { ya=JSON.parse(localStorage.getItem('lector_borrados')||'[]'); } catch(e){}
+        localStorage.setItem('lector_borrados',JSON.stringify([...new Set([...ya,...ausentes])]));
+      }
+    }
+    localStorage.setItem('lector_migrated_borrados','1');
+  }
+
   let borrados=[];
   try { borrados=JSON.parse(localStorage.getItem('lector_borrados')||'[]'); } catch(e){}
   const libros=await loadLibros();
   const map=new Map(libros.map(l=>[l.id,l]));
   for (const plantilla of LIBROS_PRECARGADOS) {
-    if (borrados.includes(plantilla.id)) continue; // el usuario lo borró, no vuelve a aparecer
+    if (borrados.includes(plantilla.id)) continue;
     const ex=map.get(plantilla.id);
     if (!ex) { await saveLibro(plantilla); }
     else if (ex.portada!==plantilla.portada) { await saveLibro({...ex,portada:plantilla.portada}); }
