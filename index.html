@@ -471,19 +471,13 @@
       <button class="aa-accion" id="btn-marcador" onclick="toggleMarcador();toggleAaPanel()">🏷️ Marcador</button>
       <button class="aa-accion" onclick="abrirNota();toggleAaPanel()">📝 Nota</button>
       <button class="aa-accion" id="btn-edit" onclick="toggleEditar();toggleAaPanel()">✏️ Editar</button>
-      <button class="aa-accion" onclick="toggleExportMenu();toggleAaPanel()">⬇️ Exportar</button>
+      <button class="aa-accion" onclick="exportarTxt();toggleAaPanel()">📄 Exportar TXT</button>
       <button class="aa-accion" onclick="repaginarLibro()" style="grid-column:1/-1">📐 Ajustar páginas a esta pantalla</button>
     </div>
 
   </div>
 </div>
 
-<!-- EXPORT POPUP -->
-<div class="export-popup" id="export-popup">
-  <div class="export-opt" onclick="exportarTxt();cerrarExportMenu()">📄 Exportar TXT</div>
-  <div class="export-opt" onclick="exportarPDF();cerrarExportMenu()">📑 Exportar PDF</div>
-  <div class="export-opt" onclick="toggleFullscreen();cerrarExportMenu()">⛶ Pantalla completa</div>
-</div>
 
 <!-- MODAL NOTA -->
 <div class="modal-overlay" id="modal-nota" onclick="event.target===this&&cerrarNota()">
