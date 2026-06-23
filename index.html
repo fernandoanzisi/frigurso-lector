@@ -48,8 +48,7 @@
 
   .page{display:none}
   .page.active{display:block;height:calc(100dvh - 60px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none}
-  #page-lector.active{height:100dvh;overflow:hidden;touch-action:none}
-  #page-lector.active *{touch-action:none}
+  #page-lector.active{height:100dvh;overflow:hidden}
 
   /* BIBLIOTECA */
   .biblioteca{padding:16px}
@@ -154,8 +153,8 @@
   .search-result-item em{color:var(--accent);font-style:normal;font-weight:700}
   .search-empty{font-size:13px;color:var(--text3);padding:8px 0;text-align:center}
 
-  .lector-body{flex:1;overflow:hidden;background:var(--page-bg);padding:0;min-height:0;touch-action:none}
-  .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;height:100%;overflow:hidden;
+  .lector-body{flex:1;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;-webkit-overflow-scrolling:touch;background:var(--page-bg);padding:0;min-height:0}
+  .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;min-height:100%;
     padding:28px 52px 88px;
     box-shadow:0 0 60px rgba(0,0,0,0.18);will-change:transform,opacity}
   @media(max-width:520px){.lector-page{padding:18px 20px 80px}}
@@ -895,14 +894,7 @@ function cambiarPag(delta) {
     page.style.opacity='1';
   },200);
 }
-// Bloquea pull-to-refresh: capture en window, fase más temprana posible
-window.addEventListener('touchmove',e=>{
-  if (document.getElementById('page-lector')?.classList.contains('active')){
-    e.preventDefault();
-  }
-},{passive:false,capture:true});
-
-// Swipe: horizontal Y vertical — abajo=siguiente, arriba=anterior
+// Swipe horizontal para cambiar página
 let _touch={x:0,y:0};
 document.addEventListener('touchstart',e=>{
   _touch={x:e.touches[0].clientX,y:e.touches[0].clientY};
@@ -911,9 +903,7 @@ document.addEventListener('touchend',e=>{
   if (!document.getElementById('page-lector').classList.contains('active')||_state.editando) return;
   const dx=e.changedTouches[0].clientX-_touch.x;
   const dy=e.changedTouches[0].clientY-_touch.y;
-  const adx=Math.abs(dx), ady=Math.abs(dy);
-  if (adx>ady&&adx>30){ mostrarControles(); cambiarPag(dx<0?1:-1); }       // ← → página
-  else if(ady>adx&&ady>30){ mostrarControles(); cambiarPag(dy<0?-1:1); }   // ↑ anterior ↓ siguiente
+  if (Math.abs(dx)>Math.abs(dy)*1.5&&Math.abs(dx)>40){ mostrarControles(); cambiarPag(dx<0?1:-1); }
 },{passive:true});
 
 // ─── EDITAR ────────────────────────────────────────────────────
