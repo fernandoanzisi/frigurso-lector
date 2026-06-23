@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.frigurso.lector",
+    "sha256_cert_fingerprints": ["AC:71:EF:75:89:B0:D5:22:35:ED:56:E4:26:2B:29:17:A8:BD:37:56:16:F1:F8:29:B0:0B:4F:2C:74:0A:59:B6"]
+  }
+}]
