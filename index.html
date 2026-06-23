@@ -47,7 +47,7 @@
   .btn-icon:active{opacity:0.7}
 
   .page{display:none}
-  .page.active{display:block;height:calc(100dvh - 60px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .page.active{display:block;height:calc(100dvh - 60px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none}
   #page-lector.active{height:100dvh;overflow:hidden;touch-action:none}
   #page-lector.active *{touch-action:none}
 
@@ -653,6 +653,7 @@ function goPage(id) {
 async function goBib() {
   if (_state.editando) salirModoEdicion();
   cerrarBusqueda(); cerrarExportMenu();
+  localStorage.removeItem('frigurso_resume');
   _state.pendingFiles=[];
   renderThumbsUI(); updateBtnProc();
   goPage('bib');
@@ -666,6 +667,7 @@ function goLector(id) {
   _state.libroActual=id;
   const ultimaPag = lib.ultimaPag||0;
   _state.paginaActual = (lib.portada && ultimaPag === 0) ? -1 : ultimaPag;
+  localStorage.setItem('frigurso_resume', JSON.stringify({id, pag:_state.paginaActual}));
   history.pushState({frigurso:'lector'}, '');
   goPage('lector'); renderPagina(); iniciarAutoHide();
 }
@@ -878,27 +880,29 @@ function cambiarPag(delta) {
   const page=document.querySelector('.lector-page');
   if (!page) { _state.paginaActual=n; renderPagina(); return; }
   const dir=delta>0?-1:1;
-  // Fade + slide out (Kindle style)
   page.style.transition='transform 0.2s ease-in,opacity 0.2s ease-in';
   page.style.transform=`translateX(${dir*-22}px)`;
   page.style.opacity='0';
   setTimeout(()=>{
     _state.paginaActual=n; renderPagina();
+    localStorage.setItem('frigurso_resume',JSON.stringify({id:_state.libroActual,pag:n}));
     page.style.transition='none';
     page.style.transform=`translateX(${dir*22}px)`;
     page.style.opacity='0';
-    page.getBoundingClientRect(); // reflow
+    page.getBoundingClientRect();
     page.style.transition='transform 0.24s ease-out,opacity 0.24s ease-out';
     page.style.transform='translateX(0)';
     page.style.opacity='1';
   },200);
 }
-// Bloquea pull-to-refresh a nivel del elemento lector (no window)
-document.getElementById('page-lector').addEventListener('touchmove',e=>{
-  e.preventDefault();
-},{passive:false});
+// Bloquea pull-to-refresh: capture en window, fase más temprana posible
+window.addEventListener('touchmove',e=>{
+  if (document.getElementById('page-lector')?.classList.contains('active')){
+    e.preventDefault();
+  }
+},{passive:false,capture:true});
 
-// Swipe con detección de dirección (filtra scroll vertical)
+// Swipe: horizontal Y vertical — abajo=siguiente, arriba=anterior
 let _touch={x:0,y:0};
 document.addEventListener('touchstart',e=>{
   _touch={x:e.touches[0].clientX,y:e.touches[0].clientY};
@@ -907,7 +911,9 @@ document.addEventListener('touchend',e=>{
   if (!document.getElementById('page-lector').classList.contains('active')||_state.editando) return;
   const dx=e.changedTouches[0].clientX-_touch.x;
   const dy=e.changedTouches[0].clientY-_touch.y;
-  if (Math.abs(dx)>Math.abs(dy)*1.5&&Math.abs(dx)>30) { mostrarControles(); cambiarPag(dx<0?1:-1); }
+  const adx=Math.abs(dx), ady=Math.abs(dy);
+  if (adx>ady&&adx>30){ mostrarControles(); cambiarPag(dx<0?1:-1); }       // ← → página
+  else if(ady>adx&&ady>30){ mostrarControles(); cambiarPag(dy<0?-1:1); }   // ↑ anterior ↓ siguiente
 },{passive:true});
 
 // ─── EDITAR ────────────────────────────────────────────────────
@@ -1485,6 +1491,14 @@ async function init() {
   _state.tema=tema; ciclaTema(tema);
   const fs=parseInt(localStorage.getItem('lector_font')||'19');
   _state.fontSize=fs; document.documentElement.style.setProperty('--font-size',fs+'px');
+  // Restaurar posición si el app se recargó mientras leía
+  try {
+    const resume=JSON.parse(localStorage.getItem('frigurso_resume')||'null');
+    if (resume?.id) {
+      const lib=_state.libros.find(l=>l.id===resume.id);
+      if (lib) { _state.libroActual=lib.id; _state.paginaActual=resume.pag||0; history.pushState({frigurso:'lector'},''); goPage('lector'); renderPagina(); iniciarAutoHide(); return; }
+    }
+  } catch(e){}
   renderBiblioteca();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
