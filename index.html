@@ -48,7 +48,7 @@
 
   .page{display:none}
   .page.active{display:block;height:calc(100dvh - 60px);overflow-y:auto;-webkit-overflow-scrolling:touch}
-  #page-lector.active{height:100dvh;overflow:hidden;touch-action:pan-x}
+  #page-lector.active{height:100dvh;overflow:hidden;touch-action:none}
 
   /* BIBLIOTECA */
   .biblioteca{padding:16px}
@@ -153,7 +153,7 @@
   .search-result-item em{color:var(--accent);font-style:normal;font-weight:700}
   .search-empty{font-size:13px;color:var(--text3);padding:8px 0;text-align:center}
 
-  .lector-body{flex:1;overflow:hidden;background:var(--page-bg);padding:0;min-height:0;touch-action:pan-x}
+  .lector-body{flex:1;overflow:hidden;background:var(--page-bg);padding:0;min-height:0;touch-action:none}
   .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;height:100%;overflow:hidden;
     padding:28px 52px 88px;
     box-shadow:0 0 60px rgba(0,0,0,0.18);will-change:transform,opacity}
@@ -663,11 +663,17 @@ function goLector(id) {
   const lib = _state.libros.find(l=>l.id===id);
   if (!lib||!lib.paginas.length) { toast('Sin páginas'); return; }
   _state.libroActual=id;
-  // Si tiene portada y el usuario no había avanzado, mostrar portada primero
   const ultimaPag = lib.ultimaPag||0;
   _state.paginaActual = (lib.portada && ultimaPag === 0) ? -1 : ultimaPag;
+  history.pushState({frigurso:'lector'}, '');
   goPage('lector'); renderPagina(); iniciarAutoHide();
 }
+window.addEventListener('popstate', e => {
+  if (document.getElementById('page-lector').classList.contains('active')) {
+    history.pushState({frigurso:'lector'}, '');
+    goBib();
+  }
+});
 
 // ─── BIBLIOTECA ────────────────────────────────────────────────
 function renderBiblioteca() {
