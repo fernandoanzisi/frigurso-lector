@@ -49,6 +49,7 @@
   .page{display:none}
   .page.active{display:block;height:calc(100dvh - 60px);overflow-y:auto;-webkit-overflow-scrolling:touch}
   #page-lector.active{height:100dvh;overflow:hidden;touch-action:none}
+  #page-lector.active *{touch-action:none}
 
   /* BIBLIOTECA */
   .biblioteca{padding:16px}
@@ -668,11 +669,8 @@ function goLector(id) {
   history.pushState({frigurso:'lector'}, '');
   goPage('lector'); renderPagina(); iniciarAutoHide();
 }
-window.addEventListener('popstate', e => {
-  if (document.getElementById('page-lector').classList.contains('active')) {
-    history.pushState({frigurso:'lector'}, '');
-    goBib();
-  }
+window.addEventListener('popstate', () => {
+  if (document.getElementById('page-lector').classList.contains('active')) goBib();
 });
 
 // ─── BIBLIOTECA ────────────────────────────────────────────────
@@ -895,6 +893,11 @@ function cambiarPag(delta) {
     page.style.opacity='1';
   },200);
 }
+// Bloquea pull-to-refresh a nivel del elemento lector (no window)
+document.getElementById('page-lector').addEventListener('touchmove',e=>{
+  e.preventDefault();
+},{passive:false});
+
 // Swipe con detección de dirección (filtra scroll vertical)
 let _touch={x:0,y:0};
 document.addEventListener('touchstart',e=>{
@@ -904,8 +907,7 @@ document.addEventListener('touchend',e=>{
   if (!document.getElementById('page-lector').classList.contains('active')||_state.editando) return;
   const dx=e.changedTouches[0].clientX-_touch.x;
   const dy=e.changedTouches[0].clientY-_touch.y;
-  // Solo si es más horizontal que vertical y tiene suficiente distancia
-  if (Math.abs(dx)>Math.abs(dy)*2.5&&Math.abs(dx)>50) { mostrarControles(); cambiarPag(dx<0?1:-1); }
+  if (Math.abs(dx)>Math.abs(dy)*1.5&&Math.abs(dx)>30) { mostrarControles(); cambiarPag(dx<0?1:-1); }
 },{passive:true});
 
 // ─── EDITAR ────────────────────────────────────────────────────
