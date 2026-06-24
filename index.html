@@ -223,6 +223,8 @@
   .lector-portada-titulo{font-family:var(--font-read);font-size:1.25em;font-weight:600;
     color:var(--text);margin-bottom:6px;line-height:1.3}
   .lector-portada-autor{font-family:var(--font-read);font-size:0.95em;font-style:italic;color:var(--text2)}
+  .lector-coverpage{position:absolute;inset:0;overflow:hidden;background:#000;z-index:1}
+  .lector-coverpage img{width:100%;height:100%;object-fit:contain;display:block}
 
   .lector-footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
     border-top:1px solid var(--border);box-shadow:0 -2px 12px rgba(0,0,0,0.08);
@@ -941,6 +943,28 @@ function renderPagina() {
   const pct=total>1?Math.round((n+1)/total*100):0;
   document.getElementById('pag-info').textContent=`Pág ${n+1} de ${total} · ${pct}%`;
   document.getElementById('pag-fill').style.width=pct+'%';
+
+  // Primera página: portada a pantalla completa
+  if (n===0&&lib.portadaHD) {
+    document.getElementById('btn-edit').style.visibility='hidden';
+    document.getElementById('lector-texto').innerHTML=`<div class="lector-coverpage"><img src="${lib.portadaHD}" alt="Portada"></div>`;
+    document.getElementById('nota-indicator').style.display='none';
+    document.getElementById('btn-prev').disabled=lib.portada?true:(n===0);
+    document.getElementById('btn-next').disabled=false;
+    renderMarcadoresBarra(lib,total); actualizarBtnMarcador(lib,n); lib.ultimaPag=n; saveLibro(lib);
+    return;
+  }
+  // Última página: contraportada a pantalla completa
+  if (n===total-1&&lib.contraportada) {
+    document.getElementById('btn-edit').style.visibility='hidden';
+    document.getElementById('lector-texto').innerHTML=`<div class="lector-coverpage"><img src="${lib.contraportada}" alt="Contraportada"></div>`;
+    document.getElementById('nota-indicator').style.display='none';
+    document.getElementById('btn-prev').disabled=false;
+    document.getElementById('btn-next').disabled=true;
+    renderMarcadoresBarra(lib,total); actualizarBtnMarcador(lib,n); lib.ultimaPag=n; saveLibro(lib);
+    return;
+  }
+
   document.getElementById('btn-edit').style.visibility='';
   document.getElementById('lector-texto').innerHTML=textoAHtml(pag?.texto);
   document.getElementById('nota-indicator').style.display=pag?.nota?'':'none';
@@ -1504,16 +1528,16 @@ async function extraerTextoPDF(source) {
   return {paginas:paginas.filter(p=>p.length>5), metaTitulo, metaAutor, pdf};
 }
 
-async function renderPortadaPDF(pdf) {
+async function renderPaginaImagen(pdf, numPag, maxW=200) {
   try {
-    const page=await pdf.getPage(1);
+    const page=await pdf.getPage(numPag);
     const viewport=page.getViewport({scale:1});
-    const scale=200/viewport.width;
+    const scale=maxW/viewport.width;
     const scaled=page.getViewport({scale});
     const canvas=document.createElement('canvas');
     canvas.width=scaled.width; canvas.height=scaled.height;
     await page.render({canvasContext:canvas.getContext('2d'),viewport:scaled}).promise;
-    return canvas.toDataURL('image/jpeg',0.8);
+    return canvas.toDataURL('image/jpeg',0.85);
   } catch(e){ return null; }
 }
 
@@ -1545,8 +1569,10 @@ async function procesarPDF() {
     const {paginas, metaTitulo, metaAutor, pdf}=await extraerTextoPDF(source);
     if (!paginas.length) throw new Error('No se pudo extraer texto del PDF. ¿Es un PDF escaneado? Usá el tab Fotos.');
 
-    document.getElementById('pdf-progress-label').textContent='Generando portada...';
-    const portada=await renderPortadaPDF(pdf);
+    document.getElementById('pdf-progress-label').textContent='Generando imágenes de tapa...';
+    const portada=await renderPaginaImagen(pdf,1,200);
+    const portadaHD=await renderPaginaImagen(pdf,1,900);
+    const contraportada=await renderPaginaImagen(pdf,pdf.numPages,900);
     try { pdf.destroy(); } catch(e){}
 
     let titulo=document.getElementById('pdf-titulo').value.trim()||metaTitulo||'PDF importado';
@@ -1554,7 +1580,8 @@ async function procesarPDF() {
     if (autor) titulo=titulo+' — '+autor;
 
     const palabras=paginas.reduce((s,p)=>s+p.split(/\s+/).filter(Boolean).length,0);
-    const libro={id:'l'+Date.now(),titulo,paginas:paginas.map(t=>({texto:t,nota:''})),portada,
+    const libro={id:'l'+Date.now(),titulo,paginas:paginas.map(t=>({texto:t,nota:''})),
+      portada,portadaHD,contraportada,
       creado:new Date().toLocaleDateString('es-AR'),ultimaPag:0,marcadores:[],palabras,fuente:'pdf'};
     await saveLibro(libro);
     _state.libros.unshift(libro);
