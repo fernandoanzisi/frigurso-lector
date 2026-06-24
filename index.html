@@ -1200,6 +1200,16 @@ function iniciarAutoHide() {
     document.querySelectorAll('.libro-meta').forEach(el=>el.style.fontSize=metaFs+'px');
     document.querySelectorAll('.header-title').forEach(el=>el.style.fontSize=tituloFs+'px');
     document.querySelectorAll('.btn-add').forEach(el=>el.style.fontSize=libroFs+'px');
+    const smPx=Math.round(w*0.065); const smFs=Math.round(smPx*0.55);
+    document.querySelectorAll('.btn-sm').forEach(el=>{
+      el.style.width=smPx+'px'; el.style.height=smPx+'px'; el.style.fontSize=smFs+'px'; el.style.flexShrink='0';
+    });
+    document.querySelectorAll('.btn-sm svg').forEach(el=>{
+      el.setAttribute('width',smFs); el.setAttribute('height',smFs);
+    });
+    document.querySelectorAll('.btn-aa').forEach(el=>{
+      el.style.height=smPx+'px'; el.style.fontSize=smFs+'px'; el.style.padding=`0 ${Math.round(smPx*0.3)}px`;
+    });
     document.documentElement.style.setProperty('--font-size', fsize);
 
     // Adaptar hoja al ancho de la pantalla
