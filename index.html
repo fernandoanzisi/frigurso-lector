@@ -1146,51 +1146,44 @@ function iniciarAutoHide() {
 }
 
 // Tap zones en lector-body
-// Detección de tablet por tamaño físico de pantalla
+// Detección de tablet — aplica estilos inline directamente
 (function(){
   const s = Math.max(screen.width, screen.height);
-  const esTablet = s >= 700;
-  const esTabletGrande = s >= 900;
-  if (!esTablet) return;
-  const css = esTabletGrande ? `
-    .btn-nav{width:130px!important;height:130px!important;font-size:80px!important}
-    .btn-icon{width:80px!important;height:80px!important;font-size:38px!important}
-    .pag-info{font-size:24px!important}
-    .footer-main{padding:20px 32px max(14px,env(safe-area-inset-bottom))!important}
-    .lector-titulo{font-size:24px!important}
-    .lector-header{padding:20px 24px!important}
-    .libro-titulo{font-size:24px!important}
-    .libro-meta{font-size:18px!important}
-    .stat-chip{font-size:20px!important;padding:16px 26px!important}
-    .stat-chip strong{font-size:26px!important}
-    .btn-add{font-size:22px!important;padding:18px 36px!important}
-    .header-title{font-size:26px!important}
-    :root{--font-size:30px}
-  ` : `
-    .btn-nav{width:110px!important;height:110px!important;font-size:68px!important}
-    .btn-icon{width:68px!important;height:68px!important;font-size:30px!important}
-    .pag-info{font-size:20px!important}
-    .footer-main{padding:16px 28px max(14px,env(safe-area-inset-bottom))!important}
-    .lector-titulo{font-size:20px!important}
-    .lector-header{padding:18px 22px!important}
-    .libro-titulo{font-size:20px!important}
-    .libro-meta{font-size:16px!important}
-    .stat-chip{font-size:18px!important;padding:14px 22px!important}
-    .stat-chip strong{font-size:22px!important}
-    .btn-add{font-size:20px!important;padding:16px 32px!important}
-    .header-title{font-size:22px!important}
-    :root{--font-size:26px}
-  `;
-  const st=document.createElement('style');
-  st.textContent=css;
-  document.head.appendChild(st);
+  if (s < 700) return;
+  const grande = s >= 900;
+  const nav   = grande ? {w:'130px',h:'130px',fs:'80px'} : {w:'110px',h:'110px',fs:'68px'};
+  const icon  = grande ? {w:'80px', h:'80px', fs:'38px'} : {w:'68px', h:'68px', fs:'30px'};
+  const fsize = grande ? '30px' : '26px';
+
+  function aplicar(){
+    document.querySelectorAll('.btn-nav').forEach(el=>{
+      el.style.width=nav.w; el.style.height=nav.h; el.style.fontSize=nav.fs;
+    });
+    document.querySelectorAll('.btn-icon').forEach(el=>{
+      el.style.width=icon.w; el.style.height=icon.h; el.style.fontSize=icon.fs;
+    });
+    document.querySelectorAll('.pag-info').forEach(el=>el.style.fontSize=grande?'24px':'20px');
+    document.querySelectorAll('.lector-titulo').forEach(el=>el.style.fontSize=grande?'24px':'20px');
+    document.querySelectorAll('.libro-titulo').forEach(el=>el.style.fontSize=grande?'24px':'20px');
+    document.querySelectorAll('.libro-meta').forEach(el=>el.style.fontSize=grande?'18px':'16px');
+    document.querySelectorAll('.header-title').forEach(el=>el.style.fontSize=grande?'26px':'22px');
+    document.querySelectorAll('.btn-add').forEach(el=>{
+      el.style.fontSize=grande?'22px':'20px'; el.style.padding=grande?'18px 36px':'16px 32px';
+    });
+    document.documentElement.style.setProperty('--font-size', fsize);
+  }
+
+  document.addEventListener('DOMContentLoaded', aplicar);
+  // Re-aplicar en cambios de página por si se re-renderizan elementos
+  setTimeout(aplicar, 300);
+  setTimeout(aplicar, 1000);
 
   // DEBUG — sacar cuando funcione
   setTimeout(()=>{
     const d=document.createElement('div');
     d.id='dbg';
     d.style.cssText='position:fixed;top:0;left:0;right:0;background:red;color:#fff;font-size:16px;padding:8px;z-index:9999;text-align:center';
-    d.textContent=`${screen.width}x${screen.height} dPR:${devicePixelRatio} s:${s} ${esTabletGrande?'tablet-lg':'tablet'}`;
+    d.textContent=`${screen.width}x${screen.height} dPR:${devicePixelRatio} s:${s} ${grande?'tablet-lg':'tablet'} btn:${document.querySelectorAll('.btn-nav').length}`;
     document.body.appendChild(d);
   },500);
 })();
