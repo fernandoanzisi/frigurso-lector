@@ -1384,6 +1384,16 @@ async function extraerTextoPDF(source) {
     const bodyFs=Object.entries(fsCounts).sort((a,b)=>b[1]-a[1])[0];
     const cuerpoFs=bodyFs?parseFloat(bodyFs[0]):0;
 
+    // Debug: mostrar en consola los datos de fuente de la página 5
+    if (i===5) {
+      const info=content.items.filter(it=>it.str?.trim()).slice(0,15).map(it=>({
+        str:it.str, font:it.fontName,
+        style:content.styles?.[it.fontName]?.fontFamily||'',
+        t1:it.transform[1].toFixed(3), t3:it.transform[3].toFixed(3)
+      }));
+      console.log('PDF pág5 items:', JSON.stringify(info,null,2));
+    }
+
     // Detectar si un item es cursiva por fontName, styles o shear en la matriz
     const esItalica=(item)=>{
       const fn=(item.fontName||'').toLowerCase();
