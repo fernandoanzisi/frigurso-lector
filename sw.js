@@ -1,5 +1,5 @@
 // Incrementar esta versión en cada deploy para limpiar el caché viejo
-const CACHE = 'lector-v62';
+const CACHE = 'lector-v63';
 const PRECACHE = ['/', '/index.html', '/manifest.json', '/libros-data.js'];
 
 self.addEventListener('install', e => {
@@ -31,7 +31,7 @@ self.addEventListener('fetch', e => {
   if (isHTML) {
     e.respondWith(
       fetch(e.request).then(res => {
-        if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+        if (res.ok) { const c2=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,c2)); }
         return res;
       }).catch(() => caches.match(e.request))
     );
@@ -42,7 +42,7 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     caches.match(e.request).then(cached => {
       const fresh = fetch(e.request).then(res => {
-        if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+        if (res.ok) { const c2=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,c2)); }
         return res;
       }).catch(() => cached);
       return cached || fresh;
