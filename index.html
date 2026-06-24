@@ -1481,6 +1481,7 @@ async function extraerTextoPDF(source) {
       }
     }
     texto=texto.replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+    if (i===5) console.log('pág5 texto:', JSON.stringify(texto.slice(0,400)));
     paginas.push(texto);
 
     document.getElementById('pdf-progress-fill').style.width=Math.round(i/pdf.numPages*100)+'%';
