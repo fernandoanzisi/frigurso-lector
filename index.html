@@ -1384,14 +1384,14 @@ async function extraerTextoPDF(source) {
     const bodyFs=Object.entries(fsCounts).sort((a,b)=>b[1]-a[1])[0];
     const cuerpoFs=bodyFs?parseFloat(bodyFs[0]):0;
 
-    // Agrupar items por línea, guardando tamaño de fuente y si hay negrita
+    // Agrupar items por línea, guardando tamaño de fuente, fontName predominante y negrita
     const lineas=[];
     let lineaActual=null;
     for (const item of content.items) {
       if (!item.str) continue;
       const y=item.transform[5];
       if (lineaActual===null||Math.abs(y-lineaActual.y)>5) {
-        lineaActual={y, texto:'', fsSum:0, fsN:0, bold:false};
+        lineaActual={y, texto:'', fsSum:0, fsN:0, bold:false, font:item.fontName||''};
         lineas.push(lineaActual);
       }
       const s=item.str;
@@ -1415,6 +1415,7 @@ async function extraerTextoPDF(source) {
     const lineH=gapN>0?gapSum/gapN:14;
 
     // Unir líneas: gap > 1.5× altura de línea = párrafo nuevo
+    // Cambio de fuente entre líneas cortas consecutivas = párrafo nuevo (ej: citas con autor/obra)
     // Líneas con fuente > 1.25× cuerpo se marcan como [[H]] (heading)
     let texto='';
     for (let j=0;j<lineas.length;j++){
@@ -1429,7 +1430,10 @@ async function extraerTextoPDF(source) {
 
       if (!texto){texto=bloque;continue;}
       const gap=lineas[j-1].y-lineas[j].y;
-      if (esHeading||gap>lineH*1.5){
+      const prevLin=lineas[j-1];
+      // Cambio de fuente entre líneas cortas = bloques separados (citas, autor, título de obra)
+      const cambioFuente=lin.font!==prevLin.font&&l.length<80&&prevLin.texto.trim().length<80;
+      if (esHeading||gap>lineH*1.5||cambioFuente){
         texto+='\n\n'+bloque;
       } else if (!esHeading&&texto.endsWith('-')){
         texto=texto.slice(0,-1)+bloque;
