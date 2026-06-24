@@ -1151,7 +1151,13 @@ function iniciarAutoHide() {
   const s = Math.max(screen.width, screen.height);
   if (s >= 900) document.documentElement.classList.add('tablet','tablet-lg');
   else if (s >= 700) document.documentElement.classList.add('tablet');
-  setTimeout(()=>toast(`pantalla: ${screen.width}x${screen.height} dPR:${devicePixelRatio} clase:${document.documentElement.className}`),1500);
+  setTimeout(()=>{
+    const d=document.createElement('div');
+    d.id='dbg';
+    d.style.cssText='position:fixed;top:0;left:0;right:0;background:red;color:#fff;font-size:16px;padding:8px;z-index:9999;text-align:center';
+    d.textContent=`${screen.width}x${screen.height} dPR:${devicePixelRatio} clase:"${document.documentElement.className}"`;
+    document.body.appendChild(d);
+  },500);
 })();
 
 document.addEventListener('DOMContentLoaded',()=>{
