@@ -980,6 +980,10 @@ function entrarModoEdicion() {
   el.textContent=pag?.texto||'';
   el.contentEditable='true'; el.focus();
   document.getElementById('btn-edit').innerHTML=icon('save',16);
+  // Mantener controles visibles mientras se edita
+  clearTimeout(_hideTimer);
+  document.getElementById('lector-header')?.classList.remove('oculto');
+  document.getElementById('lector-footer')?.classList.remove('oculto');
 }
 function salirModoEdicion() {
   _state.editando=false;
@@ -1158,6 +1162,7 @@ function mostrarControles() {
   _hideTimer=setTimeout(ocultarControles,3500);
 }
 function ocultarControles() {
+  if (_state.editando) return;
   document.getElementById('lector-header')?.classList.add('oculto');
   document.getElementById('lector-footer')?.classList.add('oculto');
   clearTimeout(_hideTimer);
