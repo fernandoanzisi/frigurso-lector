@@ -1160,6 +1160,7 @@ function mostrarControles() {
 function ocultarControles() {
   document.getElementById('lector-header')?.classList.add('oculto');
   document.getElementById('lector-footer')?.classList.add('oculto');
+  clearTimeout(_hideTimer);
 }
 function iniciarAutoHide() {
   mostrarControles();
@@ -1223,7 +1224,9 @@ document.addEventListener('DOMContentLoaded',()=>{
       if (_state.editando||_state.buscando) return;
       const panel=document.getElementById('aa-panel');
       if (panel?.classList.contains('show')) { toggleAaPanel(); return; }
-      mostrarControles();
+      const header=document.getElementById('lector-header');
+      if (header?.classList.contains('oculto')) mostrarControles();
+      else ocultarControles();
     });
   }
 });
