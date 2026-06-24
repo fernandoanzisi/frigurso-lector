@@ -1234,6 +1234,8 @@ function iniciarAutoHide() {
 // Tap zones en lector-body
 // Detección de tablet — aplica estilos proporcionales al ancho real
 (function(){
+  // Solo escalar en Android/iOS. Las computadoras Windows/Mac nunca tienen "Android" en el UA.
+  if (!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
   const s = Math.max(screen.width, screen.height);
   if (s < 700) return;
 
@@ -1367,27 +1369,81 @@ function handlePdfFile(f) {
 async function extraerTextoPDF(source) {
   await cargarPdfjs();
   const pdf=await pdfjsLib.getDocument(source).promise;
-  const pageTexts=[];
+  const paginas=[];
   for (let i=1;i<=pdf.numPages;i++) {
     const page=await pdf.getPage(i);
     const content=await page.getTextContent();
-    let lastY=null, linea='', texto='';
+
+    // Primera pasada: calcular tamaño de fuente del cuerpo del texto (el más frecuente en caracteres)
+    const fsCounts={};
     for (const item of content.items) {
-      const y=Math.round(item.transform[5]);
-      if (lastY!==null&&Math.abs(y-lastY)>4) {
-        texto+=linea.trim()+'\n';
-        linea='';
-      }
-      linea+=item.str+(item.hasEOL?' ':'');
-      lastY=y;
+      if (!item.str?.trim()) continue;
+      const fs=Math.round(Math.abs(item.transform[3])*10)/10;
+      if (fs>0) fsCounts[fs]=(fsCounts[fs]||0)+item.str.trim().length;
     }
-    if (linea.trim()) texto+=linea.trim();
-    pageTexts.push(texto.trim());
+    const bodyFs=Object.entries(fsCounts).sort((a,b)=>b[1]-a[1])[0];
+    const cuerpoFs=bodyFs?parseFloat(bodyFs[0]):0;
+
+    // Agrupar items por línea, guardando tamaño de fuente y si hay negrita
+    const lineas=[];
+    let lineaActual=null;
+    for (const item of content.items) {
+      if (!item.str) continue;
+      const y=item.transform[5];
+      if (lineaActual===null||Math.abs(y-lineaActual.y)>5) {
+        lineaActual={y, texto:'', fsSum:0, fsN:0, bold:false};
+        lineas.push(lineaActual);
+      }
+      const s=item.str;
+      if (lineaActual.texto&&s&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
+        lineaActual.texto+=' ';
+      lineaActual.texto+=s;
+      const fs=Math.abs(item.transform[3]);
+      if (fs>0){lineaActual.fsSum+=fs*s.length;lineaActual.fsN+=s.length;}
+      if ((item.fontName||'').toLowerCase().includes('bold')) lineaActual.bold=true;
+    }
+
+    // Ordenar de arriba a abajo (Y mayor = más arriba en PDF)
+    lineas.sort((a,b)=>b.y-a.y);
+
+    // Calcular altura de línea típica para detectar párrafos
+    let gapSum=0, gapN=0;
+    for (let j=1;j<lineas.length;j++){
+      const g=lineas[j-1].y-lineas[j].y;
+      if (g>2&&g<40){gapSum+=g;gapN++;}
+    }
+    const lineH=gapN>0?gapSum/gapN:14;
+
+    // Unir líneas: gap > 1.5× altura de línea = párrafo nuevo
+    // Líneas con fuente > 1.25× cuerpo se marcan como [[H]] (heading)
+    let texto='';
+    for (let j=0;j<lineas.length;j++){
+      const lin=lineas[j];
+      const l=lin.texto.trim();
+      if (!l) continue;
+      const avgFs=lin.fsN>0?lin.fsSum/lin.fsN:cuerpoFs;
+      const esHeading=cuerpoFs>0&&avgFs>cuerpoFs*1.25&&l.length<120;
+      const esNegrita=lin.bold&&!esHeading&&cuerpoFs>0&&avgFs>cuerpoFs*0.95&&l.length<120;
+
+      const bloque=esHeading?`[[H]]${l}[[/H]]`:esNegrita?`[[B]]${l}[[/B]]`:l;
+
+      if (!texto){texto=bloque;continue;}
+      const gap=lineas[j-1].y-lineas[j].y;
+      if (esHeading||gap>lineH*1.5){
+        texto+='\n\n'+bloque;
+      } else if (!esHeading&&texto.endsWith('-')){
+        texto=texto.slice(0,-1)+bloque;
+      } else {
+        texto+=' '+bloque;
+      }
+    }
+    texto=texto.replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+    paginas.push(texto);
+
     document.getElementById('pdf-progress-fill').style.width=Math.round(i/pdf.numPages*100)+'%';
     document.getElementById('pdf-progress-label').textContent=`Leyendo página ${i} de ${pdf.numPages}...`;
   }
 
-  // Obtener metadatos
   let metaTitulo='', metaAutor='';
   try {
     const meta=await pdf.getMetadata();
@@ -1395,8 +1451,7 @@ async function extraerTextoPDF(source) {
     metaAutor=meta?.info?.Author||'';
   } catch(e){}
 
-  const textoTotal=pageTexts.join('\n\n').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
-  const paginas=splitTexto(textoTotal, calcCharsPerPage());
+  // Una página del PDF = una página en el lector (sin re-paginar)
   return {paginas:paginas.filter(p=>p.length>5), metaTitulo, metaAutor, pdf};
 }
 
@@ -1620,6 +1675,20 @@ function textoAHtml(texto) {
       const src = imgMatch[1].replace(/"/g, '%22');
       const alt = escHtml(imgMatch[2] || '');
       html += `<figure class="lector-img"><img src="${src}" alt="${alt}" loading="lazy">${alt ? `<figcaption>${alt}</figcaption>` : ''}</figure>`;
+      seq = 0; continue;
+    }
+
+    // Heading marcado por el extractor de PDF: [[H]]texto[[/H]]
+    const hMatch = s0.match(/^\[\[H\]\](.*)\[\[\/H\]\]$/);
+    if (hMatch) {
+      html += `<h3 class="lector-h">${escHtml(hMatch[1])}</h3>`;
+      seq = 0; continue;
+    }
+
+    // Negrita marcada por el extractor: [[B]]texto[[/B]]
+    const bMatch = s0.match(/^\[\[B\]\](.*)\[\[\/B\]\]$/);
+    if (bMatch) {
+      html += `<p class="lector-p"><strong>${escHtml(bMatch[1])}</strong></p>`;
       seq = 0; continue;
     }
 
