@@ -225,11 +225,9 @@
   .lector-portada-autor{font-family:var(--font-read);font-size:0.95em;font-style:italic;color:var(--text2)}
   .lector-coverpage{position:absolute;inset:0;overflow:hidden;background:#000;z-index:1}
   .lector-coverpage img{width:100%;height:100%;object-fit:contain;display:block}
-  .btn-fullscreen{position:fixed;bottom:max(72px,env(safe-area-inset-bottom)+72px);right:12px;
-    width:40px;height:40px;border-radius:10px;border:none;cursor:pointer;z-index:20;
-    background:rgba(0,0,0,0.35);color:#fff;display:none;align-items:center;justify-content:center;
-    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
-  #page-lector.active .btn-fullscreen{display:flex}
+  .btn-fullscreen{width:60px;height:60px;border-radius:50%;background:transparent;border:none;
+    color:var(--text2);font-size:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+  .btn-fullscreen:active{color:var(--accent)}
 
   .lector-footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
     border-top:1px solid var(--border);box-shadow:0 -2px 12px rgba(0,0,0,0.08);
@@ -482,14 +480,13 @@
       </div>
     </div>
 
-    <button class="btn-fullscreen" id="btn-fullscreen" onclick="toggleFullscreen()"></button>
-
     <div class="lector-footer" id="lector-footer">
       <div class="footer-barra"><div class="footer-barra-fill" id="pag-fill"></div></div>
       <div class="footer-main">
         <button class="btn-nav" id="btn-prev" onclick="cambiarPag(-1)">‹</button>
         <div class="pag-info" id="pag-info">Pág 1 de 1 · 0%</div>
         <button class="btn-nav" id="btn-next" onclick="cambiarPag(1)">›</button>
+        <button class="btn-fullscreen" id="btn-fullscreen" onclick="toggleFullscreen()"></button>
       </div>
     </div>
   </div>
@@ -1257,18 +1254,12 @@ function mostrarControles() {
   document.getElementById('lector-footer')?.classList.remove('oculto');
   clearTimeout(_hideTimer);
   _hideTimer=setTimeout(ocultarControles,3500);
-  // Salir de pantalla completa para mostrar barra del sistema
-  try { if (document.fullscreenElement||document.webkitFullscreenElement)
-    (document.exitFullscreen||document.webkitExitFullscreen).call(document); } catch(e){}
 }
 function ocultarControles() {
   if (_state.editando) return;
   document.getElementById('lector-header')?.classList.add('oculto');
   document.getElementById('lector-footer')?.classList.add('oculto');
   clearTimeout(_hideTimer);
-  // Entrar en pantalla completa para ocultar barra del sistema y notificaciones
-  try { const el=document.documentElement;
-    (el.requestFullscreen||el.webkitRequestFullscreen).call(el); } catch(e){}
 }
 function iniciarAutoHide() {
   actualizarIconoFullscreen();
