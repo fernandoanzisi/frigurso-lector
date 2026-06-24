@@ -1384,23 +1384,25 @@ async function extraerTextoPDF(source) {
     const bodyFs=Object.entries(fsCounts).sort((a,b)=>b[1]-a[1])[0];
     const cuerpoFs=bodyFs?parseFloat(bodyFs[0]):0;
 
-    // Debug: mostrar en consola los datos de fuente de la página 5
-    if (i===5) {
-      const info=content.items.filter(it=>it.str?.trim()).slice(0,15).map(it=>({
-        str:it.str, font:it.fontName,
-        style:content.styles?.[it.fontName]?.fontFamily||'',
-        t1:it.transform[1].toFixed(3), t3:it.transform[3].toFixed(3)
-      }));
-      console.log('PDF pág5 items:', JSON.stringify(info,null,2));
+    // Fuente más usada en el cuerpo del texto (mayor cantidad de caracteres)
+    const fontCounts={};
+    for (const item of content.items) {
+      if (!item.str?.trim()||!item.fontName) continue;
+      fontCounts[item.fontName]=(fontCounts[item.fontName]||0)+item.str.trim().length;
     }
+    const cuerpoFont=Object.entries(fontCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
 
-    // Detectar si un item es cursiva por fontName, styles o shear en la matriz
+    // Detectar cursiva: nombre/style explícito, shear en transform, o fuente diferente al cuerpo con mismo tamaño
     const esItalica=(item)=>{
       const fn=(item.fontName||'').toLowerCase();
       if (fn.includes('italic')||fn.includes('oblique')) return true;
       const sf=(content.styles?.[item.fontName]?.fontFamily||'').toLowerCase();
       if (sf.includes('italic')||sf.includes('oblique')) return true;
       if (Math.abs(item.transform[1])>0.1) return true;
+      // Fuente diferente al cuerpo con tamaño similar = énfasis tipográfico (cursiva en la mayoría de libros)
+      const fs=Math.abs(item.transform[3]);
+      if (cuerpoFont&&item.fontName&&item.fontName!==cuerpoFont&&fs>0&&Math.abs(fs-cuerpoFs)<cuerpoFs*0.3)
+        return true;
       return false;
     };
 
