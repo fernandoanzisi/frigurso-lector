@@ -639,7 +639,7 @@ async function repaginarLibro() {
   lib.paginas = nuevasPaginas;
   lib.ultimaPag = 0;
   await saveLibro(lib);
-  _state.paginaActual = lib.portada ? -1 : 0;
+  _state.paginaActual = 0;
   renderPagina();
   toggleAaPanel();
   toast(`Repaginado: ${nuevasPaginas.length} páginas`);
@@ -726,7 +726,7 @@ function goLector(id) {
   if (!lib||!lib.paginas.length) { toast('Sin páginas'); return; }
   _state.libroActual=id;
   const ultimaPag = lib.ultimaPag||0;
-  _state.paginaActual = (lib.portada && ultimaPag === 0) ? -1 : ultimaPag;
+  _state.paginaActual = Math.max(0, ultimaPag);
   localStorage.setItem('frigurso_resume', JSON.stringify({id, pag:_state.paginaActual}));
   history.pushState({frigurso:'lector'}, '');
   goPage('lector'); renderPagina(); iniciarAutoHide();
@@ -919,24 +919,8 @@ function renderPagina() {
   document.getElementById('lector-body').scrollTop=0;
   if (_state.editando) salirModoEdicion();
 
-  // Página de portada (n === -1)
-  if (n === -1 && lib.portada) {
-    document.getElementById('pag-info').textContent='Portada';
-    document.getElementById('pag-fill').style.width='0%';
-    document.getElementById('nota-indicator').style.display='none';
-    document.getElementById('btn-edit').style.visibility='hidden';
-    document.getElementById('btn-prev').disabled=true;
-    document.getElementById('btn-next').disabled=false;
-    document.getElementById('lector-texto').innerHTML=
-      `<div class="lector-portada">` +
-      `<img class="lector-portada-img" src="${lib.portada}" alt="Portada">` +
-      `<div class="lector-portada-titulo">${escHtml(lib.titulo)}</div>` +
-      (lib.autor?`<div class="lector-portada-autor">${escHtml(lib.autor)}</div>`:'') +
-      `</div>`;
-    renderMarcadoresBarra(lib,total);
-    actualizarBtnMarcador(lib,-1);
-    return;
-  }
+  // Redirigir n=-1 (portada legacy) a página 0
+  if (n === -1) { _state.paginaActual=0; renderPagina(); return; }
 
   // Páginas normales
   const pag=lib.paginas[n>=0?n:0];
@@ -970,7 +954,7 @@ function renderPagina() {
   document.getElementById('btn-edit').style.visibility='';
   document.getElementById('lector-texto').innerHTML=textoAHtml(pag?.texto);
   document.getElementById('nota-indicator').style.display=pag?.nota?'':'none';
-  document.getElementById('btn-prev').disabled = lib.portada ? n<=0 : n===0;
+  document.getElementById('btn-prev').disabled = n===0;
   document.getElementById('btn-next').disabled=n===total-1;
   renderMarcadoresBarra(lib,total);
   actualizarBtnMarcador(lib,n);
@@ -992,8 +976,7 @@ function renderMarcadoresBarra(lib,total) {
 function cambiarPag(delta) {
   const lib=_state.libros.find(l=>l.id===_state.libroActual); if (!lib) return;
   const n=_state.paginaActual+delta;
-  const minPage = lib.portada ? -1 : 0;
-  if (n<minPage||n>=lib.paginas.length) return;
+  if (n<0||n>=lib.paginas.length) return;
   const page=document.querySelector('.lector-page');
   if (!page) { _state.paginaActual=n; renderPagina(); return; }
 
@@ -1246,12 +1229,18 @@ function mostrarControles() {
   document.getElementById('lector-footer')?.classList.remove('oculto');
   clearTimeout(_hideTimer);
   _hideTimer=setTimeout(ocultarControles,3500);
+  // Salir de pantalla completa para mostrar barra del sistema
+  try { if (document.fullscreenElement||document.webkitFullscreenElement)
+    (document.exitFullscreen||document.webkitExitFullscreen).call(document); } catch(e){}
 }
 function ocultarControles() {
   if (_state.editando) return;
   document.getElementById('lector-header')?.classList.add('oculto');
   document.getElementById('lector-footer')?.classList.add('oculto');
   clearTimeout(_hideTimer);
+  // Entrar en pantalla completa para ocultar barra del sistema y notificaciones
+  try { const el=document.documentElement;
+    (el.requestFullscreen||el.webkitRequestFullscreen).call(el); } catch(e){}
 }
 function iniciarAutoHide() {
   mostrarControles();
