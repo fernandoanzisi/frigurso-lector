@@ -1204,10 +1204,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       if (_state.editando||_state.buscando) return;
       const panel=document.getElementById('aa-panel');
       if (panel?.classList.contains('show')) { toggleAaPanel(); return; }
-      const x=e.clientX, w=window.innerWidth;
-      if (x<w*0.3) { mostrarControles(); cambiarPag(-1); }
-      else if (x>w*0.7) { mostrarControles(); cambiarPag(1); }
-      else { mostrarControles(); }
+      mostrarControles();
     });
   }
 });
