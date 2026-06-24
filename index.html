@@ -1885,41 +1885,120 @@ async function buscarLibros() {
   lista.innerHTML = '';
   _libgenRes = [];
   try {
-    const r = await fetch('/api/libgen', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({query})
-    });
-    const data = await r.json();
+    // 1er intento: servidor Vercel
+    let libros = null;
+    try {
+      const r = await fetch('/api/libgen', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({query}),
+        signal: AbortSignal.timeout(20000)
+      });
+      const data = await r.json();
+      if (!data.error || data.error !== 'blocked') libros = data.libros || [];
+    } catch(e) {}
+
+    // Fallback: búsqueda directa desde el browser via CORS proxy
+    if (libros === null) {
+      estado.textContent = 'Intentando acceso directo...';
+      libros = await buscarLibgenDirecto(query);
+    }
+
     estado.style.display = 'none';
-    if (data.error) { estado.style.display=''; estado.textContent='Error: '+data.error; return; }
-    _libgenRes = data.libros || [];
+    _libgenRes = libros || [];
     if (!_libgenRes.length) {
       estado.style.display = '';
       estado.textContent = 'Sin resultados. Probá con otro título o autor.';
       return;
     }
-    lista.innerHTML = _libgenRes.map((l, i) => `
-      <div class="libro-card">
-        <div class="libro-card-titulo">${escHtml(l.titulo)}</div>
-        ${l.autor ? `<div class="libro-card-autor">${escHtml(l.autor)}</div>` : ''}
-        <div class="libro-card-meta">
-          ${l.year ? `<span>${escHtml(l.year)}</span>` : ''}
-          ${l.idioma ? `<span>${escHtml(l.idioma)}</span>` : ''}
-          <span class="badge-fmt">${escHtml(l.formato)}</span>
-          ${l.tamano ? `<span>${escHtml(l.tamano)}</span>` : ''}
-          ${l.paginas ? `<span>${escHtml(l.paginas)} pág.</span>` : ''}
-        </div>
-        <button class="libro-card-btn" id="libgen-btn-${i}" onclick="importarDesdeLibgen(${i})">Importar</button>
-      </div>
-    `).join('');
+    mostrarResultadosLibgen();
     lista.style.display = '';
   } catch(e) {
     estado.style.display = '';
-    estado.textContent = 'Error de conexión: ' + e.message;
+    estado.textContent = 'No se pudo conectar con Libgen. Intentá de nuevo.';
   } finally {
     btn.disabled = false;
   }
+}
+
+function mostrarResultadosLibgen() {
+  const lista = document.getElementById('buscar-lista');
+  lista.innerHTML = _libgenRes.map((l, i) => `
+    <div class="libro-card">
+      <div class="libro-card-titulo">${escHtml(l.titulo)}</div>
+      ${l.autor ? `<div class="libro-card-autor">${escHtml(l.autor)}</div>` : ''}
+      <div class="libro-card-meta">
+        ${l.year ? `<span>${escHtml(l.year)}</span>` : ''}
+        ${l.idioma ? `<span>${escHtml(l.idioma)}</span>` : ''}
+        <span class="badge-fmt">${escHtml(l.formato)}</span>
+        ${l.tamano ? `<span>${escHtml(l.tamano)}</span>` : ''}
+        ${l.paginas ? `<span>${escHtml(l.paginas)} pág.</span>` : ''}
+      </div>
+      <button class="libro-card-btn" id="libgen-btn-${i}" onclick="importarDesdeLibgen(${i})">Importar</button>
+    </div>
+  `).join('');
+}
+
+async function buscarLibgenDirecto(query) {
+  const LIBGEN_MIRRORS = ['libgen.is','libgen.rs','libgen.st'];
+  const CORS_PROXIES = [
+    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+  ];
+  for (const proxy of CORS_PROXIES) {
+    for (const mirror of LIBGEN_MIRRORS) {
+      try {
+        const libgenUrl = `https://${mirror}/search.php?req=${encodeURIComponent(query)}&res=50&view=simple&column=def`;
+        const r = await fetch(proxy(libgenUrl), {signal: AbortSignal.timeout(18000)});
+        if (!r.ok) continue;
+        let html;
+        const ct = r.headers.get('content-type')||'';
+        if (ct.includes('application/json')) {
+          const j = await r.json();
+          html = j.contents || '';
+        } else {
+          html = await r.text();
+        }
+        if (html.length < 500) continue;
+        const libros = parsearLibgenHTML(html);
+        if (libros.length) return libros;
+      } catch(e) {}
+    }
+  }
+  return [];
+}
+
+function parsearLibgenHTML(html) {
+  const libros = [];
+  // Extraer filas de tabla con resultados
+  const rows = html.split(/<tr[\s>]/i).slice(1);
+  for (const row of rows) {
+    const tds = [];
+    const tdRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+    let m;
+    while ((m = tdRe.exec(row)) !== null) tds.push(m[1]);
+    if (tds.length < 9) continue;
+    const idText = tds[0].replace(/<[^>]+>/g,'').trim();
+    if (!/^\d+$/.test(idText)) continue;
+    // MD5 del link del título
+    const md5Match = /md5=([a-f0-9]{32})/i.exec(tds[1]);
+    if (!md5Match) continue;
+    const md5 = md5Match[1].toLowerCase();
+    const titulo = tds[1].replace(/<[^>]+>/g,'').trim().replace(/\s+/g,' ');
+    const autor = tds[2].replace(/<[^>]+>/g,'').trim();
+    const year = tds[4].replace(/<[^>]+>/g,'').trim();
+    const pages = tds[5].replace(/<[^>]+>/g,'').trim();
+    const lang = tds[6].replace(/<[^>]+>/g,'').trim();
+    const size = tds[7].replace(/<[^>]+>/g,'').trim();
+    const ext = tds[8].replace(/<[^>]+>/g,'').trim().toLowerCase();
+    if (!['pdf','epub'].includes(ext)) continue;
+    if (!titulo) continue;
+    libros.push({
+      id: idText, titulo, autor, year, idioma: lang,
+      formato: ext.toUpperCase(), tamano: size, paginas: pages, md5
+    });
+  }
+  return libros;
 }
 
 function escHtml(s) {

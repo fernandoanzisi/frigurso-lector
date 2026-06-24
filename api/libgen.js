@@ -1,21 +1,41 @@
-const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36';
-const MIRRORS = ['libgen.is', 'libgen.rs', 'libgen.st'];
+const MIRRORS = [
+  'libgen.is', 'libgen.rs', 'libgen.st', 'libgen.li',
+  'gen.lib.rus.ec', 'libgen.lol', 'libgen.buzz',
+];
 
-async function fetchMirror(path, mirror) {
-  return fetch(`https://${mirror}${path}`, {
-    headers: { 'User-Agent': UA },
-    signal: AbortSignal.timeout(12000),
-  });
-}
+const HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.5',
+  'Connection': 'keep-alive',
+  'Upgrade-Insecure-Requests': '1',
+};
 
-async function tryMirrors(path) {
+async function trySearch(query) {
   for (const mirror of MIRRORS) {
     try {
-      const r = await fetchMirror(path, mirror);
-      if (r.ok) return r;
+      const url = `https://${mirror}/search.php?req=${encodeURIComponent(query)}&res=50&view=simple&open=0&phrase=1&column=def`;
+      const r = await fetch(url, {
+        headers: HEADERS,
+        signal: AbortSignal.timeout(14000),
+        redirect: 'follow',
+      });
+      if (!r.ok) continue;
+      const html = await r.text();
+      if (html.length < 500) continue;
+      const ids = extractIds(html);
+      if (!ids.length) return { html, ids: [], mirror };
+      return { html, ids, mirror };
     } catch (e) {}
   }
-  throw new Error('No se pudo conectar con Libgen');
+  return null;
+}
+
+function extractIds(html) {
+  // Two strategies: links with ?id= and raw numeric <td> cells
+  const s1 = [...new Set([...html.matchAll(/[?&]id=(\d+)/g)].map(m => m[1]))];
+  const s2 = [...new Set([...html.matchAll(/<td>\s*(\d{4,})\s*<\/td>/g)].map(m => m[1]))];
+  return [...new Set([...s1, ...s2])].filter(id => parseInt(id) > 0).slice(0, 50);
 }
 
 module.exports = async function handler(req, res) {
@@ -28,31 +48,19 @@ module.exports = async function handler(req, res) {
   const { query } = req.body || {};
   if (!query?.trim()) return res.status(400).json({ error: 'Falta término de búsqueda' });
 
+  const result = await trySearch(query.trim());
+  if (!result) return res.status(502).json({ error: 'blocked', libros: [] });
+
+  if (!result.ids.length) return res.json({ libros: [] });
+
+  // Fetch JSON metadata for the found IDs using same mirror
+  let libros = [];
   try {
-    // 1. Buscar y extraer IDs del HTML
-    const searchPath = `/search.php?req=${encodeURIComponent(query)}&res=50&view=simple&open=0&phrase=1&column=def`;
-    const searchResp = await tryMirrors(searchPath);
-    const html = await searchResp.text();
-
-    // Extraer IDs únicos de los links de resultado
-    const ids = [...new Set([...html.matchAll(/\/book\/index\.php\?md5=|[?&]id=(\d+)/g)]
-      .map(m => m[1]).filter(Boolean))].slice(0, 40);
-
-    // Fallback: buscar IDs en la tabla de otra forma
-    const ids2 = [...new Set([...html.matchAll(/<td>(\d{4,})<\/td>/g)]
-      .map(m => m[1]))].slice(0, 40);
-
-    const allIds = [...new Set([...ids, ...ids2])].slice(0, 40);
-    if (!allIds.length) return res.json({ libros: [] });
-
-    // 2. Obtener metadatos JSON con los IDs
     const fields = 'id,title,author,md5,extension,filesize,language,year,pages';
-    const jsonPath = `/json.php?ids=${allIds.join(',')}&fields=${fields}`;
-    const jsonResp = await tryMirrors(jsonPath);
-    const data = await jsonResp.json();
-
-    // 3. Filtrar y limpiar resultados
-    const libros = (Array.isArray(data) ? data : [])
+    const jsonUrl = `https://${result.mirror}/json.php?ids=${result.ids.join(',')}&fields=${fields}`;
+    const jr = await fetch(jsonUrl, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+    const data = await jr.json();
+    libros = (Array.isArray(data) ? data : [])
       .filter(l => l.md5 && ['pdf', 'epub'].includes((l.extension || '').toLowerCase()))
       .map(l => ({
         id: l.id,
@@ -61,19 +69,17 @@ module.exports = async function handler(req, res) {
         year: l.year || '',
         idioma: l.language || '',
         formato: (l.extension || '').toUpperCase(),
-        tamano: l.filesize ? formatBytes(parseInt(l.filesize)) : '',
+        tamano: l.filesize ? fmtBytes(parseInt(l.filesize)) : '',
         paginas: l.pages || '',
         md5: l.md5.toLowerCase(),
       }));
+  } catch (e) {}
 
-    res.json({ libros });
-  } catch (e) {
-    res.status(502).json({ error: e.message });
-  }
+  res.json({ libros });
 };
 
-function formatBytes(bytes) {
-  if (!bytes) return '';
-  if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+function fmtBytes(b) {
+  if (!b) return '';
+  if (b < 1048576) return Math.round(b / 1024) + ' KB';
+  return (b / 1048576).toFixed(1) + ' MB';
 }
