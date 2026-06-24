@@ -72,9 +72,17 @@
   .libro-meta{font-size:11px;color:var(--text3)}
   .libro-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.55);color:#fff;
     font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
-  .libro-del{position:absolute;top:6px;left:6px;background:rgba(192,57,43,0.85);color:#fff;
-    font-size:14px;width:28px;height:28px;border-radius:50%;display:none;align-items:center;justify-content:center}
-  .libro-card:hover .libro-del{display:flex}
+  .libro-check{position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;
+    background:rgba(255,255,255,0.92);border:2px solid var(--border);display:none;align-items:center;justify-content:center;font-size:14px}
+  .modo-seleccion .libro-check{display:flex}
+  .libro-card.seleccionado{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+  .libro-card.seleccionado .libro-check{background:var(--accent);border-color:var(--accent);color:#fff}
+  .seleccion-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:2px solid var(--accent);
+    padding:14px 20px;display:none;align-items:center;gap:12px;z-index:300;box-shadow:0 -4px 20px rgba(0,0,0,0.15)}
+  .seleccion-bar.show{display:flex}
+  .seleccion-count{flex:1;font-weight:700;font-size:14px;color:var(--text)}
+  .btn-cancelar{padding:10px 20px;border-radius:99px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:600}
+  .btn-borrar-sel{padding:10px 20px;border-radius:99px;background:#c0392b;border:none;color:#fff;font-size:13px;font-weight:700}
   .empty-state{text-align:center;padding:60px 20px}
   .empty-icon{font-size:64px;margin-bottom:16px}
   .empty-text{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
@@ -304,8 +312,14 @@
   <div class="biblioteca">
     <div class="bib-header">
       <div class="bib-title">Mis libros</div>
+      <button class="btn-icon" id="btn-trash" onclick="entrarModoSeleccion()" title="Borrar libros"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
       <button class="btn-add" onclick="goSubir()">＋ Agregar</button>
     </div>
+  <div class="seleccion-bar" id="seleccion-bar">
+    <span class="seleccion-count" id="seleccion-count">0 seleccionados</span>
+    <button class="btn-cancelar" onclick="salirModoSeleccion()">Cancelar</button>
+    <button class="btn-borrar-sel" onclick="borrarSeleccionados()">🗑 Borrar</button>
+  </div>
     <div class="stats-bib" id="stats-bib"></div>
     <div class="libros-grid" id="libros-grid"></div>
     <div class="empty-state" id="empty-state" style="display:none">
@@ -556,7 +570,7 @@ const LEGACY_KEY = 'lector_libros_v1';
 let _state = {
   libros:[], libroActual:null, paginaActual:0,
   tema:'blanco', fontSize:19, pendingFiles:[],
-  editando:false, buscando:false, dragIdx:null,
+  editando:false, buscando:false, dragIdx:null, modoSeleccion:false, seleccionados:new Set(),
 };
 let _procesando=false, _searchTimer=null, _exportOpen=false;
 
@@ -738,28 +752,61 @@ function renderBiblioteca() {
     const pct=(l.paginas.length>1&&(l.ultimaPag||0)>0)?Math.round(((l.ultimaPag||0)+1)/l.paginas.length*100):null;
     const marc=(l.marcadores||[]).length;
     const cover=l.portada?`<img src="${l.portada}" alt="">`:'<span class="libro-cover-emoji"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>';
-    return `<div class="libro-card" onclick="goLector('${l.id}')">
+    const sel=(_state.seleccionados||new Set()).has(l.id);
+    return `<div class="libro-card${sel?' seleccionado':''}" onclick="_state.modoSeleccion?toggleSeleccion('${l.id}'):goLector('${l.id}')">
       <div class="libro-cover">${cover}<div class="libro-badge">${l.paginas.length} pág.</div></div>
       <div class="libro-info">
         <div class="libro-titulo">${escHtml(l.titulo)}</div>
         <div class="libro-meta">${pct!==null?pct+'% leído':'Sin leer'}${marc?' · 🔖'+marc:''}</div>
       </div>
-      <button class="libro-del" onclick="event.stopPropagation();borrarLibro('${l.id}')">✕</button>
+      <div class="libro-check">${sel?'✓':''}</div>
     </div>`;
   }).join('');
+  if (_state.modoSeleccion) document.getElementById('libros-grid').classList.add('modo-seleccion');
 }
-async function borrarLibro(id) {
-  if (!confirm('¿Borrar este libro?')) return;
-  await deleteLibro(id);
-  _state.libros=_state.libros.filter(l=>l.id!==id);
-  // Si era un libro precargado, recordar que el usuario lo borró
-  if (LIBROS_PRECARGADOS.some(l=>l.id===id)) {
-    try {
-      const borrados=JSON.parse(localStorage.getItem('lector_borrados')||'[]');
-      if (!borrados.includes(id)) { borrados.push(id); localStorage.setItem('lector_borrados',JSON.stringify(borrados)); }
-    } catch(e){}
-  }
+function entrarModoSeleccion() {
+  _state.modoSeleccion=true;
+  _state.seleccionados=new Set();
+  document.getElementById('btn-trash').style.display='none';
+  document.getElementById('seleccion-bar').classList.add('show');
+  actualizarContadorSeleccion();
   renderBiblioteca();
+}
+function salirModoSeleccion() {
+  _state.modoSeleccion=false;
+  _state.seleccionados=new Set();
+  document.getElementById('btn-trash').style.display='';
+  document.getElementById('seleccion-bar').classList.remove('show');
+  document.getElementById('libros-grid').classList.remove('modo-seleccion');
+  renderBiblioteca();
+}
+function toggleSeleccion(id) {
+  if (_state.seleccionados.has(id)) _state.seleccionados.delete(id);
+  else _state.seleccionados.add(id);
+  actualizarContadorSeleccion();
+  renderBiblioteca();
+}
+function actualizarContadorSeleccion() {
+  const n=_state.seleccionados.size;
+  document.getElementById('seleccion-count').textContent=n===0?'Ninguno seleccionado':n===1?'1 libro seleccionado':`${n} libros seleccionados`;
+  document.querySelector('.btn-borrar-sel').disabled=n===0;
+}
+async function borrarSeleccionados() {
+  const n=_state.seleccionados.size;
+  if (!n) return;
+  if (!confirm(`¿Borrar ${n} libro${n>1?'s':''}?`)) return;
+  for (const id of _state.seleccionados) {
+    await deleteLibro(id);
+    _state.libros=_state.libros.filter(l=>l.id!==id);
+    if (LIBROS_PRECARGADOS.some(l=>l.id===id)) {
+      try {
+        const borrados=JSON.parse(localStorage.getItem('lector_borrados')||'[]');
+        if (!borrados.includes(id)) { borrados.push(id); localStorage.setItem('lector_borrados',JSON.stringify(borrados)); }
+      } catch(e){}
+    }
+  }
+  toast(`${n} libro${n>1?'s':''} borrado${n>1?'s':''}`);
+  salirModoSeleccion();
 }
 
 // ─── SUBIR ─────────────────────────────────────────────────────
