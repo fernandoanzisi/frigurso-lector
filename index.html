@@ -153,10 +153,11 @@
   .search-result-item em{color:var(--accent);font-style:normal;font-weight:700}
   .search-empty{font-size:13px;color:var(--text3);padding:8px 0;text-align:center}
 
-  .lector-body{flex:1;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;-webkit-overflow-scrolling:touch;background:var(--page-bg);padding:0;min-height:0}
+  .lector-body{flex:1;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none;-webkit-overflow-scrolling:touch;background:var(--page-bg);padding:0;min-height:0;perspective:1400px;perspective-origin:50% 50%}
   .lector-page{background:var(--page-card);max-width:720px;margin:0 auto;min-height:100%;
     padding:28px 52px 88px;
-    box-shadow:0 0 60px rgba(0,0,0,0.18);will-change:transform,opacity}
+    box-shadow:0 0 60px rgba(0,0,0,0.18);will-change:transform;backface-visibility:hidden;position:relative}
+  .lector-page-shadow{position:absolute;inset:0;pointer-events:none;border-radius:inherit;z-index:5;opacity:0;transition:opacity 0.28s}
   @media(max-width:520px){.lector-page{padding:18px 20px 80px}}
   .tablet .btn-nav{width:110px;height:110px;font-size:68px}
   .tablet .btn-icon{width:68px;height:68px;font-size:30px}
@@ -451,6 +452,7 @@
 
     <div class="lector-body" id="lector-body">
       <div class="lector-page">
+        <div class="lector-page-shadow" id="lector-page-shadow"></div>
         <div id="nota-indicator" class="nota-indicator" style="display:none"
           onclick="abrirNota()">Esta página tiene una nota — tocá para ver</div>
         <div class="lector-texto" id="lector-texto"></div>
@@ -908,21 +910,37 @@ function cambiarPag(delta) {
   if (n<minPage||n>=lib.paginas.length) return;
   const page=document.querySelector('.lector-page');
   if (!page) { _state.paginaActual=n; renderPagina(); return; }
-  const dir=delta>0?-1:1;
-  page.style.transition='transform 0.2s ease-in,opacity 0.2s ease-in';
-  page.style.transform=`translateX(${dir*-22}px)`;
-  page.style.opacity='0';
+
+  const isNext=delta>0;
+  const shadow=document.getElementById('lector-page-shadow');
+  const FOLD=300;
+
+  // Fase 1: doblar hacia afuera (0° → ±90°)
+  page.style.transition=`transform ${FOLD}ms cubic-bezier(0.4,0,1,1)`;
+  page.style.transformOrigin=isNext?'left center':'right center';
+  page.style.transform=`rotateY(${isNext?'-90deg':'90deg'})`;
+  if(shadow){ shadow.style.background=isNext?'linear-gradient(to left,rgba(0,0,0,0.35),transparent)':'linear-gradient(to right,rgba(0,0,0,0.35),transparent)'; shadow.style.opacity='1'; }
+
   setTimeout(()=>{
+    // Intercambiar contenido al estar de canto
     _state.paginaActual=n; renderPagina();
     localStorage.setItem('frigurso_resume',JSON.stringify({id:_state.libroActual,pag:n}));
+
+    // Fase 2: desdoblar desde el otro lado (±90° → 0°)
     page.style.transition='none';
-    page.style.transform=`translateX(${dir*22}px)`;
-    page.style.opacity='0';
+    page.style.transformOrigin=isNext?'right center':'left center';
+    page.style.transform=`rotateY(${isNext?'90deg':'-90deg'})`;
+    if(shadow){ shadow.style.background=isNext?'linear-gradient(to right,rgba(0,0,0,0.35),transparent)':'linear-gradient(to left,rgba(0,0,0,0.35),transparent)'; }
     page.getBoundingClientRect();
-    page.style.transition='transform 0.24s ease-out,opacity 0.24s ease-out';
-    page.style.transform='translateX(0)';
-    page.style.opacity='1';
-  },200);
+
+    page.style.transition=`transform ${FOLD}ms cubic-bezier(0,0,0.6,1)`;
+    page.style.transform='rotateY(0deg)';
+    if(shadow){ shadow.style.opacity='0'; }
+
+    setTimeout(()=>{
+      page.style.transition=''; page.style.transform=''; page.style.transformOrigin='';
+    }, FOLD+20);
+  }, FOLD);
 }
 // Bloquea pull-to-refresh solo cuando el scroll ya está en el tope y el dedo baja
 (function(){
