@@ -949,8 +949,9 @@ function renderPagina() {
     document.getElementById('btn-edit').style.visibility='hidden';
     document.getElementById('lector-texto').innerHTML=`<div class="lector-coverpage"><img src="${lib.portadaHD}" alt="Portada"></div>`;
     document.getElementById('nota-indicator').style.display='none';
-    document.getElementById('btn-prev').disabled=lib.portada?true:(n===0);
+    document.getElementById('btn-prev').disabled=true;
     document.getElementById('btn-next').disabled=false;
+    ocultarControles();
     renderMarcadoresBarra(lib,total); actualizarBtnMarcador(lib,n); lib.ultimaPag=n; saveLibro(lib);
     return;
   }
@@ -961,6 +962,7 @@ function renderPagina() {
     document.getElementById('nota-indicator').style.display='none';
     document.getElementById('btn-prev').disabled=false;
     document.getElementById('btn-next').disabled=true;
+    ocultarControles();
     renderMarcadoresBarra(lib,total); actualizarBtnMarcador(lib,n); lib.ultimaPag=n; saveLibro(lib);
     return;
   }
