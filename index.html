@@ -1146,45 +1146,56 @@ function iniciarAutoHide() {
 }
 
 // Tap zones en lector-body
-// Detección de tablet — aplica estilos inline directamente
+// Detección de tablet — aplica estilos proporcionales al ancho real
 (function(){
   const s = Math.max(screen.width, screen.height);
   if (s < 700) return;
-  const grande = s >= 900;
-  const nav   = grande ? {w:'130px',h:'130px',fs:'80px'} : {w:'110px',h:'110px',fs:'68px'};
-  const icon  = grande ? {w:'80px', h:'80px', fs:'38px'} : {w:'68px', h:'68px', fs:'30px'};
-  const fsize = grande ? '30px' : '26px';
 
   function aplicar(){
+    const w = window.innerWidth;
+    // Escala proporcional al ancho de pantalla actual
+    const btnPx   = Math.round(w * 0.18);
+    const btnFs   = Math.round(w * 0.11);
+    const iconPx  = Math.round(w * 0.11);
+    const iconFs  = Math.round(w * 0.06);
+    const pagFs   = Math.round(w * 0.038);
+    const tituloFs= Math.round(w * 0.038);
+    const libroFs = Math.round(w * 0.038);
+    const metaFs  = Math.round(w * 0.028);
+    const fsize   = Math.round(w * 0.048) + 'px';
+
     document.querySelectorAll('.btn-nav').forEach(el=>{
-      el.style.width=nav.w; el.style.height=nav.h; el.style.fontSize=nav.fs;
+      el.style.width=btnPx+'px'; el.style.height=btnPx+'px'; el.style.fontSize=btnFs+'px';
     });
     document.querySelectorAll('.btn-icon').forEach(el=>{
-      el.style.width=icon.w; el.style.height=icon.h; el.style.fontSize=icon.fs;
+      el.style.width=iconPx+'px'; el.style.height=iconPx+'px'; el.style.fontSize=iconFs+'px';
     });
-    document.querySelectorAll('.pag-info').forEach(el=>el.style.fontSize=grande?'24px':'20px');
-    document.querySelectorAll('.lector-titulo').forEach(el=>el.style.fontSize=grande?'24px':'20px');
-    document.querySelectorAll('.libro-titulo').forEach(el=>el.style.fontSize=grande?'24px':'20px');
-    document.querySelectorAll('.libro-meta').forEach(el=>el.style.fontSize=grande?'18px':'16px');
-    document.querySelectorAll('.header-title').forEach(el=>el.style.fontSize=grande?'26px':'22px');
-    document.querySelectorAll('.btn-add').forEach(el=>{
-      el.style.fontSize=grande?'22px':'20px'; el.style.padding=grande?'18px 36px':'16px 32px';
-    });
+    document.querySelectorAll('.pag-info').forEach(el=>el.style.fontSize=pagFs+'px');
+    document.querySelectorAll('.lector-titulo').forEach(el=>el.style.fontSize=tituloFs+'px');
+    document.querySelectorAll('.libro-titulo').forEach(el=>el.style.fontSize=libroFs+'px');
+    document.querySelectorAll('.libro-meta').forEach(el=>el.style.fontSize=metaFs+'px');
+    document.querySelectorAll('.header-title').forEach(el=>el.style.fontSize=tituloFs+'px');
+    document.querySelectorAll('.btn-add').forEach(el=>el.style.fontSize=libroFs+'px');
     document.documentElement.style.setProperty('--font-size', fsize);
+
+    // DEBUG — sacar cuando funcione
+    const d=document.getElementById('dbg');
+    if(d) d.textContent=`${screen.width}x${screen.height} inner:${w} btn:${btnPx}px font:${fsize}`;
   }
 
   document.addEventListener('DOMContentLoaded', aplicar);
-  // Re-aplicar en cambios de página por si se re-renderizan elementos
+  window.addEventListener('resize', aplicar);
   setTimeout(aplicar, 300);
   setTimeout(aplicar, 1000);
 
-  // DEBUG — sacar cuando funcione
+  // DEBUG
   setTimeout(()=>{
+    if(document.getElementById('dbg')) return;
     const d=document.createElement('div');
     d.id='dbg';
-    d.style.cssText='position:fixed;top:0;left:0;right:0;background:red;color:#fff;font-size:16px;padding:8px;z-index:9999;text-align:center';
-    d.textContent=`${screen.width}x${screen.height} dPR:${devicePixelRatio} s:${s} ${grande?'tablet-lg':'tablet'} btn:${document.querySelectorAll('.btn-nav').length}`;
+    d.style.cssText='position:fixed;top:0;left:0;right:0;background:red;color:#fff;font-size:14px;padding:6px;z-index:9999;text-align:center';
     document.body.appendChild(d);
+    aplicar();
   },500);
 })();
 
