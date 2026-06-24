@@ -1384,24 +1384,51 @@ async function extraerTextoPDF(source) {
     const bodyFs=Object.entries(fsCounts).sort((a,b)=>b[1]-a[1])[0];
     const cuerpoFs=bodyFs?parseFloat(bodyFs[0]):0;
 
-    // Agrupar items por línea, guardando tamaño de fuente, fontName predominante y negrita
+    // Detectar si un item es cursiva por fontName, styles o shear en la matriz
+    const esItalica=(item)=>{
+      const fn=(item.fontName||'').toLowerCase();
+      if (fn.includes('italic')||fn.includes('oblique')) return true;
+      const sf=(content.styles?.[item.fontName]?.fontFamily||'').toLowerCase();
+      if (sf.includes('italic')||sf.includes('oblique')) return true;
+      if (Math.abs(item.transform[1])>0.1) return true;
+      return false;
+    };
+
+    // Agrupar items por línea, insertando marcadores [[I]]..[[/I]] para cursiva inline
     const lineas=[];
     let lineaActual=null;
     for (const item of content.items) {
       if (!item.str) continue;
       const y=item.transform[5];
       if (lineaActual===null||Math.abs(y-lineaActual.y)>5) {
-        lineaActual={y, texto:'', fsSum:0, fsN:0, bold:false, font:item.fontName||''};
+        if (lineaActual?.enCursiva){lineaActual.texto+='[[/I]]';lineaActual.enCursiva=false;}
+        lineaActual={y, texto:'', fsSum:0, fsN:0, bold:false, font:item.fontName||'', enCursiva:false};
         lineas.push(lineaActual);
       }
       const s=item.str;
-      if (lineaActual.texto&&s&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
+      const italic=esItalica(item);
+      // Abrir/cerrar marcador de cursiva según cambio de estado
+      if (italic&&!lineaActual.enCursiva){
+        if (lineaActual.texto&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
+          lineaActual.texto+=' ';
+        lineaActual.texto+='[[I]]';
+        lineaActual.enCursiva=true;
+      } else if (!italic&&lineaActual.enCursiva){
+        lineaActual.texto+='[[/I]]';
+        lineaActual.enCursiva=false;
+        if (lineaActual.texto&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
+          lineaActual.texto+=' ';
+      } else if (lineaActual.texto&&s&&
+                 !lineaActual.texto.endsWith(' ')&&!lineaActual.texto.endsWith('[[I]]')&&
+                 !s.startsWith(' ')){
         lineaActual.texto+=' ';
+      }
       lineaActual.texto+=s;
       const fs=Math.abs(item.transform[3]);
       if (fs>0){lineaActual.fsSum+=fs*s.length;lineaActual.fsN+=s.length;}
       if ((item.fontName||'').toLowerCase().includes('bold')) lineaActual.bold=true;
     }
+    if (lineaActual?.enCursiva) lineaActual.texto+='[[/I]]';
 
     // Ordenar de arriba a abajo (Y mayor = más arriba en PDF)
     lineas.sort((a,b)=>b.y-a.y);
@@ -1663,6 +1690,14 @@ function toast(msg) {
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+// Escapa HTML y convierte marcadores inline [[I]]..[[/I]] a <em>
+function inlineHtml(s) {
+  const parts=String(s).split(/(\[\[I\]\][\s\S]*?\[\[\/I\]\])/);
+  return parts.map(p=>{
+    const m=p.match(/^\[\[I\]\]([\s\S]*)\[\[\/I\]\]$/);
+    return m?'<em>'+escHtml(m[1])+'</em>':escHtml(p);
+  }).join('');
+}
 
 function textoAHtml(texto) {
   if (!texto) return '<p class="lector-p">(Página vacía)</p>';
@@ -1685,33 +1720,34 @@ function textoAHtml(texto) {
     // Heading marcado por el extractor de PDF: [[H]]texto[[/H]]
     const hMatch = s0.match(/^\[\[H\]\](.*)\[\[\/H\]\]$/);
     if (hMatch) {
-      html += `<h3 class="lector-h">${escHtml(hMatch[1])}</h3>`;
+      html += `<h3 class="lector-h">${inlineHtml(hMatch[1])}</h3>`;
       seq = 0; continue;
     }
 
     // Negrita marcada por el extractor: [[B]]texto[[/B]]
     const bMatch = s0.match(/^\[\[B\]\](.*)\[\[\/B\]\]$/);
     if (bMatch) {
-      html += `<p class="lector-p"><strong>${escHtml(bMatch[1])}</strong></p>`;
+      html += `<p class="lector-p"><strong>${inlineHtml(bMatch[1])}</strong></p>`;
       seq = 0; continue;
     }
 
     // Heading: primera línea con >55% letras mayúsculas y sin punto final
-    const letras = s0.replace(/[^A-Za-záéíóúüñA-ZÁÉÍÓÚÜÑ]/g,'').length;
-    const mayus  = s0.replace(/[^A-ZÁÉÍÓÚÜÑ]/g,'').length;
+    const s0plain = s0.replace(/\[\[.*?\]\]/g,'');
+    const letras = s0plain.replace(/[^A-Za-záéíóúüñA-ZÁÉÍÓÚÜÑ]/g,'').length;
+    const mayus  = s0plain.replace(/[^A-ZÁÉÍÓÚÜÑ]/g,'').length;
     const esMayus = letras > 0 && mayus / letras > 0.55;
-    if (s0.length >= 3 && s0.length <= 76 && !/[.,;]$/.test(s0) && esMayus) {
-      html += `<h3 class="lector-h">${lineas.map(l=>escHtml(l)).join('<br>')}</h3>`;
+    if (s0plain.length >= 3 && s0plain.length <= 76 && !/[.,;]$/.test(s0plain) && esMayus) {
+      html += `<h3 class="lector-h">${lineas.map(l=>inlineHtml(l)).join('<br>')}</h3>`;
       seq = 0; continue;
     }
     // Verso: 4+ líneas cortas (poesía, estrofas)
-    const avgLen = lineas.reduce((a,l)=>a+l.length,0)/lineas.length;
+    const avgLen = lineas.reduce((a,l)=>a+l.replace(/\[\[.*?\]\]/g,'').length,0)/lineas.length;
     if (lineas.length >= 4 && avgLen < 55) {
-      html += `<p class="lector-verso">${lineas.map(l=>escHtml(l)).join('<br>')}</p>`;
+      html += `<p class="lector-verso">${lineas.map(l=>inlineHtml(l)).join('<br>')}</p>`;
       seq = 0; continue;
     }
     // Párrafo normal
-    const contenido = lineas.map(l=>escHtml(l)).join(' ');
+    const contenido = lineas.map(l=>inlineHtml(l)).join(' ');
     const cls = seq > 0 ? 'lector-p lector-indent' : 'lector-p';
     html += `<p class="${cls}">${contenido}</p>`;
     seq++;
