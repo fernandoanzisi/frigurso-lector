@@ -44,6 +44,7 @@
   .header-sub{font-size:11px;color:var(--text3);margin-top:1px}
   .btn-icon{width:40px;height:40px;border-radius:50%;background:var(--bg);border:1px solid var(--border);
     color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .btn-icon svg{width:55%;height:55%}
   .btn-icon:active{opacity:0.7}
 
   .page{display:none}
@@ -141,6 +142,7 @@
     text-overflow:ellipsis;white-space:nowrap}
   .btn-sm{width:34px;height:34px;border-radius:50%;background:transparent;border:none;
     color:var(--text2);font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .btn-sm svg{width:55%;height:55%}
   .btn-sm:active{background:var(--border)}
   .btn-sm.active{color:var(--accent)}
   .btn-aa{padding:0 10px;height:34px;border-radius:8px;background:transparent;border:1px solid var(--border);
@@ -1254,9 +1256,6 @@ function iniciarAutoHide() {
     document.querySelectorAll('.btn-icon').forEach(el=>{
       el.style.width=iconPx+'px'; el.style.height=iconPx+'px'; el.style.fontSize=iconFs+'px';
     });
-    document.querySelectorAll('.btn-icon svg').forEach(el=>{
-      el.setAttribute('width', iconFs); el.setAttribute('height', iconFs);
-    });
     document.querySelectorAll('.pag-info').forEach(el=>el.style.fontSize=pagFs+'px');
     document.querySelectorAll('.lector-titulo').forEach(el=>el.style.fontSize=tituloFs+'px');
     document.querySelectorAll('.libro-titulo').forEach(el=>el.style.fontSize=libroFs+'px');
@@ -1266,9 +1265,6 @@ function iniciarAutoHide() {
     const smPx=Math.round(w*0.065); const smFs=Math.round(smPx*0.55);
     document.querySelectorAll('.btn-sm').forEach(el=>{
       el.style.width=smPx+'px'; el.style.height=smPx+'px'; el.style.fontSize=smFs+'px'; el.style.flexShrink='0';
-    });
-    document.querySelectorAll('.btn-sm svg').forEach(el=>{
-      el.setAttribute('width',smFs); el.setAttribute('height',smFs);
     });
     document.querySelectorAll('.btn-aa').forEach(el=>{
       el.style.height=smPx+'px'; el.style.fontSize=smFs+'px'; el.style.padding=`0 ${Math.round(smPx*0.3)}px`;
