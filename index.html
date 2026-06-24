@@ -190,9 +190,9 @@
   .lector-footer.oculto{opacity:0;pointer-events:none;transform:translateY(100%)}
   .footer-barra{height:2px;background:var(--border);position:relative}
   .footer-barra-fill{height:100%;background:var(--accent);transition:width 0.35s ease;position:absolute;left:0;top:0}
-  .footer-main{display:flex;align-items:center;padding:10px 16px max(64px,env(safe-area-inset-bottom))}
-  .btn-nav{width:44px;height:44px;border-radius:50%;background:transparent;border:none;
-    color:var(--text2);font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .footer-main{display:flex;align-items:center;padding:10px 16px max(14px,env(safe-area-inset-bottom))}
+  .btn-nav{width:60px;height:60px;border-radius:50%;background:transparent;border:none;
+    color:var(--text2);font-size:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .btn-nav:disabled{opacity:0.25}
   .btn-nav:active:not(:disabled){color:var(--accent)}
   .pag-info{flex:1;text-align:center;font-family:var(--font-ui);font-size:13px;
@@ -899,6 +899,7 @@ function cambiarPag(delta) {
   let _startY=0;
   document.addEventListener('touchstart',e=>{ _startY=e.touches[0].clientY; },{passive:true});
   document.addEventListener('touchmove',e=>{
+    if (e.touches.length>1){ e.preventDefault(); return; }
     const body=document.getElementById('lector-body');
     if (!body) return;
     const lector=document.getElementById('page-lector');
