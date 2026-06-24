@@ -1170,6 +1170,9 @@ function iniciarAutoHide() {
     document.querySelectorAll('.btn-icon').forEach(el=>{
       el.style.width=iconPx+'px'; el.style.height=iconPx+'px'; el.style.fontSize=iconFs+'px';
     });
+    document.querySelectorAll('.btn-icon svg').forEach(el=>{
+      el.setAttribute('width', iconFs); el.setAttribute('height', iconFs);
+    });
     document.querySelectorAll('.pag-info').forEach(el=>el.style.fontSize=pagFs+'px');
     document.querySelectorAll('.lector-titulo').forEach(el=>el.style.fontSize=tituloFs+'px');
     document.querySelectorAll('.libro-titulo').forEach(el=>el.style.fontSize=libroFs+'px');
