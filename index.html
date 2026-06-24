@@ -1151,6 +1151,7 @@ function iniciarAutoHide() {
   const s = Math.max(screen.width, screen.height);
   if (s >= 900) document.documentElement.classList.add('tablet','tablet-lg');
   else if (s >= 700) document.documentElement.classList.add('tablet');
+  setTimeout(()=>toast(`pantalla: ${screen.width}x${screen.height} dPR:${devicePixelRatio} clase:${document.documentElement.className}`),1500);
 })();
 
 document.addEventListener('DOMContentLoaded',()=>{
