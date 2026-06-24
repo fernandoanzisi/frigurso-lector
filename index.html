@@ -1895,12 +1895,13 @@ async function buscarLibros() {
         signal: AbortSignal.timeout(20000)
       });
       const data = await r.json();
-      if (!data.error || data.error !== 'blocked') libros = data.libros || [];
+      if (!data.error && data.libros?.length) libros = data.libros;
     } catch(e) {}
 
     // Fallback: búsqueda directa desde el browser via CORS proxy
-    if (libros === null) {
-      estado.textContent = 'Intentando acceso directo...';
+    // (se activa si el servidor falló, bloqueó, o devolvió 0 resultados)
+    if (!libros?.length) {
+      estado.textContent = 'Buscando directo...';
       libros = await buscarLibgenDirecto(query);
     }
 
@@ -1969,23 +1970,25 @@ async function buscarLibgenDirecto(query) {
 }
 
 function parsearLibgenHTML(html) {
+  // Libgen columns: [0]ID [1]Author [2]Title [3]Publisher [4]Year [5]Pages [6]Language [7]Size [8]Extension
   const libros = [];
-  // Extraer filas de tabla con resultados
-  const rows = html.split(/<tr[\s>]/i).slice(1);
-  for (const row of rows) {
+  const trRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let trMatch;
+  while ((trMatch = trRe.exec(html)) !== null) {
+    const row = trMatch[1];
     const tds = [];
     const tdRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
     let m;
     while ((m = tdRe.exec(row)) !== null) tds.push(m[1]);
     if (tds.length < 9) continue;
     const idText = tds[0].replace(/<[^>]+>/g,'').trim();
-    if (!/^\d+$/.test(idText)) continue;
-    // MD5 del link del título
-    const md5Match = /md5=([a-f0-9]{32})/i.exec(tds[1]);
+    if (!/^\d{3,}$/.test(idText)) continue;
+    // MD5 está en la celda del título (tds[2])
+    const md5Match = /md5=([a-f0-9]{32})/i.exec(tds[2]);
     if (!md5Match) continue;
     const md5 = md5Match[1].toLowerCase();
-    const titulo = tds[1].replace(/<[^>]+>/g,'').trim().replace(/\s+/g,' ');
-    const autor = tds[2].replace(/<[^>]+>/g,'').trim();
+    const titulo = tds[2].replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+    const autor = tds[1].replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
     const year = tds[4].replace(/<[^>]+>/g,'').trim();
     const pages = tds[5].replace(/<[^>]+>/g,'').trim();
     const lang = tds[6].replace(/<[^>]+>/g,'').trim();
@@ -1993,10 +1996,8 @@ function parsearLibgenHTML(html) {
     const ext = tds[8].replace(/<[^>]+>/g,'').trim().toLowerCase();
     if (!['pdf','epub'].includes(ext)) continue;
     if (!titulo) continue;
-    libros.push({
-      id: idText, titulo, autor, year, idioma: lang,
-      formato: ext.toUpperCase(), tamano: size, paginas: pages, md5
-    });
+    libros.push({ id: idText, titulo, autor, year, idioma: lang,
+      formato: ext.toUpperCase(), tamano: size, paginas: pages, md5 });
   }
   return libros;
 }

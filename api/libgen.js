@@ -32,10 +32,9 @@ async function trySearch(query) {
 }
 
 function extractIds(html) {
-  // Two strategies: links with ?id= and raw numeric <td> cells
-  const s1 = [...new Set([...html.matchAll(/[?&]id=(\d+)/g)].map(m => m[1]))];
-  const s2 = [...new Set([...html.matchAll(/<td>\s*(\d{4,})\s*<\/td>/g)].map(m => m[1]))];
-  return [...new Set([...s1, ...s2])].filter(id => parseInt(id) > 0).slice(0, 50);
+  // Libgen ID is in the first <td> of each result row as a plain number
+  const ids = [...new Set([...html.matchAll(/<td[^>]*>\s*(\d{3,})\s*<\/td>/g)].map(m => m[1]))];
+  return ids.filter(id => parseInt(id) > 100).slice(0, 50);
 }
 
 module.exports = async function handler(req, res) {
