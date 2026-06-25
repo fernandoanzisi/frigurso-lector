@@ -470,8 +470,13 @@
           onkeydown="if(event.key==='Enter')buscarLibros()">
         <button class="btn-proc" id="btn-buscar-lib" onclick="buscarLibros()">Buscar</button>
       </div>
-      <div id="buscar-estado" class="buscar-estado" style="display:none">Buscando en Libgen...</div>
+      <div id="buscar-estado" class="buscar-estado" style="display:none">Buscando...</div>
       <div id="buscar-lista" class="buscar-lista" style="display:none"></div>
+      <div style="margin-bottom:10px;text-align:center;font-size:12px;color:var(--text3)">
+        ¿Sin resultados? →
+        <span id="buscar-ext-link" style="color:var(--accent);cursor:pointer;font-weight:700"
+          onclick="buscarEnNavegador()">Buscar en Anna's Archive</span>
+      </div>
       <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
     </div>
   </div>
@@ -2002,6 +2007,14 @@ function parsearLibgenHTML(html) {
   return libros;
 }
 
+function buscarEnNavegador() {
+  const q = (document.getElementById('buscar-query')?.value || '').trim();
+  const url = q
+    ? `https://annas-archive.org/search?q=${encodeURIComponent(q)}&filetype=pdf`
+    : 'https://annas-archive.org/';
+  window.open(url, '_blank');
+}
+
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -2012,22 +2025,54 @@ async function importarDesdeLibgen(idx) {
   const btn = document.getElementById(`libgen-btn-${idx}`);
   btn.disabled = true;
   btn.textContent = 'Descargando...';
-  const dir = Math.floor(parseInt(libro.id) / 1000) * 1000;
+
+  // URLs de descarga directa por MD5 (en orden de confiabilidad)
+  const md5 = libro.md5;
   const ext = libro.formato.toLowerCase();
-  const fname = encodeURIComponent(libro.titulo.substring(0, 80) + '.' + ext);
-  const dlUrl = `https://download.library.lol/main/${dir}/${libro.md5}/${fname}`;
+  const candidatos = [
+    // Con ID si lo tenemos
+    ...(libro.id && libro.id !== '0' ? [
+      `https://download.library.lol/main/${Math.floor(parseInt(libro.id)/1000)*1000}/${md5}/${encodeURIComponent(libro.titulo.substring(0,80)+'.'+ext)}`
+    ] : []),
+    // Sin ID — acceso por MD5 directo
+    `https://libgen.rocks/get.php?md5=${md5}`,
+    `https://libgen.lol/get.php?md5=${md5}`,
+    `https://libgen.li/ads.php?md5=${md5}`,
+  ];
+
   document.getElementById('pdf-titulo').value = libro.titulo;
   document.getElementById('pdf-autor').value = libro.autor || '';
-  document.getElementById('pdf-url-input').value = dlUrl;
-  switchTab('pdf');
-  switchPdfSrc('url');
-  try {
-    await procesarPDF();
-  } catch(e) {
-    btn.disabled = false;
-    btn.textContent = 'Importar';
-    switchTab('buscar');
+
+  for (const dlUrl of candidatos) {
+    document.getElementById('pdf-url-input').value = dlUrl;
+    switchTab('pdf');
+    switchPdfSrc('url');
+    try {
+      await procesarPDF();
+      return; // éxito
+    } catch(e) {}
   }
+
+  // Nada funcionó — mostrar fallback manual
+  btn.disabled = false;
+  btn.textContent = 'Importar';
+  switchTab('buscar');
+  mostrarFallbackManual(libro);
+}
+
+function mostrarFallbackManual(libro) {
+  const lista = document.getElementById('buscar-lista');
+  const fallback = document.createElement('div');
+  fallback.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;font-size:13px;color:var(--text2)';
+  const lolUrl = `https://library.lol/main/${libro.md5}`;
+  const lgUrl  = `https://libgen.is/search.php?req=${encodeURIComponent(libro.titulo)}`;
+  fallback.innerHTML = `
+    <b style="color:var(--text)">No se pudo descargar automáticamente.</b><br><br>
+    Opciones:<br>
+    1. <a href="${lolUrl}" target="_blank" style="color:var(--accent)">Abrir en Library.lol</a> → Descargar → volver y subir desde archivo<br>
+    2. <a href="${lgUrl}" target="_blank" style="color:var(--accent)">Buscar en Libgen</a> → copiar URL del PDF → pegar en pestaña PDF > URL
+  `;
+  lista.prepend(fallback);
 }
 </script>
 </body>
