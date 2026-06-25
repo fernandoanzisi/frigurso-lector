@@ -1495,31 +1495,38 @@ async function extraerTextoPDF(source) {
     for (const item of content.items) {
       if (!item.str) continue;
       const y=item.transform[5];
+      const x=item.transform[4];
+      const fs=Math.abs(item.transform[3]);
+      const itemW=typeof item.width==='number'?item.width:0;
       if (lineaActual===null||Math.abs(y-lineaActual.y)>5) {
         if (lineaActual?.enCursiva){lineaActual.texto+='[[/I]]';lineaActual.enCursiva=false;}
-        lineaActual={y, texto:'', fsSum:0, fsN:0, bold:false, font:item.fontName||'', enCursiva:false};
+        lineaActual={y, texto:'', fsSum:0, fsN:0, bold:false, font:item.fontName||'', enCursiva:false, lastEndX:x+itemW, lastFs:fs};
         lineas.push(lineaActual);
       }
       const s=item.str;
       const italic=esItalica(item);
-      // Abrir/cerrar marcador de cursiva según cambio de estado
+      // Decidir si agregar espacio usando la distancia X real entre items
+      // (evita "R OBERT" cuando "R" y "OBERT" son items separados sin espacio real)
+      const gap=lineaActual.texto?x-lineaActual.lastEndX:0;
+      const spaceW=(lineaActual.lastFs||fs)*0.28; // ~28% del tamaño = espacio típico
+      const hayEspacioX=gap>spaceW||s.startsWith(' ')||lineaActual.texto.endsWith(' ');
       if (italic&&!lineaActual.enCursiva){
-        if (lineaActual.texto&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
+        if (hayEspacioX&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
           lineaActual.texto+=' ';
         lineaActual.texto+='[[I]]';
         lineaActual.enCursiva=true;
       } else if (!italic&&lineaActual.enCursiva){
         lineaActual.texto+='[[/I]]';
         lineaActual.enCursiva=false;
-        if (lineaActual.texto&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
+        if (hayEspacioX&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
           lineaActual.texto+=' ';
-      } else if (lineaActual.texto&&s&&
-                 !lineaActual.texto.endsWith(' ')&&!lineaActual.texto.endsWith('[[I]]')&&
-                 !s.startsWith(' ')){
-        lineaActual.texto+=' ';
+      } else if (lineaActual.texto&&s&&!lineaActual.texto.endsWith('[[I]]')){
+        if (hayEspacioX&&!lineaActual.texto.endsWith(' ')&&!s.startsWith(' '))
+          lineaActual.texto+=' ';
       }
       lineaActual.texto+=s;
-      const fs=Math.abs(item.transform[3]);
+      lineaActual.lastEndX=x+itemW;
+      lineaActual.lastFs=fs;
       if (fs>0){lineaActual.fsSum+=fs*s.length;lineaActual.fsN+=s.length;}
       if ((item.fontName||'').toLowerCase().includes('bold')) lineaActual.bold=true;
     }
@@ -1548,7 +1555,10 @@ async function extraerTextoPDF(source) {
       const esHeading=cuerpoFs>0&&avgFs>cuerpoFs*1.25&&l.length<120;
       const esNegrita=lin.bold&&!esHeading&&cuerpoFs>0&&avgFs>cuerpoFs*0.95&&l.length<120;
 
-      const bloque=esHeading?`[[H]]${l}[[/H]]`:esNegrita?`[[B]]${l}[[/B]]`:l;
+      // Quitar número de página pegado al inicio de un encabezado (ej: "17 ROBERT T. KIYOSAKI")
+      const lLimpio=esHeading?l.replace(/^\d{1,4}\s+/,'').replace(/\s+\d{1,4}$/,''):l;
+
+      const bloque=esHeading?`[[H]]${lLimpio}[[/H]]`:esNegrita?`[[B]]${l}[[/B]]`:l;
 
       if (!texto){texto=bloque;continue;}
       const gap=lineas[j-1].y-lineas[j].y;
