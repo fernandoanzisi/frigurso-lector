@@ -2026,22 +2026,26 @@ async function importarDesdeLibgen(idx) {
   btn.disabled = true;
   btn.textContent = 'Descargando...';
 
-  // URLs de descarga directa por MD5 (en orden de confiabilidad)
-  const md5 = libro.md5;
-  const ext = libro.formato.toLowerCase();
-  const candidatos = [
-    // Con ID si lo tenemos
-    ...(libro.id && libro.id !== '0' ? [
-      `https://download.library.lol/main/${Math.floor(parseInt(libro.id)/1000)*1000}/${md5}/${encodeURIComponent(libro.titulo.substring(0,80)+'.'+ext)}`
-    ] : []),
-    // Sin ID — acceso por MD5 directo
-    `https://libgen.rocks/get.php?md5=${md5}`,
-    `https://libgen.lol/get.php?md5=${md5}`,
-    `https://libgen.li/ads.php?md5=${md5}`,
-  ];
-
   document.getElementById('pdf-titulo').value = libro.titulo;
   document.getElementById('pdf-autor').value = libro.autor || '';
+
+  // Candidatos de descarga según el tipo de resultado
+  let candidatos = [];
+  if (libro.tipo === 'url' && libro.dlUrl) {
+    candidatos = [libro.dlUrl];
+  } else if (libro.md5) {
+    const md5 = libro.md5;
+    const ext = libro.formato?.toLowerCase() || 'pdf';
+    candidatos = [
+      ...(libro.id && libro.id !== '0' ? [
+        `https://download.library.lol/main/${Math.floor(parseInt(libro.id)/1000)*1000}/${md5}/${encodeURIComponent(libro.titulo.substring(0,80)+'.'+ext)}`
+      ] : []),
+      `https://libgen.rocks/get.php?md5=${md5}`,
+      `https://libgen.lol/get.php?md5=${md5}`,
+      `https://libgen.li/ads.php?md5=${md5}`,
+      `https://libgen.is/book/index.php?md5=${md5}`,
+    ];
+  }
 
   for (const dlUrl of candidatos) {
     document.getElementById('pdf-url-input').value = dlUrl;
