@@ -135,15 +135,22 @@
   .buscar-form .input-field{margin-bottom:0;flex:1}
   .buscar-form .btn-proc{width:auto;padding:12px 20px;margin-bottom:0;flex-shrink:0}
   .buscar-lista{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
-  .libro-card{padding:14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+  .libro-card{padding:12px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
   .libro-card:last-child{border-bottom:none}
+  .libro-cover{width:48px;height:68px;object-fit:cover;border-radius:4px;flex-shrink:0;background:var(--bg2)}
+  .libro-cover-placeholder{width:48px;height:68px;border-radius:4px;flex-shrink:0;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px}
+  .libro-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
   .libro-card-titulo{font-weight:700;font-size:14px;color:var(--text);line-height:1.3}
-  .libro-card-autor{font-size:13px;color:var(--text2)}
-  .libro-card-meta{font-size:11px;color:var(--text3);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .badge-fmt{background:var(--accent2);color:var(--text2);padding:1px 6px;border-radius:4px;font-weight:700;font-size:11px}
-  .libro-card-btn{margin-top:4px;padding:8px 16px;border-radius:8px;border:none;font-weight:700;font-size:13px;cursor:pointer;background:var(--accent);color:#fff;align-self:flex-start}
-  .libro-card-btn:disabled{opacity:0.5;cursor:default}
+  .libro-card-autor{font-size:12px;color:var(--text2)}
+  .libro-card-meta{font-size:11px;color:var(--text3)}
+  .libro-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .libro-btn-pdf{padding:6px 12px;border-radius:8px;border:none;font-weight:700;font-size:12px;cursor:pointer;background:var(--accent);color:#fff}
+  .libro-btn-alt{padding:6px 12px;border-radius:8px;border:1px solid var(--border);font-weight:600;font-size:12px;cursor:pointer;background:transparent;color:var(--text2)}
   .buscar-estado{text-align:center;padding:24px;color:var(--text3);font-size:14px}
+  .buscar-url-box{border:1px dashed var(--accent2);border-radius:12px;padding:14px;margin-bottom:14px}
+  .buscar-url-box p{font-size:12px;color:var(--text3);margin-bottom:10px}
+  .buscar-url-row{display:flex;gap:8px}
+  .buscar-url-row .input-field{margin-bottom:0;flex:1;font-size:13px}
 
   /* LECTOR */
   .lector-wrap{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
@@ -472,10 +479,13 @@
       </div>
       <div id="buscar-estado" class="buscar-estado" style="display:none">Buscando...</div>
       <div id="buscar-lista" class="buscar-lista" style="display:none"></div>
-      <div style="margin-bottom:10px;text-align:center;font-size:12px;color:var(--text3)">
-        ¿Sin resultados? →
-        <span id="buscar-ext-link" style="color:var(--accent);cursor:pointer;font-weight:700"
-          onclick="buscarEnNavegador()">Buscar en Anna's Archive</span>
+      <!-- Pegar URL del PDF encontrado manualmente -->
+      <div class="buscar-url-box" id="buscar-url-box">
+        <p>¿Ya tenés la URL del PDF? Pegala acá y lo importás directo:</p>
+        <div class="buscar-url-row">
+          <input type="url" class="input-field" id="buscar-pdf-url" placeholder="https://...pdf">
+          <button class="libro-btn-pdf" onclick="importarURLBuscar()">Importar</button>
+        </div>
       </div>
       <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
     </div>
@@ -1874,7 +1884,7 @@ async function init() {
 }
 init();
 
-// ─── BUSCAR LIBROS (Libgen) ────────────────────────────────────
+// ─── BUSCAR LIBROS ──────────────────────────────────────────────
 let _libgenRes = [];
 
 async function buscarLibros() {
@@ -1884,200 +1894,93 @@ async function buscarLibros() {
   const lista = document.getElementById('buscar-lista');
   const btn = document.getElementById('btn-buscar-lib');
   btn.disabled = true;
-  estado.style.display = '';
-  estado.textContent = 'Buscando en Libgen...';
   lista.style.display = 'none';
   lista.innerHTML = '';
+  estado.style.display = '';
+  estado.textContent = 'Buscando...';
   _libgenRes = [];
   try {
-    // 1er intento: servidor Vercel
-    let libros = null;
-    try {
-      const r = await fetch('/api/libgen', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({query}),
-        signal: AbortSignal.timeout(20000)
-      });
-      const data = await r.json();
-      if (!data.error && data.libros?.length) libros = data.libros;
-    } catch(e) {}
-
-    // Fallback: búsqueda directa desde el browser via CORS proxy
-    // (se activa si el servidor falló, bloqueó, o devolvió 0 resultados)
-    if (!libros?.length) {
-      estado.textContent = 'Buscando directo...';
-      libros = await buscarLibgenDirecto(query);
-    }
-
+    const r = await fetch('/api/libgen', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({query}), signal:AbortSignal.timeout(15000)
+    });
+    const data = await r.json();
+    _libgenRes = data.libros || [];
     estado.style.display = 'none';
-    _libgenRes = libros || [];
     if (!_libgenRes.length) {
       estado.style.display = '';
-      estado.textContent = 'Sin resultados. Probá con otro título o autor.';
+      estado.textContent = 'Sin resultados para "'+escHtml(query)+'". Probá con el título en inglés o buscá manualmente abajo.';
       return;
     }
-    mostrarResultadosLibgen();
+    lista.innerHTML = _libgenRes.map((l,i) => `
+      <div class="libro-card">
+        ${l.cover
+          ? `<img class="libro-cover" src="${escHtml(l.cover)}" alt="" onerror="this.style.display='none'">`
+          : `<div class="libro-cover-placeholder">📖</div>`}
+        <div class="libro-info">
+          <div class="libro-card-titulo">${escHtml(l.titulo)}</div>
+          ${l.autor ? `<div class="libro-card-autor">${escHtml(l.autor)}</div>` : ''}
+          ${l.year ? `<div class="libro-card-meta">${escHtml(l.year)}</div>` : ''}
+          <div class="libro-btns">
+            <button class="libro-btn-pdf" onclick="abrirPDFLibro(${i})">Buscar PDF</button>
+            <button class="libro-btn-alt" onclick="abrirAnnasArchive(${i})">Anna's Archive</button>
+            <button class="libro-btn-alt" onclick="abrirLibgen(${i})">Libgen</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
     lista.style.display = '';
   } catch(e) {
     estado.style.display = '';
-    estado.textContent = 'No se pudo conectar con Libgen. Intentá de nuevo.';
+    estado.textContent = 'Error de conexión. Intentá de nuevo.';
   } finally {
     btn.disabled = false;
   }
 }
 
-function mostrarResultadosLibgen() {
-  const lista = document.getElementById('buscar-lista');
-  lista.innerHTML = _libgenRes.map((l, i) => `
-    <div class="libro-card">
-      <div class="libro-card-titulo">${escHtml(l.titulo)}</div>
-      ${l.autor ? `<div class="libro-card-autor">${escHtml(l.autor)}</div>` : ''}
-      <div class="libro-card-meta">
-        ${l.year ? `<span>${escHtml(l.year)}</span>` : ''}
-        ${l.idioma ? `<span>${escHtml(l.idioma)}</span>` : ''}
-        <span class="badge-fmt">${escHtml(l.formato)}</span>
-        ${l.tamano ? `<span>${escHtml(l.tamano)}</span>` : ''}
-        ${l.paginas ? `<span>${escHtml(l.paginas)} pág.</span>` : ''}
-      </div>
-      <button class="libro-card-btn" id="libgen-btn-${i}" onclick="importarDesdeLibgen(${i})">Importar</button>
-    </div>
-  `).join('');
+function abrirPDFLibro(idx) {
+  const l = _libgenRes[idx];
+  if (!l) return;
+  const q = (l.isbn || l.titulo) + ' pdf';
+  window.open(`https://annas-archive.org/search?q=${encodeURIComponent(l.isbn||l.titulo)}&filetype=pdf`, '_blank');
 }
 
-async function buscarLibgenDirecto(query) {
-  const LIBGEN_MIRRORS = ['libgen.is','libgen.rs','libgen.st'];
-  const CORS_PROXIES = [
-    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-    u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
-  ];
-  for (const proxy of CORS_PROXIES) {
-    for (const mirror of LIBGEN_MIRRORS) {
-      try {
-        const libgenUrl = `https://${mirror}/search.php?req=${encodeURIComponent(query)}&res=50&view=simple&column=def`;
-        const r = await fetch(proxy(libgenUrl), {signal: AbortSignal.timeout(18000)});
-        if (!r.ok) continue;
-        let html;
-        const ct = r.headers.get('content-type')||'';
-        if (ct.includes('application/json')) {
-          const j = await r.json();
-          html = j.contents || '';
-        } else {
-          html = await r.text();
-        }
-        if (html.length < 500) continue;
-        const libros = parsearLibgenHTML(html);
-        if (libros.length) return libros;
-      } catch(e) {}
-    }
+function abrirAnnasArchive(idx) {
+  const l = _libgenRes[idx];
+  if (!l) return;
+  window.open(`https://annas-archive.org/search?q=${encodeURIComponent(l.isbn||l.titulo)}&filetype=pdf`, '_blank');
+}
+
+function abrirLibgen(idx) {
+  const l = _libgenRes[idx];
+  if (!l) return;
+  window.open(`https://libgen.is/search.php?req=${encodeURIComponent(l.titulo)}&column=title`, '_blank');
+}
+
+function importarURLBuscar() {
+  const url = (document.getElementById('buscar-pdf-url')?.value||'').trim();
+  if (!url) return;
+  // Detectar si es una página de library.lol (no PDF directo)
+  document.getElementById('pdf-url-input').value = url;
+  // Pre-llenar título si hay una búsqueda activa
+  if (_libgenRes.length) {
+    const l = _libgenRes[0];
+    if (!document.getElementById('pdf-titulo').value)
+      document.getElementById('pdf-titulo').value = l.titulo;
+    if (!document.getElementById('pdf-autor').value && l.autor)
+      document.getElementById('pdf-autor').value = l.autor;
   }
-  return [];
-}
-
-function parsearLibgenHTML(html) {
-  // Libgen columns: [0]ID [1]Author [2]Title [3]Publisher [4]Year [5]Pages [6]Language [7]Size [8]Extension
-  const libros = [];
-  const trRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
-  let trMatch;
-  while ((trMatch = trRe.exec(html)) !== null) {
-    const row = trMatch[1];
-    const tds = [];
-    const tdRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
-    let m;
-    while ((m = tdRe.exec(row)) !== null) tds.push(m[1]);
-    if (tds.length < 9) continue;
-    const idText = tds[0].replace(/<[^>]+>/g,'').trim();
-    if (!/^\d{3,}$/.test(idText)) continue;
-    // MD5 está en la celda del título (tds[2])
-    const md5Match = /md5=([a-f0-9]{32})/i.exec(tds[2]);
-    if (!md5Match) continue;
-    const md5 = md5Match[1].toLowerCase();
-    const titulo = tds[2].replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
-    const autor = tds[1].replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
-    const year = tds[4].replace(/<[^>]+>/g,'').trim();
-    const pages = tds[5].replace(/<[^>]+>/g,'').trim();
-    const lang = tds[6].replace(/<[^>]+>/g,'').trim();
-    const size = tds[7].replace(/<[^>]+>/g,'').trim();
-    const ext = tds[8].replace(/<[^>]+>/g,'').trim().toLowerCase();
-    if (!['pdf','epub'].includes(ext)) continue;
-    if (!titulo) continue;
-    libros.push({ id: idText, titulo, autor, year, idioma: lang,
-      formato: ext.toUpperCase(), tamano: size, paginas: pages, md5 });
-  }
-  return libros;
-}
-
-function buscarEnNavegador() {
-  const q = (document.getElementById('buscar-query')?.value || '').trim();
-  const url = q
-    ? `https://annas-archive.org/search?q=${encodeURIComponent(q)}&filetype=pdf`
-    : 'https://annas-archive.org/';
-  window.open(url, '_blank');
+  switchTab('pdf');
+  switchPdfSrc('url');
+  procesarPDF();
 }
 
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-async function importarDesdeLibgen(idx) {
-  const libro = _libgenRes[idx];
-  if (!libro) return;
-  const btn = document.getElementById(`libgen-btn-${idx}`);
-  btn.disabled = true;
-  btn.textContent = 'Descargando...';
-
-  document.getElementById('pdf-titulo').value = libro.titulo;
-  document.getElementById('pdf-autor').value = libro.autor || '';
-
-  // Candidatos de descarga según el tipo de resultado
-  let candidatos = [];
-  if (libro.tipo === 'url' && libro.dlUrl) {
-    candidatos = [libro.dlUrl];
-  } else if (libro.md5) {
-    const md5 = libro.md5;
-    const ext = libro.formato?.toLowerCase() || 'pdf';
-    candidatos = [
-      ...(libro.id && libro.id !== '0' ? [
-        `https://download.library.lol/main/${Math.floor(parseInt(libro.id)/1000)*1000}/${md5}/${encodeURIComponent(libro.titulo.substring(0,80)+'.'+ext)}`
-      ] : []),
-      `https://libgen.rocks/get.php?md5=${md5}`,
-      `https://libgen.lol/get.php?md5=${md5}`,
-      `https://libgen.li/ads.php?md5=${md5}`,
-      `https://libgen.is/book/index.php?md5=${md5}`,
-    ];
-  }
-
-  for (const dlUrl of candidatos) {
-    document.getElementById('pdf-url-input').value = dlUrl;
-    switchTab('pdf');
-    switchPdfSrc('url');
-    try {
-      await procesarPDF();
-      return; // éxito
-    } catch(e) {}
-  }
-
-  // Nada funcionó — mostrar fallback manual
-  btn.disabled = false;
-  btn.textContent = 'Importar';
-  switchTab('buscar');
-  mostrarFallbackManual(libro);
-}
-
-function mostrarFallbackManual(libro) {
-  const lista = document.getElementById('buscar-lista');
-  const fallback = document.createElement('div');
-  fallback.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;font-size:13px;color:var(--text2)';
-  const lolUrl = `https://library.lol/main/${libro.md5}`;
-  const lgUrl  = `https://libgen.is/search.php?req=${encodeURIComponent(libro.titulo)}`;
-  fallback.innerHTML = `
-    <b style="color:var(--text)">No se pudo descargar automáticamente.</b><br><br>
-    Opciones:<br>
-    1. <a href="${lolUrl}" target="_blank" style="color:var(--accent)">Abrir en Library.lol</a> → Descargar → volver y subir desde archivo<br>
-    2. <a href="${lgUrl}" target="_blank" style="color:var(--accent)">Buscar en Libgen</a> → copiar URL del PDF → pegar en pestaña PDF > URL
-  `;
-  lista.prepend(fallback);
-}
+// Mantener importarDesdeLibgen por compatibilidad
+async function importarDesdeLibgen(idx) { abrirPDFLibro(idx); }
 </script>
 </body>
 </html>
