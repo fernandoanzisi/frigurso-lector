@@ -135,17 +135,17 @@
   .buscar-form .input-field{margin-bottom:0;flex:1}
   .buscar-form .btn-proc{width:auto;padding:12px 20px;margin-bottom:0;flex-shrink:0}
   .buscar-lista{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
-  .libro-card{padding:12px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
-  .libro-card:last-child{border-bottom:none}
-  .libro-cover{width:48px;height:68px;object-fit:cover;border-radius:4px;flex-shrink:0;background:var(--bg2)}
-  .libro-cover-placeholder{width:48px;height:68px;border-radius:4px;flex-shrink:0;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px}
-  .libro-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-  .libro-card-titulo{font-weight:700;font-size:14px;color:var(--text);line-height:1.3}
-  .libro-card-autor{font-size:12px;color:var(--text2)}
-  .libro-card-meta{font-size:11px;color:var(--text3)}
-  .libro-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-  .libro-btn-pdf{padding:6px 12px;border-radius:8px;border:none;font-weight:700;font-size:12px;cursor:pointer;background:var(--accent);color:#fff}
-  .libro-btn-alt{padding:6px 12px;border-radius:8px;border:1px solid var(--border);font-weight:600;font-size:12px;cursor:pointer;background:transparent;color:var(--text2)}
+  .bk-card{padding:12px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+  .bk-card:last-child{border-bottom:none}
+  .bk-cover{width:48px;height:68px;object-fit:cover;border-radius:4px;flex-shrink:0;background:var(--bg2)}
+  .bk-cover-ph{width:48px;height:68px;border-radius:4px;flex-shrink:0;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px}
+  .bk-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+  .bk-titulo{font-weight:700;font-size:14px;color:var(--text);line-height:1.3}
+  .bk-autor{font-size:12px;color:var(--text2)}
+  .bk-meta{font-size:11px;color:var(--text3)}
+  .bk-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .bk-btn{padding:6px 12px;border-radius:8px;border:none;font-weight:700;font-size:12px;cursor:pointer;background:var(--accent);color:#fff}
+  .bk-btn-alt{padding:6px 12px;border-radius:8px;border:1px solid var(--border);font-weight:600;font-size:12px;cursor:pointer;background:transparent;color:var(--text2)}
   .buscar-estado{text-align:center;padding:24px;color:var(--text3);font-size:14px}
   .buscar-url-box{border:1px dashed var(--accent2);border-radius:12px;padding:14px;margin-bottom:14px}
   .buscar-url-box p{font-size:12px;color:var(--text3);margin-bottom:10px}
@@ -484,7 +484,7 @@
         <p>¿Ya tenés la URL del PDF? Pegala acá y lo importás directo:</p>
         <div class="buscar-url-row">
           <input type="url" class="input-field" id="buscar-pdf-url" placeholder="https://...pdf">
-          <button class="libro-btn-pdf" onclick="importarURLBuscar()">Importar</button>
+          <button class="bk-btn" onclick="importarURLBuscar()">Importar</button>
         </div>
       </div>
       <button class="btn-cancel-proc" onclick="goBib()">Cancelar</button>
@@ -1913,18 +1913,18 @@ async function buscarLibros() {
       return;
     }
     lista.innerHTML = _libgenRes.map((l,i) => `
-      <div class="libro-card">
+      <div class="bk-card">
         ${l.cover
-          ? `<img class="libro-cover" src="${escHtml(l.cover)}" alt="" onerror="this.style.display='none'">`
-          : `<div class="libro-cover-placeholder">📖</div>`}
-        <div class="libro-info">
-          <div class="libro-card-titulo">${escHtml(l.titulo)}</div>
-          ${l.autor ? `<div class="libro-card-autor">${escHtml(l.autor)}</div>` : ''}
-          ${l.year ? `<div class="libro-card-meta">${escHtml(l.year)}</div>` : ''}
-          <div class="libro-btns">
-            <button class="libro-btn-pdf" onclick="abrirPDFLibro(${i})">Buscar PDF</button>
-            <button class="libro-btn-alt" onclick="abrirAnnasArchive(${i})">Anna's Archive</button>
-            <button class="libro-btn-alt" onclick="abrirLibgen(${i})">Libgen</button>
+          ? `<img class="bk-cover" src="${escHtml(l.cover)}" alt="" onerror="this.style.display='none'">`
+          : `<div class="bk-cover-ph">📖</div>`}
+        <div class="bk-info">
+          <div class="bk-titulo">${escHtml(l.titulo)}</div>
+          ${l.autor ? `<div class="bk-autor">${escHtml(l.autor)}</div>` : ''}
+          ${l.year ? `<div class="bk-meta">${escHtml(l.year)}</div>` : ''}
+          <div class="bk-btns">
+            <button class="bk-btn" onclick="abrirPDFLibro(${i})">Buscar PDF</button>
+            <button class="bk-btn-alt" onclick="abrirAnnasArchive(${i})">Anna's Archive</button>
+            <button class="bk-btn-alt" onclick="abrirLibgen(${i})">Libgen</button>
           </div>
         </div>
       </div>
